@@ -1,0 +1,135 @@
+Assignment  : CS 260, Spring 2019, Lab Test
+Student Name: Rachel Korkowski
+Answer File : korkowskirachel_32146_3894158_KORKOWRM9587.sql
+Total Points: 104
+
+Your answers, evaluation and points follow.
+
+1: SELECT C.CUSTID, C.FNAME, C.LNAME, A.ACCCLOSEDDATE
+FROM Customer C
+JOIN Account A
+ON (C.CUSTID = A.CUSTOMER)
+WHERE (LOWER(A.ACCOPENLOCATION) = 'central')
+  AND (A.ACCCLOSEDDATE >= '01-JAN-2018')
+
+Marks given: 15 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 1.5 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 5.25 / 5.25
+
+2: SELECT A.ACCOPENLOCATION, A.ACCSTATUS, COUNT(*)
+FROM Account A
+GROUP BY A.ACCOPENLOCATION, A.ACCSTATUS
+ORDER BY A.ACCOPENLOCATION, A.ACCSTATUS
+
+Marks given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT A.ACCNUMBER
+FROM Account A
+WHERE A.ACCBALANCE > 
+  (SELECT AVG(A2.ACCBALANCE) 
+  FROM Account A2
+  WHERE (A2.ACCTYPE = A.ACCTYPE))
+ORDER BY A.ACCNUMBER
+
+Marks given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 8.1 / 8.1
+
+4: SELECT TRANSLOCATION, AvgTransaction
+FROM 
+  (SELECT T.TRANSLOCATION, CAST(AVG(T.TRANSAMOUNT) AS NUMBER(*,2)) AS AvgTransaction
+  FROM Transaction T
+  GROUP BY T.TRANSLOCATION)
+WHERE AvgTransaction < 
+  (SELECT AVG(TRANSAMOUNT)
+  FROM Transaction)
+ORDER BY AvgTransaction DESC
+
+Marks given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 5.4 / 5.4
+
+5: SELECT CUSTID, FNAME, LNAME, MAX(TRANSAMOUNT)
+FROM 
+  (SELECT C.CUSTID, C.FNAME, C.LNAME, T.TRANSAMOUNT
+  FROM Customer C
+  JOIN Account A
+  ON (C.CUSTID = A.CUSTOMER)
+  JOIN Transaction T
+  ON (A.ACCNUMBER = T.ACCNUMBER)
+  WHERE (A.ACCTYPE = 'savings') 
+    AND (T.TRANSTYPE = 'w'))
+GROUP BY CUSTID, FNAME, LNAME
+ORDER BY CUSTID
+
+Marks given: 16 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 5.6 / 5.6
+
+6: SELECT C.CUSTID, C.FNAME, C.LNAME
+FROM Customer C
+WHERE C.CUSTID NOT IN 
+  (SELECT CUSTOMER
+  FROM Account
+  WHERE LOWER(ACCSTATUS)='active')
+
+Marks given: 17 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 5.95 / 5.95
+
+7: SELECT TRANSLOCATION, COUNT(ACCNUMBER) NumAccounts
+FROM 
+  (SELECT T.TRANSLOCATION, A.ACCNUMBER
+  FROM Transaction T
+  LEFT OUTER JOIN Account A
+  ON (T.TRANSLOCATION = A.ACCOPENLOCATION))
+GROUP BY TRANSLOCATION
+
+Marks given: 4 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0.5 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 1.5 / 1.5
+

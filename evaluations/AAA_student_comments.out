@@ -1,0 +1,25 @@
+Assignment  : CS 260, Spring 2019, Lab Test
+
+files/bennettchristopher_40327_3895398_BENNETCZ5682_LabTest2019.sql: --SELECT A.accopenlocation FROM Account A
+files/bennettchristopher_40327_3895398_BENNETCZ5682_LabTest2019.sql: --GROUP BY A.accopenlocation
+files/bennettchristopher_40327_3895398_BENNETCZ5682_LabTest2019.sql: --ORDER BY A.accopenlocation;
+files/cousineaubraden_35243_3894645_COUSINBM6915.sql: --SELECT AccType, AVG(AccBalance)
+files/cousineaubraden_35243_3894645_COUSINBM6915.sql: --FROM ACCOUNT
+files/cousineaubraden_35243_3894645_COUSINBM6915.sql: --GROUP BY ACCOUNT.AccType;
+files/dekrakerjonathan_37759_3895750_DEKRAKJC9868.sql: --Do not have it working 100% as i do not have, "display the number of accounts opened at that location, even if no 
+files/dekrakerjonathan_37759_3895750_DEKRAKJC9868.sql: --accounts were opened at that location.". The count function doesnt count null values. --
+files/fischernicholas_41017_3894683_fischern4293 Midterm.sql: --LEFT OUTER JOIN Account A ON (T.translocation = A.accopenlocation)
+files/fischernicholas_41017_3894683_fischern4293 Midterm.sql: --GROUP BY T.translocation;
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --SELECT A2.acctype, AVG(A2.accBalance) FROM Account A2 GROUP BY A2.acctype;
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
+files/springettchristopher_30627_3894709_springcj6832_exam.sql: --test--SELECT Accbalance, accstatus
+files/springettchristopher_30627_3894709_springcj6832_exam.sql: --from account;
+files/springettchristopher_30627_3894709_springcj6832_exam.sql: --so close :(
+files/telleriamarcelo_40828_3895895_TELLERMA5583-1.sql: --MAKE SURE IT WORKS
+files/zhujiang_59761_3896084_zhuj3128.sql.sql: -- A.ACCSTATUS IS MAKING SURE THE ACCOUNT HAVE BEEN CLOSED.

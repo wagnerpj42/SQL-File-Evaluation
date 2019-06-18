@@ -1,0 +1,141 @@
+Assignment  : CS 260, Spring 2019, Lab Test
+Student Name: Aaron Huber
+Answer File : huberaaron_36472_3894664_HUBERAF9314.sql
+Total Points: 83.8
+
+Your answers, evaluation and points follow.
+
+1: SELECT C.custId, C.fName, C.lName, A.AccClosedDate
+FROM Customer C
+JOIN Account A
+ON C.custId = A.customer
+WHERE A.AccClosedDate >= '01-JAN-18'
+
+Marks given: 9 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 0.75 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 0 / 5.25
+
+2: SELECT A.accOpenLocation, A.accStatus, COUNT(*)
+FROM Account A
+GROUP BY A.accOpenLocation, A.accStatus
+ORDER BY A.accOpenLocation, A.accStatus
+
+Marks given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT A.accNumber
+FROM Account A
+WHERE EXISTS
+  (SELECT AVG(A2.accBalance)
+  FROM Account A2
+  GROUP BY A2.accType
+  HAVING AVG(A2.accBalance) < A.accBalance)
+ORDER BY A.accNumber
+
+Marks given: 9.9 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 8.1
+
+4: SELECT T.transLocation, AVG(T.transAmount)
+FROM Transaction T
+GROUP BY T.transLocation
+HAVING AVG(T.transAmount) < 
+  (SELECT AVG(T2.transAmount)
+  FROM Transaction T2)
+ORDER BY AVG(T.transAmount) DESC
+
+Marks given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 5.4 / 5.4
+
+5: SELECT C.custId, C.fName, C.lName, MAX(T.transAmount)
+FROM Customer C
+JOIN Account A
+ON C.custId = A.customer
+JOIN Transaction T
+ON A.accNumber = T.accNumber
+WHERE EXISTS
+  (SELECT A2.customer, MAX(T2.transAmount)
+  FROM Account A2
+  JOIN Transaction T2
+  ON A2.accNumber = T2.accNumber
+  WHERE T2.transType = 'w'
+  GROUP BY A2.customer)
+GROUP BY C.custId, C.fName, C.lName
+ORDER BY C.custId
+
+Marks given: 10.4 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: SELECT C.custId, C.fName, C.lName
+FROM Customer C
+WHERE NOT EXISTS
+  (SELECT A.customer, A.accStatus, COUNT(*)
+  FROM Account A
+  WHERE A.customer = C.custId
+  AND A.accStatus = 'Active'
+  GROUP BY A.customer, A.accStatus
+  HAVING COUNT(*) >= 1)
+
+Marks given: 17 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 5.95 / 5.95
+
+7: SELECT A.accOpenLocation, COUNT(A.accNumber)
+FROM Account A
+GROUP BY A.accOpenLocation
+  UNION
+SELECT T.transLocation, 0
+FROM Transaction T
+WHERE T.transLocation NOT IN
+  (SELECT A2.accOpenLocation
+  FROM Account A2)
+
+Marks given: 3.5 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 1.5 / 1.5
+

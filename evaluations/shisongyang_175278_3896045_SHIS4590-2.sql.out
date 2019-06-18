@@ -1,0 +1,114 @@
+Assignment  : CS 260, Spring 2019, Lab Test
+Student Name: Songyang,Shi
+Answer File : shisongyang_175278_3896045_SHIS4590-2.sql
+Total Points: 35.1
+
+Your answers, evaluation and points follow.
+
+1: SELECT C.CUSTID,C.FNAME,C.LNAME,TO_DATE(ACCCLOSEDDATE,'DD-MM-YYYY') FROM CUSTOMER C
+JOIN ACCOUNT A
+ON A.CUSTID=C.CUSTID
+WHERE A.ACCOPENLOCATION='Central'
+AND A.ACCCLOSEDDATE> '01-01-2018'
+ORDER BY ACCCLOSEDDATE
+
+Marks given: 5.25 of maximum 15
+
+Answer compiles without errors: 0 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 0 / 1.5
+Answer has same column count as desired result query: 0 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 0 / 5.25
+
+2: SELECT A.ACCOPENLOCATION,A.ACCSTATUS,COUNT(*) FROM ACCOUNT A
+GROUP BY A.ACCSTATUS
+ORDER BY A.ACCSTATUS
+
+Marks given: 4.8 of maximum 16
+
+Answer compiles without errors: 0 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 0 / 1.6
+Answer has same result set content as desired query: 0 / 7.2
+
+3: SELECT A1.ACCNUMBER,A1.ACCBANLANCE FROM ACCOUNT A1
+WHERE A1.ACCBANLANCE>(SELECT AVG(A2.ACCBANLANCE) FROM ACCOUNT A2
+                      WHERE A2.ACCTYPE=A1.ACCTYPE)
+
+Marks given: 5.4 of maximum 18
+
+Answer compiles without errors: 0 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 0 / 1.8
+Answer has same result set content as desired query: 0 / 8.1
+
+4: SELECT T1.TRANSLOCATION,AVG(T1.TRANSAMOUNT) FROM TRANSACTION T1
+WHERE (SELECT AVG(T2.TRANSAMOUNT) FROM TRANSACTION T2
+       WHERE A1.TRANSID=A2.TRANSID
+       AND AVG(T1.TRANSAMOUNT)<AVG(T2.TRANSAMOUNT))
+ORDER BY T1.TRANSAMOUNT
+
+Marks given: 7.2 of maximum 18
+
+Answer compiles without errors: 0 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 0 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 5.4
+
+5: SELECT C.CUSTID,C.FNAME,C.LNAME FROM CUSTOMER C
+JOIN ACCOUNT A
+ON C.CUSTID=A.CUSTID
+JOIN TRANSACTION T
+ON A.ACCNUMBER=T.ACCNUMBER
+ADD T.TRANSTYPE LIKE '%W%'
+WHERE A.ACCTYPE='savings' AND A.ACCSTATUS='Active'
+ORDER BY C.CUSTID
+
+Marks given: 4.8 of maximum 16
+
+Answer compiles without errors: 0 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 0 / 1.6
+Answer has appropriate number of GROUP BY keywords: 0 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: SELECT C.CUSTID,C.FNAME,C.LNAME FROM CUSTOMER C
+JOIN ACCOUNT A
+ON C.CUSTID=A.CUSTID
+WHERE A.ACCSTATUS='Closed' OR  A.ACCSTATUS='Frozen' OR A.CUSTID='NULL'
+
+Marks given: 7.65 of maximum 17
+
+Answer compiles without errors: 0 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 0 / 1.7
+Answer has same result set content as desired query: 0 / 5.95
+
+7: 
+
+Marks given: 0 of maximum 5
+
+Answer compiles without errors: 0 / 0.5
+Answer has at least SELECT and FROM: 0 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0 / 0.5
+Answer has appropriate number of tables used: 0 / 0.5
+Answer has appropriate number of COUNT keyword: 0 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+

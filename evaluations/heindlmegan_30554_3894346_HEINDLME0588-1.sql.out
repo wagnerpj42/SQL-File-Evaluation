@@ -1,0 +1,131 @@
+Assignment  : CS 260, Spring 2019, Lab Test
+Student Name: Megan Heindl
+Answer File : heindlmegan_30554_3894346_HEINDLME0588-1.sql
+Total Points: 104.5
+
+Your answers, evaluation and points follow.
+
+1: SELECT CustID, FName, LName, AccClosedDate
+FROM Customer C
+JOIN Account A
+ON (C.CustID = A.Customer)
+WHERE AccOpenLocation = 'Central'
+AND AccClosedDate >= '01-JAN-2018'
+
+Marks given: 15 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 1.5 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 5.25 / 5.25
+
+2: SELECT AccOpenLocation, AccStatus, COUNT(*)
+FROM Account
+GROUP BY AccOpenLocation, AccStatus
+ORDER BY AccOpenLocation, AccStatus
+
+Marks given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT AccNumber
+FROM Account A1
+WHERE AccBalance >
+    (SELECT AVG(AccBalance)
+     FROM Account A2
+     WHERE (A1.AccType = A2.AccType))
+ORDER BY AccNumber
+
+Marks given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 8.1 / 8.1
+
+4: SELECT TransLocation, CAST (AVG(TransAmount) AS NUMBER(*,2)) AS TRANSAMOUNT
+FROM Transaction
+GROUP BY TransLocation
+HAVING AVG(TransAmount) <
+  (SELECT AVG(TransAmount)
+   FROM Transaction)
+ORDER BY TransAmount DESC
+
+Marks given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 5.4 / 5.4
+
+5: SELECT CustID, FName, LName, MAX(TransAmount)
+FROM Customer C
+JOIN Account A
+ON (C.CustId = A.Customer)
+JOIN Transaction T
+ON (A.AccNumber = T.AccNumber)
+WHERE TransType = 'w'
+AND AccType = 'savings'
+GROUP BY CustID, FName, LName
+ORDER BY CustID
+
+Marks given: 16 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 5.6 / 5.6
+
+6: SELECT CustID, FName, LName
+FROM Customer
+MINUS
+SELECT CustID, FName, LName
+FROM Customer C 
+JOIN Account A
+ON (C.CustId = A.Customer)
+WHERE A.AccStatus = 'Active'
+
+Marks given: 17 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 5.95 / 5.95
+
+7: SELECT TransLocation, COUNT(AccOpenLocation)
+FROM Transaction T
+LEFT JOIN Account A
+ON (T.TransLocation = A.AccOpenLocation)
+GROUP BY TransLocation
+
+Marks given: 4.5 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0.5 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0.5 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 1.5 / 1.5
+

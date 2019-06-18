@@ -1,0 +1,115 @@
+Assignment  : CS 260, Spring 2019, Lab Test
+Student Name: Mike Mumm
+Answer File : mummmike_38042_3895718_mummmj6824-1.sql
+Total Points: 83.35
+
+Your answers, evaluation and points follow.
+
+1: SELECT C.custid, C.fname, C.lname, A.acccloseddate FROM Account A
+  JOIN Customer C ON (C.custid = A.customer)
+  WHERE A.accopenlocation = 'Central' AND A.acccloseddate >= '01-JAN-2018'
+
+Marks given: 15 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 1.5 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 5.25 / 5.25
+
+2: SELECT accopenlocation, accstatus, COUNT(customer) AS StatusCount FROM Account
+  GROUP BY accopenlocation, accstatus
+  ORDER BY accopenlocation
+
+Marks given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT accnumber FROM Account
+  WHERE accbalance >
+            (SELECT AVG(accbalance) FROM Account)
+  GROUP BY accnumber
+  ORDER BY accnumber
+
+Marks given: 9.9 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 8.1
+
+4: SELECT T.translocation, AVG(T.transamount) AS AVGTransaction FROM Transaction T
+    GROUP BY T.translocation
+    HAVING T.translocation IN 
+            (SELECT T1.translocation FROM Transaction T1
+            GROUP BY T1.translocation
+             HAVING AVG(T.transamount) < 
+                          (SELECT AVG(T2.transamount) FROM Transaction T2))
+    ORDER BY AVG(T.transamount) DESC
+
+Marks given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 5.4 / 5.4
+
+5: SELECT C.custid, C.fname, C.lname, MAX(T.transamount) AS MostSpent FROM Customer C
+  JOIN Account A ON (A.customer = C.custid)
+  JOIN Transaction T ON (T.accnumber = A.accnumber)
+  WHERE A.acctype = 'savings' 
+  GROUP BY C.custid, C.fname, C.lname
+  ORDER BY C.custid
+
+Marks given: 10.4 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: SELECT C.custid, C.fname, C.lname FROM Customer C
+  JOIN Account A ON (A.customer = C.custid)
+  WHERE A.accstatus = 'Closed' OR A.accstatus = 'Frozen' OR A.accnumber = NULL
+
+Marks given: 11.05 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 0 / 5.95
+
+7: SELECT T.translocation, COUNT(T.accnumber) FROM Transaction T
+  FULL OUTER JOIN Account A ON (A.accnumber = T.accnumber)
+  GROUP BY T.translocation
+
+Marks given: 3 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0.5 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0.5 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+
