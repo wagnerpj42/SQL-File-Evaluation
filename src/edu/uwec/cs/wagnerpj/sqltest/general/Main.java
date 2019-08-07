@@ -2,6 +2,7 @@
  * Main - driver class for SQL assignment testing system
  * 
  * Created - Paul J. Wagner, 18-Oct-2017
+ * Last updated - PJW, 7-Aug-2019
  */
 package edu.uwec.cs.wagnerpj.sqltest.general;
 
