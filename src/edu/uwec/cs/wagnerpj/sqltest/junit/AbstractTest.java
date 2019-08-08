@@ -40,6 +40,7 @@ public abstract class AbstractTest {
 	protected Query joinCross2Query;	// query with cross join, lower case
 	protected Query avgQuery;			// query with avg function
 	protected Query maxQuery;			// query with max function
+	protected Query sumQuery;			// query with sum function	
 	protected Query likeQuery;			// query with like keyword
 	protected Query multiLineQuery;		// query on multiple lines
 	protected Query unionQuery;			// query with union
@@ -82,19 +83,21 @@ public abstract class AbstractTest {
 											"LEFT OUTER JOIN Achievement A ON " +
 											"C.c_id = A.c_id GROUP BY C.c_id"); 
 		joinOuter2Query		= new Query("SELECT C.c_id, COUNT(s_code) FROM Creature C " +
-				"LEFT JOIN Achievement A ON " +
-				"C.c_id = A.c_id GROUP BY C.c_id");
+											"LEFT JOIN Achievement A ON " +
+											"C.c_id = A.c_id GROUP BY C.c_id");
 		joinCrossQuery		= new Query("SELECT * FROM Creature CROSS JOIN Achievement");
 		joinCross2Query		= new Query("SELECT * FROM Creature cross join Achievement");
 		avgQuery			= new Query("SELECT s_code, AVG(DISTINCT c_id) FROM Achievement " +
-				"GROUP BY s_code");
+											"GROUP BY s_code");
 		maxQuery			= new Query("SELECT s_code, MAX(DISTINCT c_id) FROM Achievement " +
-				"GROUP BY s_code");
+											"GROUP BY s_code");
+		sumQuery			= new Query("SELECT s_code, SUM(DISTINCT c_id) FROM Achievement " +
+											"GROUP BY s_code");
 		likeQuery			= new Query("SELECT C.c_id FROM Creature C " +
-				"WHERE c_name LIKE '%a%'");
+											"WHERE c_name LIKE '%a%'");
 		multiLineQuery		= new Query("SELECT C.c_id, COUNT(s_code) FROM Creature C \n" +
-				"LEFT JOIN Achievement A ON \n" +
-				"C.c_id = A.c_id GROUP BY C.c_id");
+											"LEFT JOIN Achievement A ON \n" +
+											"C.c_id = A.c_id GROUP BY C.c_id");
 		unionQuery			= new Query("SELECT c_id FROM Creature UNION SELECT c_id FROM Achievement");
 	}	// end - constructor/query initialization
 	
@@ -131,6 +134,7 @@ public abstract class AbstractTest {
 		joinCross2Query		= null;
 		avgQuery			= null;
 		maxQuery			= null;
+		sumQuery			= null;
 		likeQuery			= null;
 		multiLineQuery		= null;
 		unionQuery			= null;
