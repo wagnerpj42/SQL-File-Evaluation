@@ -17,6 +17,8 @@ public abstract class AbstractTest {
 	protected Query creatureOneColQuery;// select one column, all rows
 	protected Query creatureOneRowQuery;// select one row with where clause
 	protected Query creatureAndQuery;	// select multiple rows with where/and clause
+	protected Query creatureOrQuery;	// select multiple rows with where/or clause	
+	protected Query creatureNotQuery;	// select multiple rows with where/not clause
 	protected Query creatureZeroQuery;	// select with where to get no creature rows
 	protected Query skillAllQuery;		// select all skills
 	protected Query aspirationAllQuery;	// select all aspirations
@@ -40,10 +42,13 @@ public abstract class AbstractTest {
 	protected Query joinCross2Query;	// query with cross join, lower case
 	protected Query avgQuery;			// query with avg function
 	protected Query maxQuery;			// query with max function
+	protected Query minQuery;			// query with min function
 	protected Query sumQuery;			// query with sum function	
 	protected Query likeQuery;			// query with like keyword
 	protected Query multiLineQuery;		// query on multiple lines
 	protected Query unionQuery;			// query with union
+	protected Query intersectQuery;		// query with intersect
+	protected Query minusQuery;			// query with minus
 	
 	// methods
 	// default constructor - essentially cross-test fixture setup
@@ -56,6 +61,8 @@ public abstract class AbstractTest {
 		creatureOneColQuery = new Query("SELECT c_id FROM Creature");
 		creatureOneRowQuery = new Query("SELECT c_id FROM Creature WHERE c_id = 1");
 		creatureAndQuery	= new Query("SELECT c_id FROM Creature WHERE c_id >= 1 AND c_id <= 8");
+		creatureOrQuery		= new Query("SELECT c_id FROM Creature WHERE c_id <= 1 OR c_id >= 8");
+		creatureNotQuery	= new Query("SELECT c_id FROM Creature WHERE NOT c_id = 1");
 		creatureZeroQuery	= new Query("SELECT c_id FROM Creature WHERE c_id = 100");
 		skillAllQuery       = new Query("SELECT * FROM Skill");
 		jobAllQuery			= new Query("SELECT * FROM Job");
@@ -90,6 +97,8 @@ public abstract class AbstractTest {
 		avgQuery			= new Query("SELECT s_code, AVG(DISTINCT c_id) FROM Achievement " +
 											"GROUP BY s_code");
 		maxQuery			= new Query("SELECT s_code, MAX(DISTINCT c_id) FROM Achievement " +
+											"GROUP BY s_code");		
+		minQuery			= new Query("SELECT s_code, MIN(DISTINCT c_id) FROM Achievement " +
 											"GROUP BY s_code");
 		sumQuery			= new Query("SELECT s_code, SUM(DISTINCT c_id) FROM Achievement " +
 											"GROUP BY s_code");
@@ -99,6 +108,8 @@ public abstract class AbstractTest {
 											"LEFT JOIN Achievement A ON \n" +
 											"C.c_id = A.c_id GROUP BY C.c_id");
 		unionQuery			= new Query("SELECT c_id FROM Creature UNION SELECT c_id FROM Achievement");
+		intersectQuery		= new Query("SELECT c_id FROM Creature INTERSECT SELECT c_id FROM Achievement");
+		minusQuery			= new Query("SELECT c_id FROM Creature MINUS SELECT c_id FROM Achievement");
 	}	// end - constructor/query initialization
 	
 	// finalize - essentially cross-test fixture teardown
@@ -111,6 +122,8 @@ public abstract class AbstractTest {
 		creatureOneColQuery = null;
 		creatureOneRowQuery = null;
 		creatureAndQuery	= null;
+		creatureOrQuery		= null;
+		creatureNotQuery	= null;
 		creatureZeroQuery	= null;
 		skillAllQuery       = null;
 		jobAllQuery			= null;
@@ -134,10 +147,13 @@ public abstract class AbstractTest {
 		joinCross2Query		= null;
 		avgQuery			= null;
 		maxQuery			= null;
+		minQuery			= null;
 		sumQuery			= null;
 		likeQuery			= null;
 		multiLineQuery		= null;
 		unionQuery			= null;
+		intersectQuery		= null;
+		minusQuery			= null;
 		
 		super.finalize();
 	}	// end - method finalize
