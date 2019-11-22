@@ -1,5 +1,8 @@
 /*
  * Utilities - class to hold utility methods
+ * 
+ * Created by Paul J. Wagner, 2-FEB-2019
+ * Last Modified by PJW, 7-OCT-2019
  */
 package edu.uwec.cs.wagnerpj.sqltest.util;
 
@@ -73,25 +76,19 @@ public class Utilities {
 	}
 	
 	// -- skipBlankLines = skip blank lines in buffered reader
-	// TODO: fix pattern to properly catch one or more spaces, remove hard-coded tests
 	public static String skipBlankLines (BufferedReader br, String line) {
-		//String regexp = "[\\s]+";					// regular expression for 1 or more white space chars
-		//Pattern pattern = Pattern.compile(regexp);	// pattern for regexp pattern matching
-		//Matcher matcher = null;						// matcher for regexp pattern matching		
 		
-		String localLine = line;
-		//if (localLine != null) {
-		//	matcher = pattern.matcher(localLine);
-		//}
+		String localLine = null;
+		if (line != null) {
+			localLine = line.trim();
+		}
+		
         try {
-			//while (localLine != null && (localLine.equals("") || matcher.find()) ) {
-        	while (localLine != null && (localLine.equals("") || localLine.equals(" ") || localLine.equals("  ") ||
-        			localLine.equals("   ") || localLine.equals("    ") || localLine.equals("     ") || localLine.equals("      ") ) ) {
+        	while (localLine != null && (localLine.equals("") ) ) {
 				localLine = br.readLine();
-		        //if (localLine != null) {
-		        //	matcher = pattern.matcher(localLine);
-		        //}
-				//System.out.println("skipBlankLines();, skipping line, new line is: >" + localLine + "<");
+				if (localLine != null) {
+					localLine = localLine.trim();
+				}
 			}
 		} 
 		catch (IOException ioe) {
@@ -153,5 +150,17 @@ public class Utilities {
 		
 		return result;
 	}	// end - method isUserComment
+
+	
+	// -- processSlashes - change Windows format backslashes to slashes, which can be processed in Java
+	public static String processSlashes(String path) {
+		String resultPath = "";
+		
+		// replace all backslashes with forward slashes
+		resultPath = path.replace("\\", "/");
+		//System.out.println("in processSlashes, path is now: >" + resultPath + "<");
+		
+		return resultPath;
+	}	// end - method processSlashes
 	
 }	// end - class Utilities
