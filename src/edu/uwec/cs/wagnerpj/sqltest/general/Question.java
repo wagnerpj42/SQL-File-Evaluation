@@ -10,18 +10,18 @@ import java.util.ArrayList;
 public class Question {
 	// data
 	String qNumStr;						// question string; e.g. 1b. or 1.d)
-	int questionMarks;					// number of marks for that question
+	int questionPoints;					// number of points for that question
 	Query desiredQuery;					// model answer
 	ArrayList<EvalComponentInQuestion> tests; 		// list of tests to evaluate this question
 	
 	// methods
 	// constructors
 	// all-arg constructor
-	public Question(String qNumStr, int questionMarks, Query desiredQuery, 
+	public Question(String qNumStr, int questionPoints, Query desiredQuery, 
 			ArrayList<EvalComponentInQuestion> tests) {
 		super();
 		this.qNumStr = qNumStr;
-		this.questionMarks = questionMarks;
+		this.questionPoints = questionPoints;
 		this.desiredQuery = desiredQuery;
 		this.tests = tests;
 	}
@@ -40,12 +40,12 @@ public class Question {
 		this.qNumStr = qNumStr;
 	}
 
-	public int getQuestionMarks() {
-		return questionMarks;
+	public int getQuestionPoints() {
+		return questionPoints;
 	}
 
-	public void setQuestionMarks(int questionMarks) {
-		this.questionMarks = questionMarks;
+	public void setQuestionPoints(int questionPoints) {
+		this.questionPoints = questionPoints;
 	}
 	
 	public Query getDesiredQuery() {
@@ -71,7 +71,7 @@ public class Question {
 		int result = 1;
 		result = prime * result + ((desiredQuery == null) ? 0 : desiredQuery.hashCode());
 		result = prime * result + ((qNumStr == null) ? 0 : qNumStr.hashCode());
-		result = prime * result + questionMarks;
+		result = prime * result + questionPoints;
 		result = prime * result + ((tests == null) ? 0 : tests.hashCode());
 		return result;
 	}
@@ -96,7 +96,7 @@ public class Question {
 				return false;
 		} else if (!qNumStr.equals(other.qNumStr))
 			return false;
-		if (questionMarks != other.questionMarks)
+		if (questionPoints != other.questionPoints)
 			return false;
 		if (tests == null) {
 			if (other.tests != null)
@@ -109,7 +109,7 @@ public class Question {
 	// toString
 	@Override
 	public String toString() {
-		return "Question [qNumStr=" + qNumStr + ", questionMarks=" + questionMarks + ", desiredQuery=" + desiredQuery
+		return "Question [qNumStr=" + qNumStr + ", questionPoints=" + questionPoints + ", desiredQuery=" + desiredQuery
 				+ ", tests=" + tests + "]";
 	}
 	

@@ -27,14 +27,14 @@ public class Submission {
 
 	private ArrayList <QuestionAnswer> answers;		// list of answers as submitted
 	private ArrayList <QueryEvaluation> queryEvals;	// list of query evals for each answer
-	private double totalMarks;						// total number of marks for assignment
+	private double totalPoints;						// total number of points for assignment
 	
 	// methods
 	// constructors
 	// all-arg constructor
 	public Submission(String submissionFileName, String studentName, String studentID,
 			String submissionName, ArrayList<QuestionAnswer> answers, 
-			ArrayList<QueryEvaluation> queryEvals, double totalMarks) {
+			ArrayList<QueryEvaluation> queryEvals, double totalPoints) {
 		super();
 		this.submissionFileName = submissionFileName;
 		this.studentName = studentName;
@@ -42,7 +42,7 @@ public class Submission {
 		this.submissionName = submissionName;
 		this.answers = answers;
 		this.queryEvals = queryEvals;
-		this.totalMarks = totalMarks;
+		this.totalPoints = totalPoints;
 	}
 	
 	// default constructor
@@ -99,12 +99,12 @@ public class Submission {
 		this.queryEvals = queryEvals;
 	}
 	
-	public double getTotalMarks() {
-		return totalMarks;
+	public double getTotalPoints() {
+		return totalPoints;
 	}
 
-	public void setTotalMarks(double totalMarks) {
-		this.totalMarks = totalMarks;
+	public void setTotalPoints(double totalPoints) {
+		this.totalPoints = totalPoints;
 	}
 
 	// hashCode
@@ -118,7 +118,7 @@ public class Submission {
 		result = prime * result + ((studentName == null) ? 0 : studentName.hashCode());
 		result = prime * result + ((submissionFileName == null) ? 0 : submissionFileName.hashCode());
 		result = prime * result + ((submissionName == null) ? 0 : submissionName.hashCode());
-		result = prime * result + (int)totalMarks;
+		result = prime * result + (int)totalPoints;
 		return result;
 	}
 
@@ -162,7 +162,7 @@ public class Submission {
 				return false;
 		} else if (!submissionName.equals(other.submissionName))
 			return false;
-		if (totalMarks != other.totalMarks)
+		if (totalPoints != other.totalPoints)
 			return false;
 		return true;
 	}	// end - method equals
@@ -172,7 +172,7 @@ public class Submission {
 	public String toString() {
 		return "Submission [submissionFileName=" + submissionFileName + ", studentName=" + studentName + ", studentID="
 				+ studentID + ", submissionName=" + submissionName + ", answers=" + answers + ", queryEvals="
-				+ queryEvals + ", totalMarks=" + totalMarks + "]";
+				+ queryEvals + ", totalPoints=" + totalPoints + "]";
 	}
 	
 	// readSubmission - read one submission from a file
@@ -192,50 +192,68 @@ public class Submission {
 			br = new BufferedReader(fr);
 			String line;
 			this.submissionFileName = submissionFileName;
-			System.out.println("\nReading in file " + submissionFileName);
+			///System.out.println("\nReading in file " + submissionFileName);
 			// TODO - remove --- from these three lines before writing out
 			// TODO - make how many lines are in an assignment customizable? e.g. add student id
 			line = br.readLine(); 					// get first line
 			line = Utilities.skipBlankLines(br, line); // skip blanks if any
 			submissionName = line.substring(4);		 // first line = assignment name, strip off >--- <
-			//System.out.println("submission name: " + submissionName);
-			line = br.readLine();					// second line = student name
-			studentName = line.substring(10);		// strip of the >--- Name: <
-			//System.out.println("student name: " + studentName);
+			System.out.println("submission name: " + submissionName);
+			line = br.readLine();					// second line = (student) name
+			final int PROMPT_LENGTH = 9;			// length of >--- Name:<
+			if (line.length() > PROMPT_LENGTH) {
+				studentName = line.substring(PROMPT_LENGTH).trim();		// name is whatever is after prompt
+			} else {
+				studentName = "missing";
+			}
+			System.out.println("name: " + studentName);
 			line = br.readLine(); 					// read third line
 
-			// skip any additional instructions for assignment
+			// skip any blank lines and additional instructions for assignment (before first question instructor comments)
 			line = Utilities.skipBlankLines(br, line);
-			//System.out.println("after any blanks, next line is: >" + line + "<");
-			line = Utilities.skipInstructorComments(br, line);
-			//System.out.println("after instructor comments, next line is: >" + line + "<");
-			line = Utilities.skipBlankLines(br, line);			
-			//System.out.println("after second set of blanks, next line is: >" + line + "<");
+			System.out.println("after any blanks, next line is: >" + line + "<");
 			
-			// initialize answers and total marks
+			// if not already at the first question, look for any other instructor comments and trailing blanks and skip them
+			matcher = pattern.matcher(line);
+	        while (!Utilities.isUserComment(line) && !matcher.find()) {				// stop if user comments or start of new question			
+	        	line = Utilities.skipInstructorComments(br, line);
+	        	System.out.println("after instructor comments, next line is: >" + line + "<");
+	        	line = Utilities.skipBlankLines(br, line);			
+	        	System.out.println("after next set of blanks, next line is: >" + line + "<");
+	        	matcher = pattern.matcher(line);
+	        }
+			
+			// initialize answers and total points
 			if (answers == null) {					// initialize questions list
 				answers = new ArrayList<QuestionAnswer>();
 			}
-			totalMarks = 0;
+			totalPoints = 0;
 
 			// process student's answers
 			int loopCount = 0;						// for debugging
-			//line = br.readLine();               	// get first answer line - assume at least one question number on temmplate
-			while (line != null && loopCount < 10) {					// more answers to process  
+			//line = br.readLine();               	// get first answer line - assume at least one question number on template
+			final int MAX_TIMES_TO_TRY = 15;		// maximum number of times to try processing line before saying stuck and move on
+			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
 				// skip white lines before/between/after questions
 				// TODO: need general way of detecting non-query text; e.g. comments, garbage
-				//System.out.println("line before skipping blanks is: >" + line + "<");
+				System.out.println("line before skipping any blanks is: >" + line + "<");
 				line = Utilities.skipBlankLines(br, line);
-				line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
-				line = Utilities.skipBlankLines(br, line);
+				
+				// remove 0, 1 or more user comment sections and blank sections
+				matcher = pattern.matcher(line);
+				while (line != null && !matcher.find() ) {
+					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+					line = Utilities.skipBlankLines(br, line);
+					matcher = pattern.matcher(line);
+				}
 				System.out.println("next line to analyze is: >" + line + "<");				
 				
 				// if not at end of file, process as answer or non-answer text to be skipped
 				if (line != null) {
 			        matcher = pattern.matcher(line);
 			        if (matcher.find()) {				// start of new question
-			        	//System.out.println("found new question...");
+			        	System.out.println("found new question...");
 						// process the first line to get question number and desired query
 			        	// TODO: need to generalize to support . or ) as in pattern
 						int periodPos = line.indexOf('.');
@@ -246,13 +264,15 @@ public class Submission {
 							
 							// skip remaining instructor comments with question text
 							line = Utilities.skipInstructorComments(br, line);
-							//System.out.println("line after skipping instructor comments is: >" + line + "<");
+							System.out.println("line after skipping instructor comments is: >" + line + "<");
 							
 							// skip any blank lines after instructor comments
 							line = Utilities.skipBlankLines(br, line);
+							System.out.println("line after skipping blanks after instructor comments is: >" + line + "<");
 							
 							// process any user comments above the answer
 							line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+							System.out.println("line after skipping user comments above answer is: >" + line + "<");
 							
 							// skip any remaining blank lines before answer
 							line = Utilities.skipBlankLines(br, line);
@@ -266,7 +286,7 @@ public class Submission {
 							} else {											//  if line is null
 								answerQueryStr = "";
 							}
-							//System.out.println("start of answerQueryStr is: >" + answerQueryStr + "<");
+							System.out.println("start of answerQueryStr is: >" + answerQueryStr + "<");
 											
 							// process the remaining lines for that answer to get the complete query
 							if (line != null && !Utilities.isInstructorComment(line)) {
@@ -294,13 +314,16 @@ public class Submission {
 							        	moreLinesForAnswer = false;
 										line = br.readLine();			// start toward next question
 							        }
+							        else if (Utilities.isUserComment(line)) { // found user comment embedded in answer
+							        	line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+							        }
 							        else {
 							        	System.err.println("unexpected answer line condition");
 							        }
-							        //System.out.println("next line is: >" + line + "<");
+							        System.out.println("next line is: >" + line + "<");
 								}	// end - if line is not null
 							}	// end - while more lines for answer
-							//System.out.println("final answer before blank/comment check for " + qNumStr + " is: >" + answerQueryStr.trim() + "<\n");
+							System.out.println("final answer before blank/comment check for " + qNumStr + " is: >" + answerQueryStr.trim() + "<\n");
 							
 							// process any remaining lines, looking for user comments, possibly surrounded by blank lines
 							line = Utilities.skipBlankLines(br, line);
@@ -316,7 +339,7 @@ public class Submission {
 						
 						// build the entire question answer
 						answerQueryStr = answerQueryStr.trim();
-						System.out.println("\nfinal answer for " + qNumStr + " is: >" + answerQueryStr + "<");
+						//System.out.println("\nfinal answer for " + qNumStr + " is: >" + answerQueryStr + "<");
 						QuestionAnswer answer = 
 								new QuestionAnswer(qNumStr, new Query(answerQueryStr), 0.0);
 						answers.add(answer);
@@ -348,7 +371,7 @@ public class Submission {
 			outWriter.println("Student Name: " + studentName);
 			//outWriter.println("Student ID  : " + studentID);
 			outWriter.println("Answer File : " + submissionFileName);
-			outWriter.println("Total Points: " + df.format(totalMarks));
+			outWriter.println("Total Points: " + df.format(totalPoints));
 			outWriter.println();
 			outWriter.println("Your answers, evaluation and points follow.");
 			outWriter.println();
@@ -362,20 +385,20 @@ public class Submission {
 				
 				// output testing information for that answer
 				QueryEvaluation qe = queryEvals.get(aIndex);
-				outWriter.print("Marks given: " + df.format(qe.getQueryScore()) );
-				double maxQuestionMarks = qe.getMaxMarks();
-				outWriter.println(" of maximum " + df.format(maxQuestionMarks));
+				outWriter.print("Points given: " + df.format(qe.getQueryScore()) );
+				double maxQuestionPoints = qe.getMaxPoints();
+				outWriter.println(" of maximum " + df.format(maxQuestionPoints));
 				outWriter.println();
 				ArrayList<ISQLTest> tests = qe.getAllTests();
-				ArrayList<Integer>  testMarks = qe.getAllTestsResults();
+				ArrayList<Integer>  testPoints = qe.getAllTestsResults();
 				ArrayList<Integer>  testPcts = qe.getAllTestsPercents();
 				for (int testIndex = 0; testIndex < tests.size(); testIndex++) {
 					ISQLTest test = tests.get(testIndex);
-					int marks = testMarks.get(testIndex);
+					int points = testPoints.get(testIndex);
 					int pct = testPcts.get(testIndex);
 					// TODO: mark conversion to utility method
-					outWriter.println(test.getDesc() + ": " + df.format ( (marks / 100.0) * (qe.getMaxMarks() / 10.0) )
-							+ " / " + df.format( (pct / 100.0) * qe.getMaxMarks() ) );
+					outWriter.println(test.getDesc() + ": " + df.format ( (points / 100.0) * (qe.getMaxPoints() / 10.0) )
+							+ " / " + df.format( (pct / 100.0) * qe.getMaxPoints() ) );
 				}
 				outWriter.println();
 			}

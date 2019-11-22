@@ -2,7 +2,8 @@
  * Class DataAccessObject
  * 
  * Created by Paul J. Wagner, 22-SEP-2017
- *
+ * 
+ * Notes: needs ojdbc7.jar on build path/project as of 11/2019
  */
 package edu.uwec.cs.wagnerpj.sqltest.general;
 
@@ -10,18 +11,26 @@ import java.sql.*;
 
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
 
-public class DataAccessObject implements IDAO {
+public class OracleDataAccessObject implements IDAO {
 
 	private Connection conn = null;			// JDBC connection
 	private ResultSet rset = null;			// result set for queries
 	private int returnValue;				// return value for all other commands
+	private String hostName;				// DBMS host
+	private String idName;					// DBMS system id
+	private String username;				// DBMS user name
+	private String password;				// DBMS user password
+	
+	// --- constructor
+	public OracleDataAccessObject (String hostName, String idName, String username, String password) {
+		this.hostName = hostName;
+		this.idName = idName;
+		this.username = username;
+		this.password = password;
+	}
 		
 	// --- connect - connect to the Oracle database
 	public Connection connect() {
-		// --- set the username and password
-		String user = "paul";	
-		String pass = "toldi4cs"; 
-
 		// --- 1) get the Class object for the driver 
 		try {
 		   Class.forName ("oracle.jdbc.OracleDriver");
@@ -31,9 +40,9 @@ public class DataAccessObject implements IDAO {
 		}
 
 		// --- 2) connect to database
+		String connectString = "jdbc:oracle:thin:@" + hostName + ":1521:" + idName;
 		try {
-		   conn = DriverManager.getConnection(
-		   "jdbc:oracle:thin:@localhost:1521:toldidb",user,pass);
+		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
 		   System.err.println ("Could not make connection to database");

@@ -12,25 +12,27 @@ import edu.uwec.cs.wagnerpj.sqltest.sqltests.ISQLTest;
 public class QueryEvaluation {
 	// data
 	private Query givenQuery;							// the submission query to evaluate
-	private Query desiredQuery;						// the model query for evaluation
-	private int maxMarks;								// maximum number of marks for question
+	private Query desiredQuery;							// the model query for evaluation
+	private int maxPoints;								// maximum number of points for question
 	private ArrayList<ISQLTest> allTests = new ArrayList<ISQLTest>(); // list of tests to apply
 	private ArrayList<Integer> allTestsPercents;		// parallel list of percentage weights
 	private ArrayList<String> allTestsConditions;		// parallel list of test conditions
 	private ArrayList<Integer> allTestsResults;			// parallel list of test results
 	private double queryScore;							// overall score for that query
+	private IDAO dao;									// data access object for evaluation
 	
 	// methods
 	// constructors
 	// all-arg constructor
-	public QueryEvaluation(Query givenQuery, Query desiredQuery, int maxMarks,
+	public QueryEvaluation(Query givenQuery, Query desiredQuery, IDAO dao, int maxPoints,
 			ArrayList<ISQLTest> allTests, ArrayList<Integer> allTestsPercents, 
 			ArrayList<String> allTestsConditions,  ArrayList<Integer> allTestsResults, 
 			double queryScore) {
 		super();
 		this.givenQuery = givenQuery;
 		this.desiredQuery = desiredQuery;
-		this.maxMarks = maxMarks;
+		this.dao = dao;
+		this.maxPoints = maxPoints;
 		this.allTests = allTests;
 		this.allTestsPercents = allTestsPercents;
 		this.allTestsConditions = allTestsConditions;
@@ -40,7 +42,7 @@ public class QueryEvaluation {
 
 	// default constructor
 	public QueryEvaluation () {
-		this(null, null, 0, null, null, null, null, 0.0);
+		this(null, null, null, 0, null, null, null, null, 0.0);
 	}
 
 	// getters and setters
@@ -59,13 +61,21 @@ public class QueryEvaluation {
 	public void setDesiredQuery(Query desiredQuery) {
 		this.desiredQuery = desiredQuery;
 	}
-
-	public int getMaxMarks() {
-		return maxMarks;
+	
+	public IDAO getDao() {
+		return dao;
 	}
 
-	public void setMaxMarks(int maxMarks) {
-		this.maxMarks = maxMarks;
+	public void setDao(IDAO dao) {
+		this.dao = dao;
+	}
+	
+	public int getMaxPoints() {
+		return maxPoints;
+	}
+
+	public void setMaxPoints(int maxPoints) {
+		this.maxPoints = maxPoints;
 	}
 	
 	public ArrayList<ISQLTest> getAllTests() {
@@ -120,7 +130,7 @@ public class QueryEvaluation {
 		result = prime * result + ((allTestsResults == null) ? 0 : allTestsResults.hashCode());
 		result = prime * result + ((desiredQuery == null) ? 0 : desiredQuery.hashCode());
 		result = prime * result + ((givenQuery == null) ? 0 : givenQuery.hashCode());
-		result = prime * result + maxMarks;
+		result = prime * result + maxPoints;
 		long temp;
 		temp = Double.doubleToLongBits(queryScore);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -167,7 +177,7 @@ public class QueryEvaluation {
 				return false;
 		} else if (!givenQuery.equals(other.givenQuery))
 			return false;
-		if (maxMarks != other.maxMarks)
+		if (maxPoints != other.maxPoints)
 			return false;
 		if (Double.doubleToLongBits(queryScore) != Double.doubleToLongBits(other.queryScore))
 			return false;
@@ -177,7 +187,7 @@ public class QueryEvaluation {
 	// toString
 	@Override
 	public String toString() {
-		return "QueryEvaluation [givenQuery=" + givenQuery + ", desiredQuery=" + desiredQuery + ", maxMarks=" + maxMarks
+		return "QueryEvaluation [givenQuery=" + givenQuery + ", desiredQuery=" + desiredQuery + ", dao = " + dao + ", maxPoints=" + maxPoints
 				+ ", allTests=" + allTests + ", allTestsPercents=" + allTestsPercents + ", allTestsConditions="
 				+ allTestsConditions + ", allTestsResults=" + allTestsResults + ", queryScore=" + queryScore + "]";
 	}
@@ -185,7 +195,7 @@ public class QueryEvaluation {
 	// evaluate = do the evaluation for this query evaluation
 	public double evaluate() {
 		double result = 0.0;				// result of all test for this query evaluation
-		int marksTotal = 0;					// raw marks total
+		int pointsTotal = 0;				// raw points total
 		ArrayList<Integer> results = new ArrayList<Integer>();	// list of results
 		int testIndex = 0;					// index for each test in list
 		for (ISQLTest aTest: allTests) {
@@ -198,21 +208,21 @@ public class QueryEvaluation {
 				testString = allTestsConditions.get(testIndex);
 			}
 			//System.out.println("QueryEvaluation-evaluate() - testString is: >" +  testString + "<");
-			int testResult = aTest.sqlTest(givenQuery, testString); // or some condition string
+			int testResult = aTest.sqlTest(dao, givenQuery, testString); // or some condition string
 			//System.out.println("testResult is: " + testResult);
 			int currentPercent = allTestsPercents.get(testIndex);
 			//System.out.println("currentPercent is: " + currentPercent);
-			int currentMarks = testResult * currentPercent;
-			results.add(currentMarks);
+			int currentPoints = testResult * currentPercent;
+			results.add(currentPoints);
 			//System.out.println(aTestName + ": " + "testResult: " + testResult + ", curr%: " + currentPercent +
-			//	 ", curr marks: " + currentMarks);
-			marksTotal += currentMarks;
+			//	 ", curr points: " + currentPoints);
+			pointsTotal += currentPoints;
 			testIndex++;
 		}	//	end - for each test 
 		
-		result = marksTotal / 100.0;		// convert from percent to raw marks
-		result = result * (maxMarks / 10.0);	// convert from raw marks to marks for this question
-		setQueryScore(result);				// store the total marks result internally		
+		result = pointsTotal / 100.0;		// convert from percent to raw points
+		result = result * (maxPoints / 10.0);	// convert from raw points to points for this question
+		setQueryScore(result);				// store the total points result internally		
 		setAllTestsResults(results);		// store the list of test results internally
 		
 		return result;
