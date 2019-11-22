@@ -30,21 +30,21 @@ public class CondJoinExplicitCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one from
-		assertEquals(condJEC.sqlTest(creatureAllQuery, " == 0"), 10);
+		assertEquals(condJEC.sqlTest(testDAO, creatureAllQuery, " == 0"), 10);
 		// valid nested query with two select/froms has no joins
-		assertEquals(condJEC.sqlTest(nestedQuery, " == 1"), 0);
+		assertEquals(condJEC.sqlTest(testDAO, nestedQuery, " == 1"), 0);
 		// valid query with one JOIN/ON
-		assertEquals(condJEC.sqlTest(joinOneQuery, " == 1"), 10);
+		assertEquals(condJEC.sqlTest(testDAO, joinOneQuery, " == 1"), 10);
 		// valid query with one comma join and one JOIN/ON
-		assertEquals(condJEC.sqlTest(joinManyQuery, " == 1"), 10);
+		assertEquals(condJEC.sqlTest(testDAO, joinManyQuery, " == 1"), 10);
 		// valid query with table joined to itself with JOIN/ON
-		assertEquals(condJEC.sqlTest(joinTableSelfQuery, " == 1"), 10);
+		assertEquals(condJEC.sqlTest(testDAO, joinTableSelfQuery, " == 1"), 10);
 		// null query has no joins
-		assertEquals(condJEC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condJEC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query with select/improper column list has no joins
-		assertEquals(condJEC.sqlTest(badQuery, " == 0"), 10);
+		assertEquals(condJEC.sqlTest(testDAO, badQuery, " == 0"), 10);
 		// bad query with garbage has no joins
-		assertEquals(condJEC.sqlTest(garbageQuery, " >= 1"), 0);
+		assertEquals(condJEC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondTableCountTests

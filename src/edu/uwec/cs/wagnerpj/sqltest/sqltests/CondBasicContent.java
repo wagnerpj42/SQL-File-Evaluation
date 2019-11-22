@@ -7,9 +7,10 @@ package edu.uwec.cs.wagnerpj.sqltest.sqltests;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
+import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondBasicContent implements ISQLTest {
-	public int sqlTest (Query givenQuery, String condition) {
+	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisSelectCt = -1;			// select count in this query
 		int thisFromCt = -1;			// from count in this query

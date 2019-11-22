@@ -18,7 +18,7 @@ public class TestTableListEqual implements ISQLTest {
 	}
 
 	// sqlTest - from interface
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		
 		int result;						// result on scale 0 to 10
 		int givenTableCt = 0;			// table count from given query
@@ -28,13 +28,13 @@ public class TestTableListEqual implements ISQLTest {
 										// query object for string
 		Query desiredQuery = new Query(desiredQueryString);
 		
-		givenTableList = getTableList(givenQuery).trim();
+		givenTableList = getTableList(dao, givenQuery).trim();
 		//System.out.println("givenTableList is: >" +  givenTableList + "<");
 		givenTableCt = givenTableList.split(" ").length;
 		//System.out.println("givenTableCt is: " + givenTableCt);
 		
 		// TODO: this second view with same name sometimes not being created
-		desiredTableList = getTableList(desiredQuery).trim();
+		desiredTableList = getTableList(dao, desiredQuery).trim();
 		//System.out.println("desiredTableList is: >" +  desiredTableList + "<");
 		desiredTableCt = desiredTableList.split(" ").length;
 		//System.out.println("desiredTableCt is: " + desiredTableCt);	
@@ -62,9 +62,7 @@ public class TestTableListEqual implements ISQLTest {
 	}
 	
 	// getTableList - auxiliary method, return a sorted table list for a Query
-	public String getTableList(Query query) {
-		IDAO dao = new DataAccessObject();  // data access object for database connection
-											// summary of result set's metadata
+	public String getTableList(IDAO dao, Query query) {
 		ResultSet rs = null;				// result set for view query
 		//ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
 		String viewString = ("create view temp_view as " + query.toString());

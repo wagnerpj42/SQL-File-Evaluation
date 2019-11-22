@@ -30,15 +30,15 @@ public class CondSelectCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one select
-		assertEquals(condSC.sqlTest(creatureAllQuery, " >= 1"), 10);
+		assertEquals(condSC.sqlTest(testDAO, creatureAllQuery, " >= 1"), 10);
 		// valid nested query with two selects
-		assertEquals(condSC.sqlTest(nestedQuery, " == 2"), 10);
+		assertEquals(condSC.sqlTest(testDAO, nestedQuery, " == 2"), 10);
 		// null query has no selects
-		assertEquals(condSC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condSC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query with select has one select
-		assertEquals(condSC.sqlTest(badQuery, " >= 1"), 10);
+		assertEquals(condSC.sqlTest(testDAO, badQuery, " >= 1"), 10);
 		// bad query with garbage has no selects
-		assertEquals(condSC.sqlTest(garbageQuery, " >= 1"), 0);
+		assertEquals(condSC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondSelectCountTests

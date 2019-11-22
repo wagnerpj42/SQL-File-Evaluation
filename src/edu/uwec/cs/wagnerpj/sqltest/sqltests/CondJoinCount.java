@@ -11,9 +11,10 @@ import javax.script.ScriptException;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
+import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondJoinCount implements ISQLTest {
-	public int sqlTest (Query givenQuery, String condition) {
+	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisCommaCt = -1;			// comma count in this query
 		int thisJoinCt = -1;			// explicit join count in this query

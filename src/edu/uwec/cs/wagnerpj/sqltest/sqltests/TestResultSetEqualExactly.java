@@ -16,15 +16,13 @@ public class TestResultSetEqualExactly implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		int result = 0;						// result on scale 0 to 10
 		String thisResultString = "";		// result set string returned from this query
 		String desiredResultString = "";	// row count returned from desired query
 		ResultSet rset = null;				// result set for SQL query
 											// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-											// dao for query execution
-		IDAO dao = new DataAccessObject();
 											// query object for string
 		Query desiredQuery = new Query(desiredQueryString);
 		// TODO: do we need to build query from string, just to use toString() later?

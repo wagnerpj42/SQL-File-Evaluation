@@ -16,15 +16,13 @@ public class TestRowCount implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		int result;						// result from 0 (wrong) to 10 (exactly right)
 		int thisQRowCt = -1;			// row count returned from this query
 		int desiredQRowCt = -1;			// row count returned from desired query
 		ResultSet rset = null;			// an SQL result set
 										// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-										// dao for query execution
-		IDAO dao = new DataAccessObject();
 										// query object for string
 		Query desiredQuery = new Query(desiredQueryString);
 	

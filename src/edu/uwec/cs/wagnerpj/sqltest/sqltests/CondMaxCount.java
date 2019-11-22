@@ -11,9 +11,10 @@ import javax.script.ScriptException;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
+import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondMaxCount implements ISQLTest {
-	public int sqlTest (Query givenQuery, String condition) {
+	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisMaxCt = -1;				// count of MAX phrases returned from this query
 		boolean compResult = false;		// result of condition evaluation

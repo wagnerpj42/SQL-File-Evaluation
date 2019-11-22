@@ -19,15 +19,13 @@ public class TestResultSetEqualContent implements ISQLTest {
 	
 	// sqlTest - from interface
 	// TODO: need to make better test; epsilon value can be exceeded by how columns are formatted and displayed, so temporarily removed
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		int result = 0;						// result on scale 0 to 10
 		String givenResultString = "";		// result set string returned from given query
 		String desiredResultString = "";	// result set string returned from desired query
 		ResultSet rset = null;				// result set for SQL query
 											// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-											// dao for query execution
-		IDAO dao = new DataAccessObject();
 											// query for string
 		Query desiredQuery = new Query(desiredQueryString);
 		

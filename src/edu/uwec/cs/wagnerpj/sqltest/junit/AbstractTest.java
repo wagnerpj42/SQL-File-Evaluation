@@ -5,10 +5,14 @@
  */
 package edu.uwec.cs.wagnerpj.sqltest.junit;
 
+import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
+import edu.uwec.cs.wagnerpj.sqltest.general.OracleDataAccessObject;
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 
 public abstract class AbstractTest {
 	// data
+	protected IDAO  testDAO;			// DAO for testing
+	
 	protected Query achievementAllQuery;// select all achievements
 	protected Query creatureAllQuery;	// select all creatures
 	protected Query creatureAllQueryLC;	// select all creatures, in lower case
@@ -53,6 +57,8 @@ public abstract class AbstractTest {
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
+		testDAO				= new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi5cs");		// hardcoded for now; TODO: how to allow specification?
+		
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");
 		creatureAllQueryLC  = new Query("select * from creature");
@@ -114,6 +120,8 @@ public abstract class AbstractTest {
 	
 	// finalize - essentially cross-test fixture teardown
 	protected void finalize() throws Throwable {
+		testDAO				= null;
+		
 		achievementAllQuery = null;
 		creatureAllQuery    = null;
 		creatureAllQueryLC  = null;

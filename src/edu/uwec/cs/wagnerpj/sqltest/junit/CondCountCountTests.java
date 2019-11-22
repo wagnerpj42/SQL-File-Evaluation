@@ -30,15 +30,15 @@ public class CondCountCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query displaying count with one group by has one count
-		assertEquals(condCC.sqlTest(groupByQuery, " >= 1"), 10);
+		assertEquals(condCC.sqlTest(testDAO, groupByQuery, " >= 1"), 10);
 		// valid nested query with two selects but no counts, has count equal to zero
-		assertEquals(condCC.sqlTest(nestedQuery, " == 0"), 10);
+		assertEquals(condCC.sqlTest(testDAO, nestedQuery, " == 0"), 10);
 		// null query has no selects
-		assertEquals(condCC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condCC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query with select but little else has no counts
-		assertEquals(condCC.sqlTest(badQuery, " >= 1"), 0);
+		assertEquals(condCC.sqlTest(testDAO, badQuery, " >= 1"), 0);
 		// bad query with garbage has no counts
-		assertEquals(condCC.sqlTest(garbageQuery, " >= 1"), 0);
+		assertEquals(condCC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondSelectCountTests

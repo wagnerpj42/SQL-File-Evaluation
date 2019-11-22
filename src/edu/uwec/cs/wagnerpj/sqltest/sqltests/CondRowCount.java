@@ -11,13 +11,12 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import edu.uwec.cs.wagnerpj.sqltest.general.DataAccessObject;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.general.ResultSetMetaDataSummary;
 
 public class CondRowCount implements ISQLTest {
-	public int sqlTest (Query givenQuery, String condition) {
+	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		boolean compResult = false;		// result of condition evaluation
 		
@@ -25,8 +24,6 @@ public class CondRowCount implements ISQLTest {
 		ResultSet rset = null;			// an SQL result set
 										// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-										// dao for query execution
-		IDAO dao = new DataAccessObject();
 	
 		// execute given query, get row count for this query
 		dao.connect();

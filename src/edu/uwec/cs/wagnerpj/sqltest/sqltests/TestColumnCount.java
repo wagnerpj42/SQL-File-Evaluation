@@ -16,7 +16,7 @@ public class TestColumnCount implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		
 		int result;						// result on scale 0 to 10
 		int thisQColCt = -1;				// column count returned from this query
@@ -24,8 +24,6 @@ public class TestColumnCount implements ISQLTest {
 		ResultSet rset = null;			// result set for SQL query
 										// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-										// dao for query execution
-		IDAO dao = new DataAccessObject();
 										// query object for query string
 		Query desiredQuery = new Query(desiredQueryString);
 	

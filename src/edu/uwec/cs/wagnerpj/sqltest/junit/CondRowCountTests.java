@@ -30,17 +30,17 @@ public class CondRowCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query of Achievement generates 11 rows
-		assertEquals(condRC.sqlTest(achievementAllQuery, " == 11"), 10);
+		assertEquals(condRC.sqlTest(testDAO, achievementAllQuery, " == 11"), 10);
 		// valid query of Creature generates 8 rows
-		assertEquals(condRC.sqlTest(creatureAllQuery, " == 8"), 10);
+		assertEquals(condRC.sqlTest(testDAO, creatureAllQuery, " == 8"), 10);
 		// valid query of Skill generates 8 rows
-		assertEquals(condRC.sqlTest(skillAllQuery, " == 8"), 10);
+		assertEquals(condRC.sqlTest(testDAO, skillAllQuery, " == 8"), 10);
 		// null query generates no rows
-		assertEquals(condRC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condRC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query generates no rows
-		assertEquals(condRC.sqlTest(badQuery, " >= 1"), 0);
+		assertEquals(condRC.sqlTest(testDAO, badQuery, " >= 1"), 0);
 		// bad query with garbage generates no rows
-		assertEquals(condRC.sqlTest(garbageQuery, " >= 1"), 0);
+		assertEquals(condRC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondSelectCountTests

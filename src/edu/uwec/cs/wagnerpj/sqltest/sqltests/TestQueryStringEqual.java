@@ -14,7 +14,7 @@ public class TestQueryStringEqual implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		// TODO: need to test more comprehensively for content, 
 		//       as spacing, etc. may vary
 		int result;			// result on scale 0 to 10

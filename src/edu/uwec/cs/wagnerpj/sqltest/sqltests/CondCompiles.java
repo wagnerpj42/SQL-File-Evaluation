@@ -7,18 +7,15 @@ package edu.uwec.cs.wagnerpj.sqltest.sqltests;
 
 import java.sql.ResultSet;
 
-import edu.uwec.cs.wagnerpj.sqltest.general.DataAccessObject;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 
 public class CondCompiles implements ISQLTest {
-	public int sqlTest (Query givenQuery, String condition) {
+	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		boolean compResult = false;		// result of query compilation evaluation
 		
 		ResultSet rset = null;			// result set for SQL query
-										// dao for query execution
-		IDAO dao = new DataAccessObject();
 		
 		// try to execute given query, see result
 		dao.connect();

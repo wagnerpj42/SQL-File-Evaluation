@@ -11,10 +11,11 @@ import javax.script.ScriptException;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
+import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondTableCount implements ISQLTest {
-	// TODO: problem - counting commas gets commas in TO_DATE(), TO_CHAR(), and other functions; temporarilyi removed
-	public int sqlTest (Query givenQuery, String condition) {
+	// TODO: problem - counting commas gets commas in TO_DATE(), TO_CHAR(), and other functions; temporarily removed
+	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisFromCt = -1;			// from count in this query
 		//int thisCommaCt = -1;			// comma count in this query

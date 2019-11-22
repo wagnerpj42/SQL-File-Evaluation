@@ -30,17 +30,17 @@ public class CondSumCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one sum
-		assertEquals(condSC.sqlTest(sumQuery, " == 1"), 10);		
+		assertEquals(condSC.sqlTest(testDAO, sumQuery, " == 1"), 10);		
 		// valid query with one group by but no sums
-		assertEquals(condSC.sqlTest(groupByQuery, " >= 1"), 0);
+		assertEquals(condSC.sqlTest(testDAO, groupByQuery, " >= 1"), 0);
 		// valid nested query with two selects but no sums
-		assertEquals(condSC.sqlTest(nestedQuery, " == 0"), 10);
+		assertEquals(condSC.sqlTest(testDAO, nestedQuery, " == 0"), 10);
 		// null query has no sums
-		assertEquals(condSC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condSC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query with select but little else has no sums
-		assertEquals(condSC.sqlTest(badQuery, " >= 1"), 0);
+		assertEquals(condSC.sqlTest(testDAO, badQuery, " >= 1"), 0);
 		// bad query with garbage has no sums
-		assertEquals(condSC.sqlTest(garbageQuery, " >= 1"), 0);
+		assertEquals(condSC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondAvgCountTests

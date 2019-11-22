@@ -10,7 +10,7 @@ import edu.uwec.cs.wagnerpj.sqltest.general.*;
 public interface ISQLTest {
 	// methods
 	// -- sqlTest() - run a specific test
-	public abstract int sqlTest(Query givenQuery, String testString);
+	public abstract int sqlTest(IDAO dao, Query givenQuery, String testString);
 	
 	// -- getName() - return the test's name
 	public abstract String getName();

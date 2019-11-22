@@ -30,15 +30,15 @@ public class CondCompilesTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query - compiles
-		assertEquals(condC.sqlTest(creatureAllQuery, ""), 10);
+		assertEquals(condC.sqlTest(testDAO, creatureAllQuery, ""), 10);
 		// valid nested query - compiles
-		assertEquals(condC.sqlTest(nestedQuery, ""), 10);
+		assertEquals(condC.sqlTest(testDAO, nestedQuery, ""), 10);
 		// null query - doesn't compile
-		assertEquals(condC.sqlTest(nullQuery, ""), 0);
+		assertEquals(condC.sqlTest(testDAO, nullQuery, ""), 0);
 		// bad query with select/improper table - doesn't compile
-		assertEquals(condC.sqlTest(badQuery, ""), 0);
+		assertEquals(condC.sqlTest(testDAO, badQuery, ""), 0);
 		// bad query with garbage - doesn't compile
-		assertEquals(condC.sqlTest(garbageQuery, ""), 0);
+		assertEquals(condC.sqlTest(testDAO, garbageQuery, ""), 0);
 	}
 
 }	// end - class CondFromCountTests

@@ -24,17 +24,17 @@ public class TestRowCountTests extends AbstractTest {
 	@Test
 	public void testTestRowCount() {
 		// queries of same table but selecting different # of columns have same row count
-		assertEquals(testRC.sqlTest(creatureAllQuery, creatureOneColQuery.toString()), 10);
+		assertEquals(testRC.sqlTest(testDAO, creatureAllQuery, creatureOneColQuery.toString()), 10);
 		// queries of different tables with different numbers of rows do not have same row count
-		assertEquals(testRC.sqlTest(creatureAllQuery, achievementAllQuery.toString()), 0);
+		assertEquals(testRC.sqlTest(testDAO, creatureAllQuery, achievementAllQuery.toString()), 0);
 		// queries of different table with same number of rows does have same row count
-		assertEquals(testRC.sqlTest(achievementAllQuery, aspirationAllQuery.toString()), 10);
+		assertEquals(testRC.sqlTest(testDAO, achievementAllQuery, aspirationAllQuery.toString()), 10);
 		// queries generating 1 and 0 creatures, respectively, should generate a partial score
-		assertEquals(testRC.sqlTest(creatureOneRowQuery, creatureZeroQuery.toString()), 5);
+		assertEquals(testRC.sqlTest(testDAO, creatureOneRowQuery, creatureZeroQuery.toString()), 5);
 		// a valid query and a null query should not have the same row count
-		assertEquals(testRC.sqlTest(creatureAllQuery, nullQuery.toString()), 0);
+		assertEquals(testRC.sqlTest(testDAO, creatureAllQuery, nullQuery.toString()), 0);
 		// a valid table query and bad query are not equal in row count
-		assertEquals(testRC.sqlTest(creatureAllQuery, badQuery.toString()), 0);
+		assertEquals(testRC.sqlTest(testDAO, creatureAllQuery, badQuery.toString()), 0);
 	}
 	
 	@After

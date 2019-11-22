@@ -16,7 +16,7 @@ public class TestSameColumnSet implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (Query givenQuery, String desiredQueryString) {
+	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		
 		int result;						// result from 0 (wrong) to 10 (totally correct)
 		String thisColSet = "";			// column set returned from this query
@@ -24,8 +24,6 @@ public class TestSameColumnSet implements ISQLTest {
 		ResultSet rset = null;			// result set for SQL statement
 										// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-										// dao for query execution
-		IDAO dao = new DataAccessObject();
 										// query object for string
 		Query desiredQuery = new Query(desiredQueryString);
 	

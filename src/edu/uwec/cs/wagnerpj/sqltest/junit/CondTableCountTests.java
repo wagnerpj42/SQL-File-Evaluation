@@ -30,21 +30,20 @@ public class CondTableCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one from
-		assertEquals(condTC.sqlTest(creatureAllQuery, " >= 1"), 10);
+		assertEquals(condTC.sqlTest(testDAO, creatureAllQuery, " >= 1"), 10);
 		// valid nested query with two froms
-		assertEquals(condTC.sqlTest(nestedQuery, " == 2"), 10);
+		assertEquals(condTC.sqlTest(testDAO, nestedQuery, " == 2"), 10);
 		// valid query with one JOIN/ON
-		assertEquals(condTC.sqlTest(joinOneQuery, " == 2"), 10);
+		assertEquals(condTC.sqlTest(testDAO, joinOneQuery, " == 2"), 10);
 		// valid query with one comma join and one JOIN/ON
-		assertEquals(condTC.sqlTest(joinManyQuery, " == 3"), 10);
+		assertEquals(condTC.sqlTest(testDAO, joinManyQuery, " == 3"), 10);
 		// valid query with table joined to itself with JOIN/ON
-		assertEquals(condTC.sqlTest(joinTableSelfQuery, " == 2"), 10);
+		assertEquals(condTC.sqlTest(testDAO, joinTableSelfQuery, " == 2"), 10);
 		// null query has no tables
-		assertEquals(condTC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condTC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query with select/improper column list has no tables
-		assertEquals(condTC.sqlTest(badQuery, " >= 1"), 0);
+		assertEquals(condTC.sqlTest(testDAO, badQuery, " >= 1"), 0);
 		// bad query with garbage has no froms
-		assertEquals(condTC.sqlTest(garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondTableCountTests

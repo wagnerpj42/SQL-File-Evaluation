@@ -30,21 +30,21 @@ public class CondDescCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one from
-		assertEquals(condDC.sqlTest(creatureAllQuery, " == 0"), 10);
+		assertEquals(condDC.sqlTest(testDAO, creatureAllQuery, " == 0"), 10);
 		// valid query with one JOIN/ON
-		assertEquals(condDC.sqlTest(joinOneQuery, " == 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, joinOneQuery, " == 1"), 0);
 		// valid query with order by but not desc
-		assertEquals(condDC.sqlTest(orderByQuery, " == 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, orderByQuery, " == 1"), 0);
 		// valid query with order by and desc
-		assertEquals(condDC.sqlTest(orderByDescQuery, " == 1"), 10);
+		assertEquals(condDC.sqlTest(testDAO, orderByDescQuery, " == 1"), 10);
 		// valid query with order by and descending
-		assertEquals(condDC.sqlTest(orderByDesc2Query, " == 1"), 10);
+		assertEquals(condDC.sqlTest(testDAO, orderByDesc2Query, " == 1"), 10);
 		// null query has no desc
-		assertEquals(condDC.sqlTest(nullQuery, " >= 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
 		// bad query with select/improper column list has no descs
-		assertEquals(condDC.sqlTest(badQuery, " == 0"), 10);
+		assertEquals(condDC.sqlTest(testDAO, badQuery, " == 0"), 10);
 		// bad query with garbage has no descs
-		assertEquals(condDC.sqlTest(garbageQuery, " >= 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
 	}
 
 }	// end - class CondDescCountTests

@@ -30,17 +30,16 @@ public class CondNumLinesTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with at least three lines
-		assertEquals(condNLC.sqlTest(multiLineQuery, " >= 3"), 10);		
+		assertEquals(condNLC.sqlTest(testDAO, multiLineQuery, " >= 3"), 10);		
 		// valid query on one line
-		assertEquals(condNLC.sqlTest(groupByQuery, " == 1"), 10);
+		assertEquals(condNLC.sqlTest(testDAO, groupByQuery, " == 1"), 10);
 		// valid nested query but one line
-		assertEquals(condNLC.sqlTest(nestedQuery, " == 1"), 10);
+		assertEquals(condNLC.sqlTest(testDAO, nestedQuery, " == 1"), 10);
 		// null query considered one line
-		assertEquals(condNLC.sqlTest(nullQuery, " == 0"), 0);
+		assertEquals(condNLC.sqlTest(testDAO, nullQuery, " == 0"), 0);
 		// bad query with select but little else has one line
-		assertEquals(condNLC.sqlTest(badQuery, " == 1"), 10);
+		assertEquals(condNLC.sqlTest(testDAO, badQuery, " == 1"), 10);
 		// bad query with garbage has one line
-		assertEquals(condNLC.sqlTest(garbageQuery, " == 1"), 10);
 	}
 
 }	// end - class CondAvgCountTests
