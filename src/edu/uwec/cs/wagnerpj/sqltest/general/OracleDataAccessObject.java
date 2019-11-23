@@ -56,7 +56,7 @@ public class OracleDataAccessObject implements IDAO {
 		Statement stmt = null;		// SQL statement object
 		rset = null;				// initialize result set
 		try	{
-		   stmt = conn.createStatement();
+		   stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		   rset = stmt.executeQuery(sqlQuery);
 		}
 		catch (SQLException e) {
