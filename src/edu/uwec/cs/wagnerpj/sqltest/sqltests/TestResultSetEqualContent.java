@@ -27,32 +27,8 @@ import java.util.Scanner;
 import edu.uwec.cs.wagnerpj.sqltest.general.*;
 
 
-/*											TODO /  CONSIDERATIONS
- *  1) Optimization concerns: 
- *  	-What size result sets are we expected to process in reasonable time? 
- *  	-Exit early conditions. Huge/wrong student answer?
- *  	-Processing result set twice, first time only to get the row count (could use resizing arrays instead to get around this...)
- *  2) How to allocate points? -> Change code to reflect
- *  	-Any unmatched rows at all -> 0 points
- *  	-If only duplicate related errors -> a few points
- *  	-If no errors -> 10 points
- *  3) Supporting different date formats
- *  	-If Date or TimeStamp data type detected, use getDate() and then standardize format into a String
- *  	-If toChar(someDate) used in a query, which formats should be detected/standardized?
- *  4) Other formatting concerns
- *  	-Long decimals. toString() returns scientific notation. Truncate?
- *  	-Any others?
- *  5) Code that doesn't compile is currently interpreted as empty matrix. This could coincidentally be correct answer. Fix.
- *  6) Algorithm isn't 100% foolproof. Will this be an issue? How to fix?
- *  	-EXAMPLES: 	DESIRED: [1, 2]			GIVEN: [1, 2]		<------- considered correct by algorithm
- *  			  			 [3, 4]  			   [4, 3] 				 ideally columns would be required to align
- *  	
- *  				DESIRED: [1, 2]			GIVEN: [1, 2, x]    <------- considered (partially?) correct by algorithm
- *  						 [3, 4]				   [3, x, 4]			 ideally extra column's values wouldn't be considered
- *  
- *					Highly unlikely that the above occurs with rest of results all being correct. But conceivably could happen...
- *	7) Bit of cleanup needed...
- */
+
+
 public class TestResultSetEqualContent implements ISQLTest {
 	private int numDuplicates;
 	private ArrayList<Map<Integer, Integer>> failedMappings = new ArrayList<Map<Integer,Integer>>();
