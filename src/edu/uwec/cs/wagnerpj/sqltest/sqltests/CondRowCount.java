@@ -14,9 +14,10 @@ import javax.script.ScriptException;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.general.ResultSetMetaDataSummary;
+import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
 
 public class CondRowCount implements ISQLTest {
-	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		boolean compResult = false;		// result of condition evaluation
 		
@@ -52,7 +53,7 @@ public class CondRowCount implements ISQLTest {
 		// compare and generate result
 		result = compResult ? 10 : 0;
 		
-		return result;
+		return new TestResult(result);
 	}	// end - method sqlTest
 	
 	public String getName() {

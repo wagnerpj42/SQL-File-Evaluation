@@ -16,7 +16,7 @@ public class TestColumnCount implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		
 		int result;						// result on scale 0 to 10
 		int thisQColCt = -1;				// column count returned from this query
@@ -56,7 +56,7 @@ public class TestColumnCount implements ISQLTest {
 			result = 0;
 		};
 		
-		return result;
+		return new TestResult(result);
 
 	}	// end - method sqlTest
 	

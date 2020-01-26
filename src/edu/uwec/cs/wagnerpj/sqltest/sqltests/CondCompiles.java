@@ -9,9 +9,10 @@ import java.sql.ResultSet;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
+import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
 
 public class CondCompiles implements ISQLTest {
-	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		boolean compResult = false;		// result of query compilation evaluation
 		
@@ -37,7 +38,7 @@ public class CondCompiles implements ISQLTest {
 		// compare and generate result
 		result = compResult ? 10 : 0;
 		
-		return result;
+		return new TestResult(result);
 	}	// end - condCompiles
 	
 	public String getName() {

@@ -10,11 +10,12 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
+import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondDescCount implements ISQLTest {
-	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisDescCt = -1;			// desc(ending) count returned from this query
 		boolean compResult = false;		// result of condition evaluation
@@ -41,7 +42,7 @@ public class CondDescCount implements ISQLTest {
 		// compare and generate result
 		result = compResult ? 10 : 0;
 		
-		return result;
+		return new TestResult(result);
 	}	// end - condOrderByCount
 	
 	public String getName() {

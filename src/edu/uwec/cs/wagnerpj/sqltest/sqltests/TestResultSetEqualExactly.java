@@ -16,7 +16,7 @@ public class TestResultSetEqualExactly implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		int result = 0;						// result on scale 0 to 10
 		String thisResultString = "";		// result set string returned from this query
 		String desiredResultString = "";	// row count returned from desired query
@@ -74,7 +74,7 @@ public class TestResultSetEqualExactly implements ISQLTest {
 			System.err.println("TestResultSetEqualExactly - sqlTest - submitted query does not generate result string");
 		}
 		
-		return result;
+		return new TestResult(result);
 
 	}	// end - method sqlTest
 	

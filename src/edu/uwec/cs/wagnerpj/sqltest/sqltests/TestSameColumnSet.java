@@ -16,7 +16,7 @@ public class TestSameColumnSet implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		
 		int result;						// result from 0 (wrong) to 10 (totally correct)
 		String thisColSet = "";			// column set returned from this query
@@ -63,7 +63,7 @@ public class TestSameColumnSet implements ISQLTest {
 			result = 0;
 		}
 		
-		return result;
+		return new TestResult(result);
 
 	}	// end - method sqlTest
 	

@@ -10,11 +10,12 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
+import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondSumCount implements ISQLTest {
-	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisSumCt = -1;				// count of SUM phrases returned from this query
 		boolean compResult = false;		// result of condition evaluation
@@ -39,7 +40,7 @@ public class CondSumCount implements ISQLTest {
 		// compare and generate result
 		result = compResult ? 10 : 0;
 		
-		return result;
+		return new TestResult(result);
 	}	// end - condSumCount
 	
 	public String getName() {

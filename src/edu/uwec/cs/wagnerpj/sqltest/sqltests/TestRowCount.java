@@ -16,7 +16,7 @@ public class TestRowCount implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		int result;						// result from 0 (wrong) to 10 (exactly right)
 		int thisQRowCt = -1;			// row count returned from this query
 		int desiredQRowCt = -1;			// row count returned from desired query
@@ -61,7 +61,7 @@ public class TestRowCount implements ISQLTest {
 			result = 0;
 		}
 		
-		return result;
+		return new TestResult(result);
 
 	}	// end - method sqlTest
 	

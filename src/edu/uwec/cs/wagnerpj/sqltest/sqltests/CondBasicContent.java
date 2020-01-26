@@ -6,11 +6,12 @@
 package edu.uwec.cs.wagnerpj.sqltest.sqltests;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
+import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
 public class CondBasicContent implements ISQLTest {
-	public int sqlTest (IDAO dao, Query givenQuery, String condition) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
 		int thisSelectCt = -1;			// select count in this query
 		int thisFromCt = -1;			// from count in this query
@@ -26,7 +27,7 @@ public class CondBasicContent implements ISQLTest {
 		// compare and generate result
 		result = (thisSelectCt >= 1 && thisFromCt >= 1) ? 10 : 0;
 		
-		return result;
+		return new TestResult(result);
 	}	// end - condBasicContent
 	
 	public String getName() {

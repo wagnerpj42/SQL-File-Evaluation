@@ -14,8 +14,8 @@ public class TestQueryStringEqual implements ISQLTest {
 	}
 	
 	// sqlTest - from interface
-	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
-		// TODO: need to test more comprehensively for content, 
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
+		// TODO: need to test more comprehensively for content,
 		//       as spacing, etc. may vary
 		int result;			// result on scale 0 to 10
 		
@@ -25,7 +25,7 @@ public class TestQueryStringEqual implements ISQLTest {
 		else {
 			result = 0;
 		}
-		return result;
+		return new TestResult(result);
 	}
 
 	// getName - from interface

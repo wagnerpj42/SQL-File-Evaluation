@@ -18,7 +18,7 @@ public class TestTableListEqual implements ISQLTest {
 	}
 
 	// sqlTest - from interface
-	public int sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
+	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
 		
 		int result;						// result on scale 0 to 10
 		int givenTableCt = 0;			// table count from given query
@@ -48,7 +48,7 @@ public class TestTableListEqual implements ISQLTest {
 			result = 0;
 		};
 		
-		return result;
+		return new TestResult(result);
 
 	}	// end - method sqlTest
 	

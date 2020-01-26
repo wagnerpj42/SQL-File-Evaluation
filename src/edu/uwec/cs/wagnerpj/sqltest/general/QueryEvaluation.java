@@ -208,17 +208,17 @@ public class QueryEvaluation {
 				testString = allTestsConditions.get(testIndex);
 			}
 			//System.out.println("QueryEvaluation-evaluate() - testString is: >" +  testString + "<");
-			int testResult = aTest.sqlTest(dao, givenQuery, testString); // or some condition string
+			TestResult testResult = aTest.sqlTest(dao, givenQuery, testString); // or some condition string
 			//System.out.println("testResult is: " + testResult);
 			int currentPercent = allTestsPercents.get(testIndex);
 			//System.out.println("currentPercent is: " + currentPercent);
-			int currentPoints = testResult * currentPercent;
+			int currentPoints = testResult.getScore() * currentPercent;
 			results.add(currentPoints);
 			//System.out.println(aTestName + ": " + "testResult: " + testResult + ", curr%: " + currentPercent +
 			//	 ", curr points: " + currentPoints);
 			pointsTotal += currentPoints;
 			testIndex++;
-		}	//	end - for each test 
+		}	//	end - for each test
 		
 		result = pointsTotal / 100.0;		// convert from percent to raw points
 		result = result * (maxPoints / 10.0);	// convert from raw points to points for this question
