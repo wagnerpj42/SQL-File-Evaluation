@@ -95,6 +95,7 @@ public class QueryParseUtil {
      *          example: avg:col1
      * @throws Exception Exception thrown if no column name can be identified
      */
+    @SuppressWarnings("Duplicates")
     public static String[] identifyColumnName(String s) throws Exception{
         try {
             //Return two values
@@ -324,6 +325,7 @@ public class QueryParseUtil {
         while(true) {
             numParentheses = 0;
             numQuotes = 0;
+            //Find a SELECT statement that does not follow a set operator
             Matcher nestedSelectMatcher = Pattern.compile("(?i)(?<!(UNION|INTERSECT|MINUS)[\\s[(]]{0,100})\\(\\s*SELECT\\s").matcher(queryPortion); //Search for subselect
             if (nestedSelectMatcher.find()) {
                 beginIndex = nestedSelectMatcher.start();
@@ -373,6 +375,7 @@ public class QueryParseUtil {
      * @return  ArrayList that contains all substrings of form "(col1 = col2)" that follow an ON keyword that corresponds to
      *          an inner join statement that exists on the same level as a SELECT statement (i.e. not in a subselect)
      */
+    @SuppressWarnings("Duplicates")
     public static ArrayList<String> identifyAllInnerJoinStatementOnClauses(String query){
         ArrayList<String> ret = new ArrayList<String>();
 
@@ -489,7 +492,7 @@ public class QueryParseUtil {
     }
 
     //Utility function that checks if an on clause is comparing columns on equality rather than inequality.
-    private static boolean isValidOnClause(String onClause){
+    public static boolean isValidOnClause(String onClause){
         int numQuotes = 0;
         for(int i = 0; i < onClause.length(); i++){
             if(onClause.charAt(i) == '\"') numQuotes++;

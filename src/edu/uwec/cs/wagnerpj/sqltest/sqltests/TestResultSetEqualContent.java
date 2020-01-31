@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static edu.uwec.cs.wagnerpj.sqltest.sqltests.TestResultSetEqualContentNotDatesButGOod.isValidOnClause;
 import static edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil.*;
 
 /**		README:
@@ -820,7 +819,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 						//Parse all JOIN statements to find equivalent columns, and add them to equivalency graph
 						ArrayList<String> innerJoinStatements = identifyAllInnerJoinStatementOnClauses(fromToEnd);
 						for (String innerJoinStatement : innerJoinStatements) {
-							if (isValidOnClause(innerJoinStatement)) {
+							if (QueryParseUtil.isValidOnClause(innerJoinStatement)) {
 								Edge[] results = identifyEquivalentColumns(innerJoinStatement);
 								if (results[1] != null){
 									columnNameEquivalenceGraphAliases.add(results[0]);
