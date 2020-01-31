@@ -69,14 +69,15 @@ public class QueryParseUtil {
             int lastCommaIndex = 0;
             ArrayList<String> ret = new ArrayList<String>();
 
+            //split query at any comma that is not between parentheses or quotation marks
             for (int i = 0; i < query.length(); i++) {
                 if (query.charAt(i) == ',' && numParentheses == 0 && numQuotations % 2 == 0) {
                     ret.add(query.substring(start, i) + ',');
                     start = i;
                     lastCommaIndex = i;
                 }
-                if (query.charAt(i) == '(') numParentheses++;
-                if (query.charAt(i) == ')') numParentheses--;
+                if (query.charAt(i) == '(' && numQuotations % 2 == 0) numParentheses++;
+                if (query.charAt(i) == ')' && numQuotations % 2 == 0) numParentheses--;
                 if (query.charAt(i) == '\"') numQuotations++;
             }
             ret.add(query.substring(lastCommaIndex));
@@ -310,7 +311,7 @@ public class QueryParseUtil {
      *         the subselect's alias name (if present)
      */
     @SuppressWarnings("Duplicates")
-    public static Map<String, String> identifySubselectStatementsToEndOrSetOperator(String query){
+    public static Map<String, String> identifySubselectStatements(String query){
         //Find a subselect statement, and parse until it's matching parenthesis is found. Continue until no more subselects exist
         Map<String, String> ret = new HashMap<>();
         String subSelect;
@@ -320,13 +321,10 @@ public class QueryParseUtil {
         int endIndex;
         int numParentheses;
         int numQuotes;
-        boolean setOperatorFound = false;
-        ArrayList<Integer> setOperatorIndexes = identifyAllSetOperatorIndexes(query);
         while(true) {
             numParentheses = 0;
             numQuotes = 0;
-            setOperatorFound = false;
-            Matcher nestedSelectMatcher = Pattern.compile("(?i)\\(\\s*SELECT\\s").matcher(queryPortion); //Search for subselect
+            Matcher nestedSelectMatcher = Pattern.compile("(?i)(?<!(UNION|INTERSECT|MINUS)[\\s[(]]{0,100})\\(\\s*SELECT\\s").matcher(queryPortion); //Search for subselect
             if (nestedSelectMatcher.find()) {
                 beginIndex = nestedSelectMatcher.start();
                 for (int i = beginIndex; i < queryPortion.length(); i++) {
@@ -334,21 +332,13 @@ public class QueryParseUtil {
                     else if (queryPortion.charAt(i) == '(' && numQuotes % 2 == 0) numParentheses++;
                     else if (queryPortion.charAt(i) == ')' && numQuotes % 2 == 0) numParentheses--;
                         //If index is beginning of a set operator, end of select statement is reached
-                    else if (setOperatorIndexes.contains(i) && numParentheses == 1) {
-                        endIndex = i;
-                        setOperatorFound = true;
-                        subSelect = queryPortion.substring(beginIndex+1, endIndex);			   //select subselect
-                        subSelectAlias = identifySubSelectAlias(queryPortion, subSelect);	   //search for subselect alias
-                        ret.put(subSelect, subSelectAlias);									   //add subselect and it's alias to return mapping
-                    }
                     //If matching parenthesis is found, end of select statement is reached
                     if (numParentheses == 0) {	//Once we find matching parenthesis, end of select statement is reached
                         endIndex = i;
-                        if(!setOperatorFound){
-                            subSelect = queryPortion.substring(beginIndex+1, endIndex);			   //select subselect
-                            subSelectAlias = identifySubSelectAlias(queryPortion, subSelect);	   //search for subselect alias
-                            ret.put(subSelect, subSelectAlias);									   //add subselect and it's alias to return mapping
-                        }
+                        subSelect = queryPortion.substring(beginIndex+1, endIndex);			   //select subselect
+                        subSelectAlias = identifySubSelectAlias(queryPortion, subSelect);	   //search for subselect alias
+                        ret.put(subSelect, subSelectAlias);									   //add subselect and it's alias to return mapping
+
                         queryPortion = queryPortion.substring(endIndex, queryPortion.length());//chop off this subselect from overall query string and repeat
                         break;
                     }

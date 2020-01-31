@@ -99,16 +99,16 @@ public class TestResultSetEqualContent implements ISQLTest {
 	private ArrayList<Map<Integer, Integer>> failedMappings = new ArrayList<Map<Integer, Integer>>();
 	private ArrayList<Map<Integer, Integer>> failedMappingTemp = new ArrayList<Map<Integer, Integer>>();
 	private boolean columnAssociationCompleted = false;
-	public static ArrayList<Edge> givenColumnNameEquivalenceGraph = new ArrayList<Edge>();
-	public static ArrayList<Edge> desiredColumnNameEquivalenceGraph = new ArrayList<Edge>();
+	private ArrayList<Edge> givenColumnNameEquivalenceGraph = new ArrayList<Edge>();
+	private ArrayList<Edge> desiredColumnNameEquivalenceGraph = new ArrayList<Edge>();
 	private ArrayList<String[]> extraRows = new ArrayList<String[]>();
 	private ArrayList<String[]> missingRows = new ArrayList<String[]>();
-	public static ArrayList<Boolean> desiredMonthFirstFormat = new ArrayList<>();
-	public static ArrayList<Boolean> givenMonthFirstFormat = new ArrayList<>();
+	private ArrayList<Boolean> desiredMonthFirstFormat = new ArrayList<>();
+	private ArrayList<Boolean> givenMonthFirstFormat = new ArrayList<>();
 	private String[][] desiredResultMatrix;
 	private String[][] givenResultMatrix;
-	public static ResultSetMetaData rsmdGiven = null;
-	public static ResultSetMetaData rsmdDesired = null;
+	private ResultSetMetaData rsmdGiven = null;
+	private ResultSetMetaData rsmdDesired = null;
 	private TestResult testResult = new TestResult();
 
 
@@ -549,7 +549,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 	//checks if a dd-mm-yyyy formatted column matches a mm-dd-yyyy formatted column
-	public static boolean reversedDateMatches(String s1, String s2) {
+	private boolean reversedDateMatches(String s1, String s2) {
 		if ((s1.matches("\\d{2}-\\d{2}-\\d{4}\\s.*") && s2.matches("\\d{2}-\\d{2}-\\d{4}\\s.*"))) {
 			String day = s1.substring(0, 2);
 			String month = s1.substring(3, 5);
@@ -587,7 +587,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 	//reformats a result set entry, standardizing it if it is a date, or truncating it if it is a long decimal
-	public static String reformat(String s, Boolean isMonthFirst) {
+	private String reformat(String s, Boolean isMonthFirst) {
 		DateFormat dfStandardized = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		//Convert decimal values to standardized form
 		if (s.matches("-?\\d*\\.\\d+(E(-?)\\d+)?")) {
@@ -678,7 +678,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 	//Attempts to create a column association between two queries based off of column names
-	public static Map<Integer, ArrayList<Integer>> attemptColumnAssociation(String desiredQuery, String givenQuery){
+	private Map<Integer, ArrayList<Integer>> attemptColumnAssociation(String desiredQuery, String givenQuery){
 		try {
 			//delete comments in both queries
 			desiredQuery = deleteComments(desiredQuery);
@@ -736,7 +736,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 	//Test if strings are equal
 	//Otherwise test if strings are connected based on JOIN operations.
-	public static boolean areEqualColumns(String s1, String s2){
+	private boolean areEqualColumns(String s1, String s2){
 		if(s1.equals(s2)){
 			return true;
 		}
@@ -765,7 +765,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	 * @param ownership		"desired" if desired query is being parsed. "given" if given query is being parsed.
 	 * @return				Returns four ArrayLists containing column name, alias, date format, and subselect alias information
 	 */
-	public static ParseResult parseSelectStatement(String query, String queryAlias, Boolean firstCall, String ownership) throws Exception {
+	private ParseResult parseSelectStatement(String query, String queryAlias, Boolean firstCall, String ownership) throws Exception {
 		//Return value is package of four different lists
 		//index 0 is columnNames, index 1 is columnAlias, index 2 is columnMonthFirstDateFormat, index 3 is columnSubselectAlias
 		ParseResult ret;
@@ -946,7 +946,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 	//removes column name from a function + column name pair
 	//':' character is used as separator between function and column name
-	public static String stripColumnName(String colName){
+	private String stripColumnName(String colName){
 		int i = colName.lastIndexOf(':');
 		if (i > 0) return colName.substring(i, colName.length());
 		else return "";
@@ -955,14 +955,14 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 	//removes a function from a column name + function pair
 	//':' character is used as separator between function and column name
-	public static String stripColumnFunctions(String colName){
+	private String stripColumnFunctions(String colName){
 		int i = colName.lastIndexOf(':');
 		if (i > 0) return colName.substring(0, i+1);
 		else return colName;
 	}
 
 	//changes a column name to a different name, without changing functions
-	public static String adjustColumnNameOnly(String newName, String oldName) {
+	private String adjustColumnNameOnly(String newName, String oldName) {
 		int quoteCount = 0;
 		int colonIndex = -1;
 		for (int i = 0; i < oldName.length(); i++) {
@@ -977,7 +977,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 	//checks if a columnString [SELECT | ,] column_logic_here [, | FROM] corresponds to a mm-dd-yyyy or a yyyy-mm-dd format
-	public static boolean isMonthFirstFormattedDate(String query){
+	private boolean isMonthFirstFormattedDate(String query){
 		Pattern pattern = Pattern.compile("(?i)(yyyy|yy)\\s*(-|,|\\s+|\\\\|/|:|\\.|\\|)\\s*MM\\s*(-|,|\\s+|\\\\|/|:|\\.|\\|)\\s*dd");
 		Matcher matcher = pattern.matcher(query);
 		if(matcher.find()) return true;
@@ -988,7 +988,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 	//deletes all comments from a query
-	public static String deleteComments(String query){
+	private String deleteComments(String query){
 		StringBuilder ret = new StringBuilder();
 
 		boolean delete = false;
@@ -1000,7 +1000,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return ret.toString();
 	}
 
-	public static void main(String[] args) {
+	private void main(String[] args) {
 
 		//If not at top level of algorithm,
 	//	OracleDataAccessObject dao = new OracleDataAccessObject("alfred.cs.uwec.edu", "csdev", "vaugharj", "UZ6TO9P");
@@ -1009,7 +1009,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 				"SELECT col1 FROM(SELECT col1 FROM(SELECT col1 FROM TABLE) UNION SELECT COL1 FROM TABLE)" +
 						"WHERE col1 IN (SELECT WHERECOL1 FROM TABLE WHERE col1 IN (SELECT WHERECOL2 FROM TABLE)))";
 		System.out.println(identifyNestedSelectStatementsToEndOrSetOperator(s));
-		System.out.println(identifySubselectStatementsToEndOrSetOperator(s));
+		System.out.println(identifySubselectStatements(s));
 
 
 	}
