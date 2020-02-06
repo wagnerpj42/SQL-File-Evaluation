@@ -6,6 +6,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Group of utility methods related to parsing query information and extracting certain parts of a query
+ */
 public class QueryParseUtil {
 
     /**
@@ -21,7 +24,7 @@ public class QueryParseUtil {
     }
 
     /**
-     * Identifies the FROM (...) [END_OF_QUERY] portion of the query
+     * Identifies and returns the "FROM (...)" portion of the query
      * @param query The query in question
      * @return      The FROM (...) [END_OF_QUERY] portion of a query
      */
@@ -32,7 +35,7 @@ public class QueryParseUtil {
     }
 
     /**
-     * Identifies a query from the FROM (inclusive) to the end of the query or to the first set-operator (exclusive)
+     * Identifies the substring of a query from the FROM (inclusive) to the end of the query or to the first set-operator (exclusive)
      * @param query The query in question
      * @return      The FROM (inclusive) to the end of the query or to the first set-operator (exclusive)
      */
@@ -40,6 +43,8 @@ public class QueryParseUtil {
         Matcher fromMatcher = Pattern.compile("(?i)(?<=(\\s{1,999}|[)]|\"))FROM(?=(\\s{1,999}|[(]|\"))").matcher(query);
         if(!fromMatcher.find()) return null;
         else{
+            //find all indexes in the query where a set operator begins
+            //we will check if these set operators exist on the same level (i.e. not in a subselect) as the query in question
             ArrayList<Integer> setOperatorIndexes = identifyAllSetOperatorIndexes(query);
             int numParentheses = 0;
             int numQuotes = 0;
@@ -47,6 +52,7 @@ public class QueryParseUtil {
                 if(query.charAt(i) == '(' && numQuotes % 2 == 0) numParentheses++;
                 else if(query.charAt(i) == ')' && numQuotes % 2 == 0) numParentheses--;
                 else if(query.charAt(i) == '\"') numQuotes++;
+                //if current index is beginning of a set operator and we aren't in a subselect (i.e. numParentheses == 0), stop parsing
                 else if(setOperatorIndexes.contains(i) && numParentheses == 0){
                     return query.substring(fromMatcher.start(), i).toLowerCase();
                 }
@@ -57,9 +63,13 @@ public class QueryParseUtil {
     }
 
     /**
-     * Splits a SELECT statement into portions, with each portion corresponding to the logic of one column in the result set
-     * @param query SELECT (...) FROM portion of a query. HINT: Use identifySelectToFrom() to retrieve this value
-     * @return An ArrayList of substrings of the form [SELECT or ","] [COLUMN_LOGIC] [FROM or ","]
+     * Splits a SELECT statement into portions, with each portion containing the substring that corresponds to one column in the result set
+     * @param query The [SELECT (...) FROM] portion of a query. NOTE: Use identifySelectToFrom() to retrieve this substring
+     * @return Returns an ArrayList of substrings, with each index containing the substring that contains all logic corresponding
+     *          to a column in a result set. The commas, SELECT, or FROM that envelop the column logic will included in the substring as well.
+     *
+     *          E.g.        [SELECT | , ] column_logic_here [FROM | , ]
+     *
      */
     public static ArrayList<String> splitQuery(String query){
         try {
@@ -90,17 +100,16 @@ public class QueryParseUtil {
 
     /**
      * Identifies a column name and functions used on the column name.
-     * @param s A substring returned from splitQuery()
-     * @return  Index 0: Returns functions + columnName with the ':' character used as a delimiter between function names and column name
-     *          example: avg:col1
+     * @param s One of the substrings returned by the splitQuery() method. String looks like "[SELECT | ,] column_logic [FROM | ,]"
+     * @return  Index 0: Returns column name AND functions, functions separated by delimiter ":" character
+     *          e.g.    func1:func2:columnName
+     *          Index 1: Returns only the column name, but not any functions that may have been present
+     *          e.g.    columnName
      * @throws Exception Exception thrown if no column name can be identified
      */
     @SuppressWarnings("Duplicates")
     public static String[] identifyColumnName(String s) throws Exception{
         try {
-            //Return two values
-            //Index 0: The column name
-            //Index 1: The column name with any functions stripped off
             String[] ret = new String[2];
             ret[0] = ""; ret[1] = "";
             StringBuilder sb = new StringBuilder();
@@ -134,9 +143,9 @@ public class QueryParseUtil {
     }
 
     /**
-     * Utility function to identify all functions used on a column. Utilized by identifyColumnName()
-     * @param columnString  Substring of a SELECT statement returned by splitQuery()
-     * @param columnName    Column name identified in identifyColumnName()
+     * Utility function to identify all functions used on a column. Function is called by identifyColumnName() as utility function
+     * @param columnString  Substring of a SELECT statement. NOTE: Use a value returned by splitQuery()
+     * @param columnName    Column name in question. NOTE: Use index 1 of array returned by a call to identifyColumnName()
      * @return              All functions used on the column, with ':' character used as a delimiter.
      */
     private static String identifyColumnFunctions(String columnString, String columnName){
@@ -146,6 +155,7 @@ public class QueryParseUtil {
         Matcher columnMatcher = Pattern.compile("(?i)(?<=(SELECT(?=\\s|[(]|\")|,|\\.|[(]|\\bdistinct\\b|\\bunique\\b|\\ball\\b)\\s{0,999})\\Q" + columnName + "\\E(?=\\s{0,999}((?<=(\\s|[)]|\"))FROM\\b|\\b\\w+\\b|\"[^\"]+\"|,|(?<=(\\s|\"))AS|[)]))").matcher(columnString);
         if(!columnMatcher.find()) return "";
 
+        //starting from column name, search backwards for functions used
         boolean appending = false;
         boolean hasChars = false;
         for(int i = columnMatcher.start(); i >= 0; i--){
@@ -179,10 +189,12 @@ public class QueryParseUtil {
     }
 
     /**
-     * Identifies any alias that follows a column name
-     * @param columnSubstring   Return value of splitQuery()
-     * @param columnName        Index 1 of array returned by identifyColumnName()
-     * @return                  Name of alias (if any) of column, otherwise returns empty string
+     * Identifies any alias that follows a column name in the SELECT portion of a query
+     * @param columnSubstring   Use one of the substrings returned by the splitQuery() utility method
+     * @param columnName        Use index 1 of array returned by identifyColumnName() (i.e. column name, ignoring any functions used on it)
+     * @return                  Name of alias (if any) of a column, otherwise returns empty string
+     *                          e.g. INPUT:  ", col_name AS col_alias FROM"
+     *                               OUTPUT: "col_alias"
      */
     public static String identifyColumnAlias(String columnSubstring, String columnName) {
         StringBuilder ret = new StringBuilder();
@@ -190,10 +202,13 @@ public class QueryParseUtil {
         boolean candidateAliasFound = false;
         int endIndex = 0;
         int beginIndex = columnSubstring.length() - 2;
+
+        //If last word in string is "FROM", then move begin index to index preceding the "f".
         if(Character.toLowerCase(columnSubstring.charAt(columnSubstring.length() - 1)) == 'm'){
             beginIndex = columnSubstring.length() - 5;
         }
 
+        //iterate backwards through string and identify index of the first number, letter or quotation mark (i.e. first index of possible alias)
         for(int i = beginIndex; i > 0; i--){
             if(columnSubstring.charAt(i) == ' ') continue;
             else if(columnSubstring.charAt(i) == '"'){
@@ -210,6 +225,7 @@ public class QueryParseUtil {
             else return "";
         }
 
+        //parse backwards from the index found in the loop above until the beginning of the word is reached
         if(candidateAliasFound){
             int i = endIndex;
             if(startsWithQuote){
@@ -230,7 +246,9 @@ public class QueryParseUtil {
         }
 
         String returnString = ret.reverse().toString();
+        //if the word found is the column Name, then no alias was used
         if(returnString.toLowerCase().equals(columnName.toLowerCase())) return "";
+        //otherwise return the word
         return returnString;
 
     }
@@ -238,9 +256,11 @@ public class QueryParseUtil {
 
     /**
      * Identifies any prefix used with a column name
-     * @param query         SELECT statement substring returned by splitQuery()
-     * @param columnName    Index 1 of array returned by identifyColumnName()
-     * @return              Returns prefix used with a column name
+     * @param query         A substring returned by splitQuery() that corresponds to column in question
+     * @param columnName    Index 1 of array returned by identifyColumnName() (i.e. column name, ignoring any functions used on it)
+     * @return              Returns prefix used with a column name, if any. Else returns null.
+     *                      E.g. Input:     ", C.col_name FROM"
+     *                           Output     "C"
      */
     public static String identifyColumnPrefix(String query, String columnName){
         Matcher prefixMatcher = Pattern.compile("(?i)(\\b\\w+|\"[^\"]+\")(?=\\s*\\.\\s*\\Q" + columnName + "\\E)").matcher(query);
@@ -250,7 +270,8 @@ public class QueryParseUtil {
 
 
     /**
-     * @param query Output of a call to identifyFromToEnd() or identifyFromToEndOrSetOperator()
+     * @param query The FROM (...) [END OF QUERY] portion of a select statement
+     *              NOTE: Use output of a call to identifyFromToEnd() or identifyFromToEndOrSetOperator()
      * @return Identifies all nested Selects (selects which follow a FROM or a JOIN keyword) exactly one level below the select
      *      * statement in question. Returns all subselects from SELECT to either closing parenthesis (exclusive) or to
      *      * first set operator (UNION, MINUS, INTERSECT)  that corresponds to subselect (exclusive). Maps this subselect to
@@ -268,7 +289,7 @@ public class QueryParseUtil {
         int numParentheses;
         int numQuotes;
         boolean setOperatorFound = false;
-        ArrayList<Integer> setOperatorIndexes = identifyAllSetOperatorIndexes(query);
+        ArrayList<Integer> setOperatorIndexes = identifyAllSetOperatorIndexes(query);   //find indexes of all set operators
         while(true) {
             numParentheses = 0;
             numQuotes = 0;
@@ -280,7 +301,7 @@ public class QueryParseUtil {
                     if (queryPortion.charAt(i) == '"') numQuotes++;
                     else if (queryPortion.charAt(i) == '(' && numQuotes % 2 == 0) numParentheses++;
                     else if (queryPortion.charAt(i) == ')' && numQuotes % 2 == 0) numParentheses--;
-                        //If index is beginning of a set operator, end of select statement is reached
+                    //If index is beginning of a set operator that does not belong to another subselect, end of select statement is reached
                     else if (setOperatorIndexes.contains(i) && numParentheses == 1) {
                         endIndex = i;
                         setOperatorFound = true;
@@ -304,12 +325,19 @@ public class QueryParseUtil {
         }
     }
 
-    /**
-     * @param query Output of a call to identifyFromToEnd() or identifyFromToEndOrSetOperator()
-     * @return Identifies all subselects exactly one level below the select
-     *         statement in question. Returns all subselects from SELECT to either closing parenthesis (exclusive) or to
+    /**        Identifies all subselects exactly one level below the select
+     *         statement in question. Returns all subselects from SELECT (inclusive) to either closing parenthesis (exclusive) or to
      *         first set operator (UNION, MINUS, INTERSECT)  that corresponds to subselect (exclusive). Maps this subselect to
      *         the subselect's alias name (if present)
+     * @param query Output of a call to identifyFromToEnd() or identifyFromToEndOrSetOperator()
+     * @return      Returns the entire subselect from SELECT (inclusive) to the parenthesis ")" that ends the subselect (exclusive)
+     *
+     *              e.g. INPUT:         FROM (SELECT columnName2 FROM tableName) t1
+     *                                  JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)
+     *
+     *                   OUTPUT:        The following mapping will be returned, containing both subselects found:
+     *                                      SELECT columnName2 FROM tableName = t1
+     *                                      SELECT columnName3 FROM anotherTableName = t2
      */
     @SuppressWarnings("Duplicates")
     public static Map<String, String> identifySubselectStatements(String query){
@@ -354,13 +382,15 @@ public class QueryParseUtil {
      * and identifySubselectStatementsToEndOrSetOperator()
      * @param query     Output of identifyFromToEnd() or identifyFromToEndOrSetOperator()
      * @param subSelect subselect statement identified in calling function
-     * @return  name of subselect's alias
+     * @return  name of subselect's alias.
      */
     private static String identifySubSelectAlias(String query, String subSelect){
+        //look for the word that follows a subselect, or the word that follows "AS" after the subselect
         Matcher subSelectAliasMatcher = Pattern.compile("(?i)(?<=\\Q" + subSelect + "\\E\\)\\s{0,999}(AS)?\\s{0,999})(\\w+\\b|\"[^\"]+\")(?<!\\bAS)").matcher(query);
         if(!subSelectAliasMatcher.find()) return null;
         else{
             String subSelectAliasName = query.substring(subSelectAliasMatcher.start(), subSelectAliasMatcher.end());
+            //if the word found is one of these SQL keywords, it is not an alias
             if(!subSelectAliasName.matches("(?i)(ON|FROM|AS|JOIN|WHERE|SELECT|GROUP|HAVING|ORDER)")){
                 return subSelectAliasName.toLowerCase();
             }
@@ -419,12 +449,14 @@ public class QueryParseUtil {
     }
 
     /**
-     * Given the output returned by a call to identifyAllInnerJoinStatementOnClauses(), will identify the
-     * column names of the equivalent columns and their respective aliases, and return them in the form of an
-     * Edge.
+     * Using one element of the list returned by a call to identifyAllInnerJoinStatementOnClauses(), will identify the
+     * column names of the columns being joined as well as their respective aliases, and return both in the form of an Edge.
      * @param onClause  Return value of identifyAllInnerJoinStatementOnClauses(). Looks like "(col1 = col2)"
-     * @return Returns two edges. Index 0 returns an edge connecting the column's names
+     * @return Returns size 2 array of edges.
+     *                            Index 0 returns an edge connecting the column's aliases
      *                            Index 1 returns an edge connecting the column's names
+     *                            e.g. INPUT:                         (a.col1 = b.col2)
+     *                           OUTPUT:  Two edges..   a <-----> b,      col1 <-----> col2
      * @throws Exception Exception will be thrown if column names cannot be identified.
      */
     public static Edge[] identifyEquivalentColumns(String onClause) throws Exception{
@@ -434,8 +466,6 @@ public class QueryParseUtil {
         String col2Alias = "";
         Edge[] ret = new Edge[2];
 
-        //step one: find equals sign, split string into two.
-        //step two, use identifyColumnName and identify Alias Name
         String s1 = "";
         String s2 = "";
         int numQuotes = 0;
@@ -491,17 +521,7 @@ public class QueryParseUtil {
         return ret;
     }
 
-    //Utility function that checks if an on clause is comparing columns on equality rather than inequality.
-    public static boolean isValidOnClause(String onClause){
-        int numQuotes = 0;
-        for(int i = 0; i < onClause.length(); i++){
-            if(onClause.charAt(i) == '\"') numQuotes++;
-            else if ((onClause.charAt(i) == '>' || onClause.charAt(i) == '<' || onClause.charAt(i) == '!') && numQuotes % 2 == 0) return false;
-            else if(onClause.charAt(i) == '=' && numQuotes % 2 == 0) return true;
-        }
 
-        return false;
-    }
 
     //Connects two strings in a graph.
     public static class Edge{

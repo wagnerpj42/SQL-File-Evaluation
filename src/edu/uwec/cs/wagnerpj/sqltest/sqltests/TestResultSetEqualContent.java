@@ -25,39 +25,31 @@ import static edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil.*;
 
 /**		README:
  *
- * 		This algorithm follows the general outline below
- *			(1) Query strings (both desired and given) are parsed for information.
- *				-Column name information is stored in list. Position in list corresponds to position of column in SELECT statement
- *				-Column date format information is stored in list. Position in list corresponds to position of column in SELECT statement
- *				-Most functions (except for to_char, round, and cast) are also included in the column name if present.
- *				-JOIN clauses are parsed to identify which columns are being joined. Stored in a list of Edges to form a graph.
- *					-Only inner joins that compare columns on equality will be considered.
- *				    -Two columns that are joined on equality will form an "Edge"
- *				    -We will store all edges in a List, which creates a traversable graph of equal columns
- *				-If an alias is used instead of column name, subselect statements will be parsed in attempt to resolve alias' column name
- *					-First find column names and aliases of subselect statements
- *					-If column name of outer select statement matches a column alias of a subselect statement column
- *					 then we change the name of the outer select statement column to the column name of the subselect statement column
- *				-Same as above will be executed to resolve column names that exist in the ON clause of a JOIN sattement
- *				-If SELECT * FROM is found, then we pull column name information directly from ResultSetMetaData object
- *			(2) Queries will be executed through JDBC.
- *		     	Given and desired result set rows will be potentially reformatted and converted into a matrix of Strings
- *				-Different date formats will be reformatted into a standardized format
- *				-Long decimals will be truncated (currently to two decimal places)
- *			(3) An attempt is made to map each desired column index to at least one given column index based off of the columns' names
- *				-If a given column name and desired column name match exactly, then they will be matched
- *				-If a given column name and desired column name are connected on the equivalency graph (due to JOIN clauses)
- *				 then they will be matched.
- *		    (4) If (3) succeeds, then we will try to match rows between the result sets based on the column mapping(s) found in (3)
- *		  		-We will record number of missing and extra rows (if any)
- *		  		-The number of missing and extra rows will be used to calculate the final score
- *		  	(5) We will then try to match desired and given result sets using a different strategy
- *		  		-Look for any rows that match between given and desired result sets
- *		  		-If two rows match, see if all other rows can be matched according to the same column-mapping used to match the first row
- *		  		-If (3) and (4) were executed, but we find a better score, then issue a warning to the professor
- *		  		-Otherwise, record the best score found using this method.
+ * 		TestResultSetEqualContent will compare a student's result set to the solution result set and determine
+ * 		a student's score according to a ratio between # of correct rows and # of incorrect (extra or missing) rows.
  *
- *		  	As seen above, two strategies are employed in attempt to match rows between desired and given result sets.
+ *		In order to to this, the following operations will be performed.
+ *			(1) Student's and Solution's queries will be executed through JDBC and their ResultSet object instances will be acquired.
+ *			(2) Both ResultSet objects will be processed into a matrices. Some data entries will be reformatted during this step.
+ *				  -Dates will be reformatted into a standardized format so that we can more easily compare them.
+ * 				  -Long decimals will be truncated to two decimal places so we can more easily compare tables with different rounding strategies.
+ * 			(3) In order to compare result sets, we need to know which column of the student's result set corresponds to which
+ * 				column in the solution result set. We will *attempt* to do this by parsing the query strings and identify
+ * 				column names in both queries, and see if we can match columns based off of their column names
+ * 				  -We will also take into consideration any JOIN'ed columns so that, for example, a foreign key
+ * 				  can be matched with it's corresponding primary key and vice versa.
+ * 				  -It is possible that a column name corresponds to an alias name defined in a subselect statement.
+ * 				  		e.g SELECT aliasName FROM (SELECT col1 as aliasName))
+ * 				  In this case, an attempt to retrieve the original column name will be made by parsing subselect statements.
+ * 			(4) If (3) succeeds, we will see how many rows we can match between both result sets according to any column associations found.
+ *			(5) We will now employ a different strategy to match rows between the result sets. We will attempt to find ONE example
+ *				of two rows that can be matched between the result sets, and we will store in memory a mapping of which columns
+ *				mapped to eachother during the matching. Any time a match is found, we will attempt to match all other rows
+ *				according to the column mapping used to match the first two rows. If a perfect match is found, we are done,
+ *				otherwise we will keep searching for possible matches and keep track of the best case.
+ *
+ *
+ *		  	As seen above, two strategies are employed in attempt to match rows between desired and solution result sets.
  *		  	The two strategies differ in the manner that they attempt to identify which given columns correspond to each desired column
  *		    between the two result sets.
  *
@@ -72,10 +64,12 @@ import static edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil.*;
  *		  		-If we match all rows, we are done
  *		  		-If not all rows match, we will continue looking for matches until all potential matches have been tested
  *
- *		 Strategy (1) might not succeed in creating a column association, in which case strategy (2) will be employed.
- *		 If strategy (1) does succeed, we will still test strategy (2) to ensure that scores of both tests are equal.
- *		 If scores are unequal, then either (1) returned with a false-positive column mapping or (2) returned with a
- *		 false-negative. We will issue a warning to the professor in this case so the situation can be analyzed.
+ *		 Both strategies should hypothetically (and in almost all cases, will) will calculate the same score for a given
+ *		 answer to a given question. However, there are a few edge cases where strategy 2 can fire a false-positive (answer
+ *		 was incorrect but marked correct), and potentially some cases where strategy 1 can misfire as well. These cases
+ *		 are rare, but to maximize correctness both strategies will be executed. This way, if the strategies
+ *		 result in two different scores we can issue a warning to the professor in a warnings file so that the
+ *		 answer can be investigated.
  *
  *
  * 		 NOTE: If more functions are found that should be ignored by the query-parsing portion of the algorithm, go to
@@ -92,23 +86,23 @@ import static edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil.*;
 
 @SuppressWarnings("Duplicates")
 public class TestResultSetEqualContent implements ISQLTest {
-	private int numDuplicates;
-	private int numUnmatchedRows;
+	private int numDuplicates;															//total number of student's duplicate rows
+	private int numUnmatchedRows;														//total number of student's stricly incorrect rows
 
-	private ArrayList<Map<Integer, Integer>> failedMappings = new ArrayList<Map<Integer, Integer>>();
-	private ArrayList<Map<Integer, Integer>> failedMappingTemp = new ArrayList<Map<Integer, Integer>>();
-	private boolean columnAssociationCompleted = false;
-	private ArrayList<Edge> givenColumnNameEquivalenceGraph = new ArrayList<Edge>();
-	private ArrayList<Edge> desiredColumnNameEquivalenceGraph = new ArrayList<Edge>();
-	private ArrayList<String[]> extraRows = new ArrayList<String[]>();
-	private ArrayList<String[]> missingRows = new ArrayList<String[]>();
-	private ArrayList<Boolean> desiredMonthFirstFormat = new ArrayList<>();
-	private ArrayList<Boolean> givenMonthFirstFormat = new ArrayList<>();
-	private String[][] desiredResultMatrix;
-	private String[][] givenResultMatrix;
-	private ResultSetMetaData rsmdGiven = null;
-	private ResultSetMetaData rsmdDesired = null;
-	private TestResult testResult = new TestResult();
+	private ArrayList<Map<Integer, Integer>> failedMappings = new ArrayList<Map<Integer, Integer>>();		//attempted column mappings performed by algorithm
+	private ArrayList<Map<Integer, Integer>> failedMappingTemp = new ArrayList<Map<Integer, Integer>>();	//temporary storage for failed mappings
+	private boolean columnAssociationCompleted = false;									//switch-variable for if query-parse was successful
+	private ArrayList<Edge> givenColumnNameEquivalenceGraph = new ArrayList<Edge>();	//student's graph to determine equivalent column names
+	private ArrayList<Edge> desiredColumnNameEquivalenceGraph = new ArrayList<Edge>();	//solution's graph to determine equivalent column names
+	private ArrayList<String[]> extraRows = new ArrayList<String[]>();							//extra rows (student provided, but should not have)
+	private ArrayList<String[]> missingRows = new ArrayList<String[]>();						//missing rows (student did not provide, but should have)
+	private ArrayList<Boolean> desiredMonthFirstFormat = new ArrayList<>();				//boolean arrays for if a column contains "yyyy-mm-dd"
+	private ArrayList<Boolean> givenMonthFirstFormat = new ArrayList<>();					//or "mm-dd-yy[yy] date formats
+	private String[][] desiredResultMatrix;												//Array to hold solution's result set entries
+	private String[][] givenResultMatrix;												//Array to hold student's result set entries
+	private ResultSetMetaData rsmdGiven = null;											//Student's result set's meta data
+	private ResultSetMetaData rsmdDesired = null;										//Solution's result set's meta data
+	private TestResult testResult = new TestResult();									//return value for ISQLTest()
 
 
 	// default constructor
@@ -118,17 +112,12 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 	// sqlTest - from interface
 
-	//TODO: Allow additional options on each column. Decimal length, deactivate formatting.
-	//TODO: Allow multiple return values. Number of points returned. Incorrect rows. Warnings for professor
-	//TODO: Check both versions of algorithm. If they are not equivalent, issue a warning for grader to hand-check.
-	//TODO: Clean-up / refactoring
 
 	public TestResult sqlTest(IDAO dao, Query givenQuery, String desiredQueryString){
 		int result = 10;                        // result on scale 0 to 10
-		this.numDuplicates = Integer.MAX_VALUE;
+		this.numDuplicates = Integer.MAX_VALUE;	 //We will be looking for minimum numUnmatched and numDuplicates, so set to MAX_VALUE initially
 		this.numUnmatchedRows = Integer.MAX_VALUE;
-		//String givenResultString = "";		// result set string returned from given query
-		//String desiredResultString = "";	// result set string returned from desired query
+
 		ResultSet rsetGiven = null;
 		ResultSet rsetDesired = null;
 		// summary of result set's metadata
@@ -145,73 +134,70 @@ public class TestResultSetEqualContent implements ISQLTest {
 		int desiredColCt = 0;
 		//String desiredColSet = null;
 
-		// 1) execute given query, get result set matrix for given query
+		// 1) execute given query, get resultSet and Metadata
 		dao.connect();
-
 		try {
 			rsetGiven = dao.executeSQLQuery(givenQuery.toString());
 			rsmdGiven = rsetGiven.getMetaData();
 			summaryGiven = dao.processResultSet(rsetGiven);
-			//givenResultString = summary.getResultString();
-			rsetGiven.beforeFirst();
+			rsetGiven.beforeFirst();	//move result set cursor to start
 		} catch (Exception e) {
 			System.err.println("Error executing SQL/processing result set for given");
-			//givenResultString = "given_error";
-			givenResultMatrix = new String[0][0];
 			System.out.println("RESULT: 0");
 			return new TestResult(0);
 		}
+		//get row and column counts
 		givenRowCt = summaryGiven.getNumRows();
 		givenColCt = summaryGiven.getNumCols();
 
 
-		// 2) execute desired query, get result set matrix
-
-
+		// 2) execute desired query
 		try {
 			rsetDesired = dao.executeSQLQuery(desiredQuery.toString());
 			rsmdDesired = rsetDesired.getMetaData();
 			summaryDesired = dao.processResultSet(rsetDesired);
-			//desiredResultString = summary.getResultString();
-			//System.out.println(desiredResultString);
 			rsetDesired.beforeFirst();
 		} catch (Exception e) {
 			System.err.println("Error executing SQL/processing result set for desired");
-			//desiredResultString = "desired_error";
 		}
 
 		desiredRowCt = summaryDesired.getNumRows();
 		desiredColCt = summaryDesired.getNumCols();
 
-		//desiredColSet = summary.getColumnSet();
 
+		//Attempt matching student and solution's columns based off of column names found in queries
 		Map<Integer, ArrayList<Integer>> columnAssociations = attemptColumnAssociation(desiredQueryString, givenQuery.toString());
+
+		//Convert student and solution's result sets to a matrix.
 		try{
-			desiredResultMatrix = resultSetToMatrix(rsetDesired, desiredColCt, desiredRowCt, desiredMonthFirstFormat);
+			desiredResultMatrix = convertResultSetToMatrix(rsetDesired, desiredColCt, desiredRowCt, desiredMonthFirstFormat);
 		}
 		catch(Exception e){
 			System.out.println("Could not process desired matrix.");
 		}
 		try {
-			givenResultMatrix = resultSetToMatrix(rsetGiven, givenColCt, givenRowCt, givenMonthFirstFormat);
+			givenResultMatrix = convertResultSetToMatrix(rsetGiven, givenColCt, givenRowCt, givenMonthFirstFormat);
 		}
 		catch(Exception e){
 			System.out.println("Could not process given matrix.\nRESULT: 0");
 			return new TestResult(0);
 		}
-		System.out.println("GIVEN:\n" + Arrays.deepToString(givenResultMatrix) + "\n\n" + "DESIRED:\n" + Arrays.deepToString(desiredResultMatrix) + "\n");
+		//System.out.println("GIVEN:\n" + Arrays.deepToString(givenResultMatrix) + "\n\n" + "DESIRED:\n" + Arrays.deepToString(desiredResultMatrix) + "\n");
 		dao.disconnect();
 
 
 
-		//if column association(s) successfully identified, use to match rows
+		//if student and solution's column indexes successfully matched based off of column names, then use the
+		//mapping to find number of matching rows between the two result sets.
 		if(columnAssociations != null){
-			matchAll(columnAssociations, new boolean[givenColCt], new HashMap<Integer, Integer>(), 0, 0);
+			matchResultSetsWithColumnAssociations(columnAssociations, new boolean[givenColCt], new HashMap<Integer, Integer>(), 0, 0);
 			columnAssociationCompleted = true;
 		}
-		//otherwise attempt to build / test association rules based on resultSet content.
+		//Find number of matching rows between student and solution result sets, using column content to
+		//match the columns.
 		matchResultSets();
 
+		//calculate final score
 		int numMatched = desiredRowCt - numUnmatchedRows - numDuplicates;
 		if(desiredRowCt != 0){
 			result = (int)(((double)numMatched / ((double)(numMatched + 3 * (numUnmatchedRows + numDuplicates))) * 10.0));
@@ -223,19 +209,19 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 		if(result < 0) result = 0;
 
-		System.out.println("numUnmatched: " + numUnmatchedRows);
+		/*System.out.println("numUnmatched: " + numUnmatchedRows);
 		System.out.println("numDuplicates: " + numDuplicates);
 		System.out.println("result: " + result);
-		System.out.println("\nMissing rows:");
+		System.out.println("\nMissing rows:");*/
 		for(int i = 0; i < missingRows.size(); i++) System.out.println(Arrays.toString(missingRows.get(i)));
-		System.out.println("\nExtra rows:" );
+		//System.out.println("\nExtra rows:" );
 		for(int i = 0; i < extraRows.size(); i++) System.out.println(Arrays.toString(extraRows.get(i)));
+
+		//load values into TestResult object and return
 		testResult.setScore(result);
 		testResult.setExtraRows(extraRows);
 		testResult.setMissingRows(missingRows);
 		return testResult;
-
-
 	}    // end - method sqlTest
 
 
@@ -251,16 +237,16 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 	/**
 	 * matchResultSets()
-	 * For the very first row of the given Result Set, we will look for a match in the desired Result set
-	 * Any time we find a match within matchRows(), matchRows() will call matchRest() to check if ALL other
-	 * rows can be matched according to the same column-matching schema.
-	 * If loop exits without finding a match, we have at least one strictly wrong row, and will return false.
+	 * Will attempt to match student rows and solution rows. Will return true if a perfect match can be found,
+	 * otherwise will continue searching for possible matches, and return false if no perfect match was ultimately found.
+	 * Call to matchOne() will be used to determine if two rows match. If so, matchOne() will call matchRest() to determine
+	 * if all other rows can be matched according to the same column-mapping schema used to find the first match.
 	 */
 
 	private boolean matchResultSets() {
-		//if either array is empty, return true if both are empty.
-		//otherwise, set unmatched rows.
-		if (desiredResultMatrix.length == 0 || givenResultMatrix.length == 0) {            //for cases involving an empty matrix
+		//if either array is empty, return true if both are empty and false if only one is non-empty
+		//also populate unmatched rows array and determine number of incorrect rows (equal to number of rows in the non-empty result set)
+		if (desiredResultMatrix.length == 0 || givenResultMatrix.length == 0) {
 			for(int i = 0; i < desiredResultMatrix.length; i++) missingRows.add(desiredResultMatrix[i]);
 			for(int j = 0; j < givenResultMatrix.length; j++)	extraRows.add(givenResultMatrix[j]);
 			if(desiredResultMatrix.length == 0 && givenResultMatrix.length == 0){
@@ -273,9 +259,11 @@ public class TestResultSetEqualContent implements ISQLTest {
 			return false;
 		}
 
-		//for each desired row, see if we can match a given row
+		//for each desired row, see if we can match it with a given row,
 		for (int i = 0; i < givenResultMatrix.length; i++) {
 			for(int j = 0; j < desiredResultMatrix.length; j++)
+				//hand control flow to matchOne(), which will check if rows match, and if so, call matchRest() to see if all other rows
+				//	can be matched
 				if (matchOne(desiredResultMatrix[j], givenResultMatrix[i],
 						new boolean[desiredResultMatrix[0].length], new boolean[givenResultMatrix[0].length],
 						new HashMap<Integer, Integer>(), 0, 0, i, j, new boolean[givenResultMatrix[0].length])) {
@@ -283,8 +271,8 @@ public class TestResultSetEqualContent implements ISQLTest {
 				}
 		}
 
-		//if numUnmatchedRows and numDuplicates remain default values (MAX_VALUE), then no desired rows matched with any given rows.
-		//set numUnmatched to total row counts of both matrices.
+		//if numUnmatchedRows and numDuplicates remain default values (MAX_VALUE), then no desired rows have matched with any given rows.
+		//set numUnmatched to total row counts of both matrices to reflect this
 		if(numUnmatchedRows == Integer.MAX_VALUE && numDuplicates == Integer.MAX_VALUE){
 			for(int i = 0; i < desiredResultMatrix.length; i ++) missingRows.add(desiredResultMatrix[i]);
 			for(int j = 0; j < givenResultMatrix.length; j++)	 extraRows.add(givenResultMatrix[j]);
@@ -296,9 +284,11 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 
-	//Will attempt to match one desired row with one given row
-	//If successful, matchRest() will be called to see how many other rows can be matched according to same column mapping used to
-	//match the first pair of rows.
+	/**
+	 * Will attempt to match a student's row and a solution row, keeping track of which column indexes are being matched.
+	 * If the rows match, then matchRest() will be called to determine how many other rows in the result sets can be
+	 * matched according to the same index-association used to make the first match.
+	 */
 	@SuppressWarnings("Duplicates")
 	private boolean matchOne(String[] desiredRow, String[] givenRow, boolean[] desiredMarked, boolean[] givenMarked,
 							 HashMap<Integer, Integer> columnMapping,
@@ -306,7 +296,6 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 		//Base case
 		if (desiredColumnIndex == desiredRow.length) return false;
-		Map<Integer, Integer> mapSnapshot = null;
 		for (int j = 0; j < givenRow.length; j++) {
 			//if we can match two unmarked elements...
 			if (givenRow[j].equals(desiredRow[desiredColumnIndex]) && !desiredMarked[desiredColumnIndex] && !givenMarked[j]) {
@@ -463,7 +452,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		if (numOfExtraRows + numOfMissingRows + numOfDuplicates == 0) {
 			//If columnAssociation was completed and we found a better score than it, issue a warning to Professor
 			if(columnAssociationCompleted && (numUnmatchedRows + numDuplicates) != 0){
-				testResult.setWarning(true);
+				testResult.addWarning(TestResult.MISMATCHED_SCORE_WARNING);
 				return true;
 			}
 			else{
@@ -476,9 +465,9 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 			//Otherwise not a perfect match. Check if it is best answer found so far, and return false.
 		} else if (numOfMissingRows + numOfExtraRows < numUnmatchedRows) {
-			//If columnAssociation was completed
+			//If columnAssociation was already completed, issue warning to professor.
 			if(columnAssociationCompleted){
-				testResult.setWarning(true);
+				testResult.addWarning(TestResult.MISMATCHED_SCORE_WARNING);
 			}
 			else{
 				numUnmatchedRows = numOfMissingRows + numOfExtraRows;
@@ -492,33 +481,21 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return false;
 	}
 
-	//if column association was found in attemptColumnAssociation(), then test any column association found
-	private void matchAll(Map<Integer, ArrayList<Integer>> columnAssociations, boolean[] markedGivenColumns, boolean[] markedDesiredColumns, HashMap<Integer, Integer> columnMapping, int numCols){
-		for(Integer desiredColumn : columnAssociations.keySet()){
-			for(Integer givenColumn : columnAssociations.get(desiredColumn)){
-				if(markedDesiredColumns[desiredColumn]) continue;
-				if(markedGivenColumns[givenColumn]) continue;
-				columnMapping.put(desiredColumn, givenColumn);
-				markedGivenColumns[givenColumn] = true;
-				markedDesiredColumns[desiredColumn] = true;
-				numCols++;
-				if(numCols == columnAssociations.size()) matchRest(columnMapping, -1, -1, new boolean[markedGivenColumns.length]);
-				else matchAll(columnAssociations, markedGivenColumns, markedDesiredColumns, columnMapping, numCols);
-				numCols--;
-				markedGivenColumns[givenColumn] = false;
-			}
-			markedDesiredColumns[desiredColumn] = false;
-		}
-	}
-
-	private void matchAll(Map<Integer, ArrayList<Integer>> columnAssociations, boolean[] markedGivenColumns, HashMap<Integer, Integer> columnMapping, int numCols, int currDesiredCol){
+	/**	matchResultSetsWithColumnAssociations() will attempt to match all rows of student result set with all rows of solution result set
+	 * according to all possible column-matching schemas found by the attemptColumnAssociation() method if at least one was found
+	 * Will adjust instance variables numDuplicates, numUnmatchedRows to determine correctness of student result set.
+	 */
+	private void matchResultSetsWithColumnAssociations(Map<Integer, ArrayList<Integer>> columnAssociations, boolean[] markedGivenColumns, HashMap<Integer, Integer> columnMapping, int numCols, int currDesiredCol){
 		for(Integer givenColumn : columnAssociations.get(currDesiredCol)){
+			//if givenColumn has already been accounted for, try next
 			if(markedGivenColumns[givenColumn]) continue;
+			//else add this column to our column mapping and mark as visited
 			columnMapping.put(currDesiredCol, givenColumn);
 			markedGivenColumns[givenColumn] = true;
 			numCols++;
+			//if column mapping is complete, then try to matchRest()
 			if(numCols == columnAssociations.size()) matchRest(columnMapping, -1, -1, new boolean[markedGivenColumns.length]);
-			else matchAll(columnAssociations, markedGivenColumns, columnMapping, numCols, currDesiredCol + 1);
+			else matchResultSetsWithColumnAssociations(columnAssociations, markedGivenColumns, columnMapping, numCols, currDesiredCol + 1);
 			numCols--;
 			markedGivenColumns[givenColumn] = false;
 		}
@@ -526,16 +503,11 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 	/**
 	 * isMatch()
-	 * Attempts to match two rows according to the column matching schema in question.
-	 *
-	 * @param givenRow       The given row in question.
-	 * @param desiredRow     The desired row in question.
-	 * @param columnMappings The column matching schema in question.
-	 * @return True if match. False if not.
+	 * Attempts to match two rows according to a given column-mapping schema
+	 * If date formats need to be swapped (dd-mm-yyyy to mm-dd-yyyy etc OR yyyy-mm-dd to yyyy-dd-mm) then swap will occur
+	 * before determining equality
 	 */
 
-	//Test if two rows match according to a supplied columnMapping, which associates desired and given column indexes
-	//Will make sure date format is corrected if a dd-mm-yyyy date format is being tested against a mm-dd-yyyy date format
 	private boolean isMatch(String[] givenRow, String[] desiredRow, HashMap<Integer, Integer> columnMappings, boolean[] isReversedDate) {
 		int size = columnMappings.keySet().size();
 		for (int i = 0; i < size; i++) {
@@ -547,13 +519,20 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return true;
 	}
 
-	//checks if a dd-mm-yyyy formatted column matches a mm-dd-yyyy formatted column
+	/**
+	 * Determines if two result set entries can be matched if the month and day positions on a date format are switched.
+	 * Used by matchResultSet() call stack to differentiate between a dd-mm-yy[yy] and mm-dd-yy[yy] date format
+	 * as well as a yyyy-mm-dd and yyyy-dd-mm date format
+	 */
 	private boolean reversedDateMatches(String s1, String s2) {
+		//if string looks like dd-mm-yyyy or mm-dd-yyyy, switch positions of mm and dd on just one of the strings and compare
 		if ((s1.matches("\\d{2}-\\d{2}-\\d{4}\\s.*") && s2.matches("\\d{2}-\\d{2}-\\d{4}\\s.*"))) {
 			String day = s1.substring(0, 2);
 			String month = s1.substring(3, 5);
 			s1 = month + "-" + day + s1.substring(5, s1.length());
 			return s1.equals(s2);
+
+		//if string looks like yyyy-mm-dd or yyyy-dd-mm, switch positions of mm and dd on just one of the strings and compare
 		} else if ((s1.matches("\\d{4}-\\d{2}-\\d{2}\\s.*") && s2.matches("\\d{4}-\\d{2}-\\d{2}\\s.*"))) {
 			String day = s1.substring(5, 7);
 			String month = s1.substring(8, 10);
@@ -564,17 +543,23 @@ public class TestResultSetEqualContent implements ISQLTest {
 		}
 	}
 
-	//Converts a resultSet into a matrix
-	private String[][] resultSetToMatrix(ResultSet resultSet, int numCols, int numRows, ArrayList<Boolean> monthFirstDateFormat) throws SQLException {
+	/**
+	 * 	Converts a result set into a matrix
+	 *  Any dates will be reformatted into a "dd-mm-yyyy HH:mm:ss" timestamp to make comparisons easier
+	 *  Any long decimals will be truncated to two decimal places to make comparisons easier
+	 */
+	private String[][] convertResultSetToMatrix(ResultSet resultSet, int numCols, int numRows, ArrayList<Boolean> monthFirstDateFormat) throws SQLException {
 		String[][] ret = null;
 		try {
+			//create matrix with same proportions as the result set
 			ret = new String[numRows][numCols];
 			int i = 0;
+			//iterate through the result set, reformatting each entry (if applicable) and add it to our matrix
 			while (resultSet.next()) {
 				for (int j = 1; j <= numCols; j++) {
 					String s = resultSet.getString(j);                                //grab string
 					if (resultSet.wasNull()) s = "NULL";                    //take care of null values
-					else{s = reformat(s, monthFirstDateFormat.get(j-1));}									//reformat decimals and dates
+					else{s = reformatResultSetEntry(s, monthFirstDateFormat.get(j-1));}									//reformat decimals and dates
 					ret[i][j - 1] = s;
 				}
 				i++;
@@ -585,8 +570,11 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return ret;
 	}
 
-	//reformats a result set entry, standardizing it if it is a date, or truncating it if it is a long decimal
-	private String reformat(String s, Boolean isMonthFirst) {
+	/**
+	 * 	Reformats a result set entry, standardizing it to "dd-mm-yyyy HH:mm:ss" formatted timestamp if it is a date,
+	 * 	or truncating it if it is a long decimal.
+	 */
+	private String reformatResultSetEntry(String s, Boolean isMonthFirst) {
 		DateFormat dfStandardized = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 		//Convert decimal values to standardized form
 		if (s.matches("-?\\d*\\.\\d+(E(-?)\\d+)?")) {
@@ -676,7 +664,9 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return s;
 	}
 
-	//Attempts to create a column association between two queries based off of column names
+	/**	Will attempt to parse both queries and determine if columns can be mapped between the queries based off of
+	 *  column names and/or JOINED columns
+	 */
 	private Map<Integer, ArrayList<Integer>> attemptColumnAssociation(String desiredQuery, String givenQuery){
 		try {
 			//delete comments in both queries
@@ -754,7 +744,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 
 
-	/**	Will record all information related to a SELECT statement's columns, including names, aliases, and date format.
+	/**	Will return all information related to a SELECT statement's columns, including names, aliases, and date format.
 	 *  If SELECT statement has corresponding subselect statements, function will be called recursively to record subselect column information
 	 *  in which case subselect column's information will be used to resolve any ambiguities present in original select statement.
 	 *
@@ -819,7 +809,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 						//Parse all JOIN statements to find equivalent columns, and add them to equivalency graph
 						ArrayList<String> innerJoinStatements = identifyAllInnerJoinStatementOnClauses(fromToEnd);
 						for (String innerJoinStatement : innerJoinStatements) {
-							if (QueryParseUtil.isValidOnClause(innerJoinStatement)) {
+							if (isValidOnClause(innerJoinStatement)) {
 								Edge[] results = identifyEquivalentColumns(innerJoinStatement);
 								if (results[1] != null){
 									columnNameEquivalenceGraphAliases.add(results[0]);
@@ -960,7 +950,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		else return colName;
 	}
 
-	//changes a column name to a different name, without changing functions
+	//changes ONLY the column name without modifying functions used on the column
 	private String adjustColumnNameOnly(String newName, String oldName) {
 		int quoteCount = 0;
 		int colonIndex = -1;
@@ -975,7 +965,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return ret;
 	}
 
-	//checks if a columnString [SELECT | ,] column_logic_here [, | FROM] corresponds to a mm-dd-yyyy or a yyyy-mm-dd format
+	//checks if a columnString corresponds to a mm-dd-yyyy or a yyyy-mm-dd format
 	private boolean isMonthFirstFormattedDate(String query){
 		Pattern pattern = Pattern.compile("(?i)(yyyy|yy)\\s*(-|,|\\s+|\\\\|/|:|\\.|\\|)\\s*MM\\s*(-|,|\\s+|\\\\|/|:|\\.|\\|)\\s*dd");
 		Matcher matcher = pattern.matcher(query);
@@ -999,25 +989,22 @@ public class TestResultSetEqualContent implements ISQLTest {
 		return ret.toString();
 	}
 
-	private void main(String[] args) {
+	//Utility function that checks if an on clause is comparing columns on equality rather than inequality.
+	private boolean isValidOnClause(String onClause){
+		int numQuotes = 0;
+		for(int i = 0; i < onClause.length(); i++){
+			if(onClause.charAt(i) == '\"') numQuotes++;
+			else if ((onClause.charAt(i) == '>' || onClause.charAt(i) == '<' || onClause.charAt(i) == '!') && numQuotes % 2 == 0) return false;
+			else if(onClause.charAt(i) == '=' && numQuotes % 2 == 0) return true;
+		}
 
-		//If not at top level of algorithm,
-	//	OracleDataAccessObject dao = new OracleDataAccessObject("alfred.cs.uwec.edu", "csdev", "vaugharj", "UZ6TO9P");
-	//	TestResultSetEqualContentGood trsec = new TestResultSetEqualContentGood();
-		String s =
-				"SELECT col1 FROM(SELECT col1 FROM(SELECT col1 FROM TABLE) UNION SELECT COL1 FROM TABLE)" +
-						"WHERE col1 IN (SELECT WHERECOL1 FROM TABLE WHERE col1 IN (SELECT WHERECOL2 FROM TABLE)))";
-		System.out.println(identifyNestedSelectStatementsToEndOrSetOperator(s));
-		System.out.println(identifySubselectStatements(s));
-
-
+		return false;
 	}
 
 
-
-
-
-
+	/**
+	 * Return value for parseSelectStatement() method
+	 */
 	private static class ParseResult{
 
 		ArrayList<String> colNames;
@@ -1025,6 +1012,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		ArrayList<Boolean> monthDateFormats;
 		ArrayList<String> colSubselectAliases;
 		ArrayList<Edge> colNameEquivalenceGraph;
+
 		public ParseResult(ArrayList<String> colNames, ArrayList<String> colAliases, ArrayList<Boolean> monthDateFormats,
 						   ArrayList<String> colSubselectAliases, ArrayList<Edge> colNameEquivalenceGraph){
 			this.colNames = colNames;
@@ -1052,4 +1040,4 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}
 
 
-}	// end - class TestResultSetEqualContentv1
+}	// end - class TestResultSetEqualContent
