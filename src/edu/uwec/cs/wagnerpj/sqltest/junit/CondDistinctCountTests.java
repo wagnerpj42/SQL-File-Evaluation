@@ -30,15 +30,15 @@ public class CondDistinctCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with no distinct
-		assertEquals(condDC.sqlTest(testDAO, creatureAllQuery, " >= 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, creatureAllQuery, " >= 1").getScore(), 0);
 		// valid nested query with one distinct
-		assertEquals(condDC.sqlTest(testDAO, nestedQuery, " == 1"), 10);
+		assertEquals(condDC.sqlTest(testDAO, nestedQuery, " == 1").getScore(), 10);
 		// null query has no distincts
-		assertEquals(condDC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select/improper table has no distincts
-		assertEquals(condDC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no distincts
-		assertEquals(condDC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condDC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondFromCountTests

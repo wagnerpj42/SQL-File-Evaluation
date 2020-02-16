@@ -30,15 +30,15 @@ public class CondFromCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one from
-		assertEquals(condFC.sqlTest(testDAO, creatureAllQuery, " >= 1"), 10);
+		assertEquals(condFC.sqlTest(testDAO, creatureAllQuery, " >= 1").getScore(), 10);
 		// valid nested query with two froms
-		assertEquals(condFC.sqlTest(testDAO, nestedQuery, " == 2"), 10);
+		assertEquals(condFC.sqlTest(testDAO, nestedQuery, " == 2").getScore(), 10);
 		// null query has no froms
-		assertEquals(condFC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condFC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select/improper table has no froms
-		assertEquals(condFC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condFC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no froms
-		assertEquals(condFC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condFC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondFromCountTests

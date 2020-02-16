@@ -30,17 +30,17 @@ public class CondIntersectCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one intersect
-		assertEquals(condIC.sqlTest(testDAO, intersectQuery, " == 1"), 10);		
+		assertEquals(condIC.sqlTest(testDAO, intersectQuery, " == 1").getScore(), 10);		
 		// valid query displaying count with one group by but no intersect
-		assertEquals(condIC.sqlTest(testDAO, groupByQuery, " >= 1"), 0);
+		assertEquals(condIC.sqlTest(testDAO, groupByQuery, " >= 1").getScore(), 0);
 		// valid nested query with two selects but no intersects
-		assertEquals(condIC.sqlTest(testDAO, nestedQuery, " == 0"), 10);
+		assertEquals(condIC.sqlTest(testDAO, nestedQuery, " == 0").getScore(), 10);
 		// null query has no intersects
-		assertEquals(condIC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condIC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select but little else has no intersects
-		assertEquals(condIC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condIC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no intersects
-		assertEquals(condIC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condIC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondIntersectCountTests

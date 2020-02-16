@@ -30,17 +30,17 @@ public class CondWhereCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with no wheres
-		assertEquals(condWC.sqlTest(testDAO, creatureAllQuery, " == 0"), 10);
+		assertEquals(condWC.sqlTest(testDAO, creatureAllQuery, " == 0").getScore(), 10);
 		// valid query with one where
-		assertEquals(condWC.sqlTest(testDAO, creatureZeroQuery, " == 1"), 10);
+		assertEquals(condWC.sqlTest(testDAO, creatureZeroQuery, " == 1").getScore(), 10);
 		// valid nested query with one where
-		assertEquals(condWC.sqlTest(testDAO, nestedQuery, " == 1"), 10);
+		assertEquals(condWC.sqlTest(testDAO, nestedQuery, " == 1").getScore(), 10);
 		// null query has no wheres
-		assertEquals(condWC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condWC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select has no wheres
-		assertEquals(condWC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condWC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no wheres
-		assertEquals(condWC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condWC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondWhereCountTests

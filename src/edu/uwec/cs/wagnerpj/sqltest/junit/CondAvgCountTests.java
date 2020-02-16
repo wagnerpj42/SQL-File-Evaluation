@@ -30,17 +30,17 @@ public class CondAvgCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one avg
-		assertEquals(condAC.sqlTest(testDAO, avgQuery, " == 1"), 10);		
+		assertEquals(condAC.sqlTest(testDAO, avgQuery, " == 1").getScore(), 10);		
 		// valid query displaying count with one group by but no avg
-		assertEquals(condAC.sqlTest(testDAO, groupByQuery, " >= 1"), 0);
+		assertEquals(condAC.sqlTest(testDAO, groupByQuery, " >= 1").getScore(), 0);
 		// valid nested query with two selects but no avgs
-		assertEquals(condAC.sqlTest(testDAO, nestedQuery, " == 0"), 10);
+		assertEquals(condAC.sqlTest(testDAO, nestedQuery, " == 0").getScore(), 10);
 		// null query has no avgs
-		assertEquals(condAC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condAC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select but little else has no avgs
-		assertEquals(condAC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condAC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no avgs
-		assertEquals(condAC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condAC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondAvgCountTests

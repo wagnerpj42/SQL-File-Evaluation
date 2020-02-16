@@ -30,15 +30,15 @@ public class CondOrderByCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one group by
-		assertEquals(condOBC.sqlTest(testDAO, orderByQuery, " >= 1"), 10);
+		assertEquals(condOBC.sqlTest(testDAO, orderByQuery, " >= 1").getScore(), 10);
 		// valid nested query with no group bys
-		assertEquals(condOBC.sqlTest(testDAO, nestedQuery, " == 1"), 0);
+		assertEquals(condOBC.sqlTest(testDAO, nestedQuery, " == 1").getScore(), 0);
 		// null query has no group bys
-		assertEquals(condOBC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condOBC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select/improper table has no group bys
-		assertEquals(condOBC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condOBC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no group bys
-		assertEquals(condOBC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condOBC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondFromCountTests

@@ -30,15 +30,15 @@ public class CondHavingCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one having
-		assertEquals(condHC.sqlTest(testDAO, havingQuery, " >= 1"), 10);
+		assertEquals(condHC.sqlTest(testDAO, havingQuery, " >= 1").getScore(), 10);
 		// valid nested query with no havings
-		assertEquals(condHC.sqlTest(testDAO, nestedQuery, " == 1"), 0);
+		assertEquals(condHC.sqlTest(testDAO, nestedQuery, " == 1").getScore(), 0);
 		// null query has no havings
-		assertEquals(condHC.sqlTest(testDAO, nullQuery, " >= 1"), 0);
+		assertEquals(condHC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select/improper table has no havings
-		assertEquals(condHC.sqlTest(testDAO, badQuery, " >= 1"), 0);
+		assertEquals(condHC.sqlTest(testDAO, badQuery, " >= 1").getScore(), 0);
 		// bad query with garbage has no havings
-		assertEquals(condHC.sqlTest(testDAO, garbageQuery, " >= 1"), 0);
+		assertEquals(condHC.sqlTest(testDAO, garbageQuery, " >= 1").getScore(), 0);
 	}
 
 }	// end - class CondHavingCountTests
