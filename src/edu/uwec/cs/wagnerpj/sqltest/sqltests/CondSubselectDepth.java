@@ -9,7 +9,6 @@ import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
 import edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil;
-import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -47,7 +46,7 @@ public class CondSubselectDepth implements ISQLTest {
 		String fromToEnd = QueryParseUtil.identifyFromToEnd(query);
 
 		//Find all subselect statements one level below this one.
-		Map<String, String> subselects = QueryParseUtil.identifySubselectStatements(fromToEnd);
+		Map<String, String> subselects = QueryParseUtil.identifySubSelectStatements(fromToEnd);
 
 		//find which subselect statement has greatest depth. Return that depth to calling function.
 		int maxSubselectDepth = currentDepth;

@@ -44,7 +44,7 @@ import static edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil.*;
  * 			(4) If (3) succeeds, we will see how many rows we can match between both result sets according to any column associations found.
  *			(5) We will now employ a different strategy to match rows between the result sets. We will attempt to find ONE example
  *				of two rows that can be matched between the result sets, and we will store in memory a mapping of which columns
- *				mapped to eachother during the matching. Any time a match is found, we will attempt to match all other rows
+ *				mapped to each other during the matching. Any time a match is found, we will attempt to match all other rows
  *				according to the column mapping used to match the first two rows. If a perfect match is found, we are done,
  *				otherwise we will keep searching for possible matches and keep track of the best case.
  *
@@ -126,7 +126,6 @@ public class TestResultSetEqualContent implements ISQLTest {
 		// query for string
 		Query desiredQuery = new Query(desiredQueryString);
 
-
 		int givenRowCt = 0;                // temp holders for given query results
 		int givenColCt = 0;
 		//String givenColSet = null;		
@@ -175,6 +174,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		catch(Exception e){
 			System.out.println("Could not process desired matrix.");
 		}
+		
 		try {
 			givenResultMatrix = convertResultSetToMatrix(rsetGiven, givenColCt, givenRowCt, givenMonthFirstFormat);
 		}
@@ -186,28 +186,37 @@ public class TestResultSetEqualContent implements ISQLTest {
 		dao.disconnect();
 
 
-
 		//if student and solution's column indexes successfully matched based off of column names, then use the
 		//mapping to find number of matching rows between the two result sets.
 		if(columnAssociations != null){
 			matchResultSetsWithColumnAssociations(columnAssociations, new boolean[givenColCt], new HashMap<Integer, Integer>(), 0, 0);
 			columnAssociationCompleted = true;
 		}
-		//Find number of matching rows between student and solution result sets, using column content to
-		//match the columns.
+		//Find number of matching rows between student and solution result sets, using column content to match the columns.
 		matchResultSets();
 
 		//calculate final score
+		//System.out.println("TRSEC - result before calculation: " + result);
 		int numMatched = desiredRowCt - numUnmatchedRows - numDuplicates;
+		//System.out.println("TRSEC -- numMatched is      : " + numMatched + ", calculated " + desiredRowCt + " - " + numUnmatchedRows + " - " + numDuplicates);
+		//System.out.println("TRSEC -- numUnmatchedRows is: " + numUnmatchedRows);
+		//System.out.println("TRSEC -- numDuplicates is   : " + numDuplicates);
+		//System.out.println("TRSEC ----- desiredRowCt is : " + desiredRowCt);
 		if(desiredRowCt != 0){
 			result = (int)(((double)numMatched / ((double)(numMatched + 3 * (numUnmatchedRows + numDuplicates))) * 10.0));
+			//System.out.println("TRSEC - result after initial division calculation: " + result);
 		}
 		else if(givenRowCt == 0) result = 10;
 		else result = 0;
+		
 		if(result != 10) result -= 2;
+		
+		// TODO: may want to make this deduction proportional - e.g. 1 vs. 4 cols. might be worse than 7 vs 10 cols.
 		if(desiredColCt != givenColCt) result -= 3;
 
 		if(result < 0) result = 0;
+		
+		//System.out.println("TRSEC - result after calculation: " + result);
 
 		/*System.out.println("numUnmatched: " + numUnmatchedRows);
 		System.out.println("numDuplicates: " + numDuplicates);
@@ -225,11 +234,12 @@ public class TestResultSetEqualContent implements ISQLTest {
 	}    // end - method sqlTest
 
 
-	// getName - from interface
+	// getName - from interface, return name of test
 	public String getName() {
 		return ("TestResultSetEqualContent");
 	}
 
+	// getDesc - from interface, return full description of test 
 	public String getDesc() {
 		return "Answer has same result set content as desired query";
 	}
@@ -242,10 +252,10 @@ public class TestResultSetEqualContent implements ISQLTest {
 	 * Call to matchOne() will be used to determine if two rows match. If so, matchOne() will call matchRest() to determine
 	 * if all other rows can be matched according to the same column-mapping schema used to find the first match.
 	 */
-
 	private boolean matchResultSets() {
 		//if either array is empty, return true if both are empty and false if only one is non-empty
 		//also populate unmatched rows array and determine number of incorrect rows (equal to number of rows in the non-empty result set)
+		//System.out.println("TRSEC - matchResultSets() - 1) before first if");
 		if (desiredResultMatrix.length == 0 || givenResultMatrix.length == 0) {
 			for(int i = 0; i < desiredResultMatrix.length; i++) missingRows.add(desiredResultMatrix[i]);
 			for(int j = 0; j < givenResultMatrix.length; j++)	extraRows.add(givenResultMatrix[j]);
@@ -260,6 +270,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		}
 
 		//for each desired row, see if we can match it with a given row,
+		//System.out.println("TRSEC - matchResultSets() - 2) before double for loops");
 		for (int i = 0; i < givenResultMatrix.length; i++) {
 			for(int j = 0; j < desiredResultMatrix.length; j++)
 				//hand control flow to matchOne(), which will check if rows match, and if so, call matchRest() to see if all other rows
@@ -267,12 +278,14 @@ public class TestResultSetEqualContent implements ISQLTest {
 				if (matchOne(desiredResultMatrix[j], givenResultMatrix[i],
 						new boolean[desiredResultMatrix[0].length], new boolean[givenResultMatrix[0].length],
 						new HashMap<Integer, Integer>(), 0, 0, i, j, new boolean[givenResultMatrix[0].length])) {
+					//System.out.println("TRSEC - matchResultSets() - 2) before return true");
 					return true;
 				}
 		}
 
 		//if numUnmatchedRows and numDuplicates remain default values (MAX_VALUE), then no desired rows have matched with any given rows.
 		//set numUnmatched to total row counts of both matrices to reflect this
+		//System.out.println("TRSEC - matchResultSets() - 3) before last if");
 		if(numUnmatchedRows == Integer.MAX_VALUE && numDuplicates == Integer.MAX_VALUE){
 			for(int i = 0; i < desiredResultMatrix.length; i ++) missingRows.add(desiredResultMatrix[i]);
 			for(int j = 0; j < givenResultMatrix.length; j++)	 extraRows.add(givenResultMatrix[j]);
@@ -281,7 +294,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		}
 
 		return false;
-	}
+	}	// end - method matchResultSets
 
 
 	/**
@@ -293,7 +306,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	private boolean matchOne(String[] desiredRow, String[] givenRow, boolean[] desiredMarked, boolean[] givenMarked,
 							 HashMap<Integer, Integer> columnMapping,
 							 int numMatched, int desiredColumnIndex, int givenRowIndex, int desiredRowIndex, boolean[] isReversedDate) {
-
+		//System.out.println("TRSEC - entering matchOne()");
 		//Base case
 		if (desiredColumnIndex == desiredRow.length) return false;
 		for (int j = 0; j < givenRow.length; j++) {
@@ -305,6 +318,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 				columnMapping.put(desiredColumnIndex, j);
 				numMatched++;
 
+				//System.out.println("TRSEC - matchOne - before if test and call to matchRest(), or else with recursive call to matchOne()");
 				//if our column mapping schema accounts for all desired columns and this mapping hasn't previously failed
 				//then try to match the rest of the rows
 				if (numMatched == desiredRow.length) {
@@ -364,8 +378,9 @@ public class TestResultSetEqualContent implements ISQLTest {
 			failedMappingTemp.clear();
 		}
 		return false;
-	}
+	}	// end - method matchOne
 
+	
 	/**
 	 * matchRest()
 	 * Determines if rest of rows is desired result set can be matched with given rows and vice versa.
@@ -376,8 +391,6 @@ public class TestResultSetEqualContent implements ISQLTest {
 	 * @param givenRowIndex The given row in index (used to avoid trying to match this row twice
 	 * @return True if perfect match found. False if not found.
 	 */
-
-
 	private boolean matchRest(HashMap<Integer, Integer> columnMapping, int givenRowIndex, int desiredRowIndex, boolean[] isReversedDate) {
 		boolean[] markedGiven = new boolean[givenResultMatrix.length];        //memory array to remember marked given columns
 		boolean[] markedDesired = new boolean[desiredResultMatrix.length];    //memory array to remember marked desired columns
@@ -389,6 +402,9 @@ public class TestResultSetEqualContent implements ISQLTest {
 		ArrayList<String[]> missingRowsTemp = new ArrayList<String[]>();
 		ArrayList<String[]> extraRowsTemp = new ArrayList<String[]>();
 
+		//System.out.println("TRSEC - entering matchRest()");
+		//System.out.println("TRSEC, matchRest() - numDuplicates is: " + numDuplicates);
+		
 		//Mark as visited the rows that were found in matchOne. -1 is stand-in for null value for when we are matching based off of column association
 		//that was found by parsing the query strings themselves, in which case no rows have yet been visited.
 		if(givenRowIndex != -1) markedGiven[givenRowIndex] = true;        //mark given row matched in matchRows() as already matched.
@@ -449,10 +465,17 @@ public class TestResultSetEqualContent implements ISQLTest {
 		}
 
 		//If no extra, missing, or duplicate rows then we have a perfect match. Return true.
+		//System.out.println("TRSEC - matchRest() - middle, numDuplicates is: " + numDuplicates);
+		//System.out.println("TRSEC - matchRest() - middle, numOfDuplicates is: " + numOfDuplicates);
+		//System.out.println("TRSEC - matchRest() - middle, numOfExtraRows is: " + numOfExtraRows);
+		//System.out.println("TRSEC - matchRest() - middle, numOfMissingRows is: " + numOfMissingRows);
+		//System.out.println("TRSEC - matchRest() - middle, sum of last three is: " + (numOfExtraRows + numOfMissingRows + numOfDuplicates));
 		if (numOfExtraRows + numOfMissingRows + numOfDuplicates == 0) {
 			//If columnAssociation was completed and we found a better score than it, issue a warning to Professor
-			if(columnAssociationCompleted && (numUnmatchedRows + numDuplicates) != 0){
+			if(columnAssociationCompleted && (numUnmatchedRows != Integer.MAX_VALUE && numDuplicates != Integer.MAX_VALUE) && (numUnmatchedRows + numDuplicates) != 0) {
 				testResult.addWarning(TestResult.MISMATCHED_SCORE_WARNING);
+				//System.out.println("TRSEC, matchRest() - perfect match, numDuplicates is: " + numDuplicates);
+				//System.out.println("TRSEC, matchRest() - perfect match with warning, before return true");
 				return true;
 			}
 			else{
@@ -460,6 +483,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 				numDuplicates = 0;
 				missingRows = missingRowsTemp;
 				extraRows = extraRowsTemp;
+				//System.out.println("TRSEC, matchRest() - perfect match no warning, before return true");
 				return true;
 			}
 
@@ -467,9 +491,11 @@ public class TestResultSetEqualContent implements ISQLTest {
 		} else if (numOfMissingRows + numOfExtraRows < numUnmatchedRows) {
 			//If columnAssociation was already completed, issue warning to professor.
 			if(columnAssociationCompleted){
+				//System.out.println("TRSEC - matchRest() - not a perfect match, warning to be issued");
 				testResult.addWarning(TestResult.MISMATCHED_SCORE_WARNING);
 			}
 			else{
+				//System.out.println("TRSEC - matchRest() - not a perfect match, no warning needed");
 				numUnmatchedRows = numOfMissingRows + numOfExtraRows;
 				numDuplicates = numOfDuplicates;
 				missingRows = missingRowsTemp;
@@ -477,7 +503,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 			}
 
 		}
-
+		//System.out.println("TRSEC = matchRest() - not perfect match, before return false");
 		return false;
 	}
 
@@ -486,6 +512,8 @@ public class TestResultSetEqualContent implements ISQLTest {
 	 * Will adjust instance variables numDuplicates, numUnmatchedRows to determine correctness of student result set.
 	 */
 	private void matchResultSetsWithColumnAssociations(Map<Integer, ArrayList<Integer>> columnAssociations, boolean[] markedGivenColumns, HashMap<Integer, Integer> columnMapping, int numCols, int currDesiredCol){
+		//System.out.println("TRSEC - matchResultSetsWithColumnAssociations - entering");
+		//System.out.println("TRSEC - matchResultSetsWithColumnAssociations - numDuplicates is: " + numDuplicates);
 		for(Integer givenColumn : columnAssociations.get(currDesiredCol)){
 			//if givenColumn has already been accounted for, try next
 			if(markedGivenColumns[givenColumn]) continue;
@@ -499,8 +527,9 @@ public class TestResultSetEqualContent implements ISQLTest {
 			numCols--;
 			markedGivenColumns[givenColumn] = false;
 		}
-	}
+	}	// end - method matchResultSetsWithColumnAssociations
 
+	
 	/**
 	 * isMatch()
 	 * Attempts to match two rows according to a given column-mapping schema
@@ -861,7 +890,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		}
 
 		//Identify all nested select statements and for each, extract every column name, column alias, date format and the alias of the subselect itself.
-		Map<String, String> nestedSelectStatementList = identifyNestedSelectStatementsToEndOrSetOperator(fromToEnd);
+		Map<String, String> nestedSelectStatementList = identifySubSelectStatementsToEndOrSetOperator(fromToEnd);
 		for (String nestedSelectStatement : nestedSelectStatementList.keySet()) {
 			String subselectAlias = nestedSelectStatementList.get(nestedSelectStatement);
 			ParseResult nestedSelectInfo = parseSelectStatement(nestedSelectStatement, subselectAlias, false, ownership);

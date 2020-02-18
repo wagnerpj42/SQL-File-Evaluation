@@ -1,6 +1,6 @@
 package edu.uwec.cs.wagnerpj.sqltest.util;
 
-import edu.uwec.cs.wagnerpj.sqltest.sqltests.TestResultSetEqualContent;
+//import edu.uwec.cs.wagnerpj.sqltest.sqltests.TestResultSetEqualContent;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -12,7 +12,9 @@ import java.util.regex.Pattern;
 public class QueryParseUtil {
 
     /**
-     * Returns the SELECT (...) FROM portion of a query
+     * identifySelectToFrom()
+     * 
+     * returns the SELECT (...) FROM portion of a query
      * @param query The query in question
      * @return      The SELECT (...) FROM portion of a query
      */
@@ -21,9 +23,42 @@ public class QueryParseUtil {
         Matcher fromMatcher = Pattern.compile("(?i)(?<=(\\s{1,999}|[)]|\"))FROM(?=(\\s{1,999}|[(]|\"))").matcher(query);
         if(!selectMatcher.find() || !fromMatcher.find()) return null;
         else return query.substring(selectMatcher.start(), fromMatcher.end()).toLowerCase();
-    }
+    }	// end - method identifySelectToFrom
 
     /**
+     * identifyFromToJoinOrWhere()
+     * 
+     * returns the FROM (...) JOIN portion of a query if SQL-99 JOIN/ON used, else FROM (...) WHERE if single table or SQL-92 comma join
+     * @param query The query in question
+     * @return      The FROM (...) JOIN/WHERE portion of a query
+     */
+    public static String identifyFromToJoinOrWhere(String query){
+        Matcher fromMatcher  = Pattern.compile("(?i)FROM(?=(\\s{1,10}|[(]))").matcher(query);
+        Matcher joinMatcher  = Pattern.compile("(?i)(?<=(\\s{1,999}|[)]|\"))JOIN(?=(\\s{1,999}|[(]|\"))").matcher(query);
+        Matcher whereMatcher = Pattern.compile("(?i)(?<=(\\s{1,999}|[)]|\"))WHERE(?=(\\s{1,999}|[(]|\"))").matcher(query);
+        
+        boolean fromFound = fromMatcher.find();		// is a FROM present in the query?
+        boolean joinFound = joinMatcher.find();		// is a JOIN present in the query?
+        boolean whereFound = whereMatcher.find();	// is a WHERE present in the query?
+        
+        if (!fromFound) {							// not even a FROM - invalid
+        	return null;
+        } else if (fromFound && joinFound) {		// if found from and join, return substring between
+        	return query.substring(fromMatcher.start(), joinMatcher.end()).toLowerCase();
+        											// if found from and where but no join, return substring between
+        } else if (fromFound && !joinFound && whereFound) {		
+        	return query.substring(fromMatcher.start(), whereMatcher.end()).toLowerCase();
+        											// if found from but no join or where, return from to end
+        } else if (fromFound && !joinFound && !whereFound) {
+        	return query.substring(fromMatcher.start(), query.length()).toLowerCase();
+        } else {									// any other case	
+        	return null;
+        }
+    }	// end - method identifyFromToJoinOrWhere
+    
+    /**
+     * identifyFromToEnd()
+     * 
      * Identifies and returns the "FROM (...)" portion of the query
      * @param query The query in question
      * @return      The FROM (...) [END_OF_QUERY] portion of a query
@@ -32,9 +67,11 @@ public class QueryParseUtil {
         Matcher fromMatcher = Pattern.compile("(?i)(?<=(\\s{1,999}|[)]|\"))FROM(?=(\\s{1,999}|[(]|\"))").matcher(query);
         if(!fromMatcher.find()) return null;
         return query.substring(fromMatcher.start(), query.length()).toLowerCase();
-    }
+    }	// end - method identifyFromToEnd
 
     /**
+	 * identifyFromToEndOrSetOperator()
+	 *
      * Identifies the substring of a query from the FROM (inclusive) to the end of the query or to the first set-operator (exclusive)
      * @param query The query in question
      * @return      The FROM (inclusive) to the end of the query or to the first set-operator (exclusive)
@@ -60,9 +97,11 @@ public class QueryParseUtil {
             }
             return query.substring(fromMatcher.start(), query.length()).toLowerCase();
         }
-    }
+    }	// end - method identifyFromToEndOrSetOperator
 
     /**
+	 * splitQuery()
+	 * 
      * Splits a SELECT statement into portions, with each portion containing the substring that corresponds to one column in the result set
      * @param query The [SELECT (...) FROM] portion of a query. NOTE: Use identifySelectToFrom() to retrieve this substring
      * @return Returns an ArrayList of substrings, with each index containing the substring that contains all logic corresponding
@@ -96,9 +135,11 @@ public class QueryParseUtil {
         catch(Exception e){
             throw e;
         }
-    }
+    }	// end - method splitQuery
 
     /**
+     * identifyColumnName()
+     * 
      * Identifies a column name and functions used on the column name.
      * @param s One of the substrings returned by the splitQuery() method. String looks like "[SELECT | ,] column_logic [FROM | ,]"
      * @return  Index 0: Returns column name AND functions, functions separated by delimiter ":" character
@@ -107,12 +148,11 @@ public class QueryParseUtil {
      *          e.g.    columnName
      * @throws Exception Exception thrown if no column name can be identified
      */
-    @SuppressWarnings("Duplicates")
     public static String[] identifyColumnName(String s) throws Exception{
         try {
             String[] ret = new String[2];
             ret[0] = ""; ret[1] = "";
-            StringBuilder sb = new StringBuilder();
+            //StringBuilder sb = new StringBuilder();
 
             //Look for something that looks like SELECT * FROM
             //IGNORABLE_KEYWORDS_1
@@ -140,9 +180,11 @@ public class QueryParseUtil {
         catch(Exception e){
             throw e;
         }
-    }
+    }	// end - method identifyColumnName
 
     /**
+     * identifyColumnFunctions()
+     * 
      * Utility function to identify all functions used on a column. Function is called by identifyColumnName() as utility function
      * @param columnString  Substring of a SELECT statement. NOTE: Use a value returned by splitQuery()
      * @param columnName    Column name in question. NOTE: Use index 1 of array returned by a call to identifyColumnName()
@@ -177,7 +219,7 @@ public class QueryParseUtil {
                 sb.setLength(0);
                 if(columnString.charAt(i) == ' ') appending = false;
             }
-        }
+        }	// end - method identifyColumnFunctions()
 
         for(int i = functionNames.size() - 1; i >= 0; i--){
             //IGNORABLE_FUNCTIONS
@@ -189,6 +231,8 @@ public class QueryParseUtil {
     }
 
     /**
+     * identifyColumnAlias()
+     * 
      * Identifies any alias that follows a column name in the SELECT portion of a query
      * @param columnSubstring   Use one of the substrings returned by the splitQuery() utility method
      * @param columnName        Use index 1 of array returned by identifyColumnName() (i.e. column name, ignoring any functions used on it)
@@ -223,7 +267,7 @@ public class QueryParseUtil {
                 break;
             }
             else return "";
-        }
+        }	// end - method identifyColumnAlias
 
         //parse backwards from the index found in the loop above until the beginning of the word is reached
         if(candidateAliasFound){
@@ -251,10 +295,12 @@ public class QueryParseUtil {
         //otherwise return the word
         return returnString;
 
-    }
+    }	// end - method 
 
 
     /**
+     * identifyColumnPrefix()
+     * 
      * Identifies any prefix used with a column name
      * @param query         A substring returned by splitQuery() that corresponds to column in question
      * @param columnName    Index 1 of array returned by identifyColumnName() (i.e. column name, ignoring any functions used on it)
@@ -266,20 +312,21 @@ public class QueryParseUtil {
         Matcher prefixMatcher = Pattern.compile("(?i)(\\b\\w+|\"[^\"]+\")(?=\\s*\\.\\s*\\Q" + columnName + "\\E)").matcher(query);
         if(prefixMatcher.find()) return query.substring(prefixMatcher.start(), prefixMatcher.end()).toLowerCase();
         return null;
-    }
+    }	// end - method identifyColumnPrefix
 
 
     /**
+     * identifySubSelectStatementsToEndOrSetOperator()
+     * 
      * @param query The FROM (...) [END OF QUERY] portion of a select statement
      *              NOTE: Use output of a call to identifyFromToEnd() or identifyFromToEndOrSetOperator()
-     * @return Identifies all nested Selects (selects which follow a FROM or a JOIN keyword) exactly one level below the select
-     *      * statement in question. Returns all subselects from SELECT to either closing parenthesis (exclusive) or to
-     *      * first set operator (UNION, MINUS, INTERSECT)  that corresponds to subselect (exclusive). Maps this subselect to
-     *      * the subselect's alias name (if present)
+     * @return Identifies all sub-selects (selects which follow a FROM or a JOIN keyword) exactly one level below the select
+     *      * statement in question. Returns all sub-selects from SELECT to either closing parenthesis (exclusive) or to
+     *      * first set operator (UNION, MINUS, INTERSECT)  that corresponds to sub-select (exclusive). Maps this sub-select to
+     *      * the sub-select's alias name (if present)
      */
-    @SuppressWarnings("Duplicates")
-    public static Map<String, String> identifyNestedSelectStatementsToEndOrSetOperator(String query){
-        //Find a subselect statement, and parse until it's matching parenthesis is found. Continue until no more subselects exist
+    public static Map<String, String> identifySubSelectStatementsToEndOrSetOperator(String query){
+        //Find a sub-select statement, and parse until it's matching parenthesis is found. Continue until no more subselects exist
         Map<String, String> ret = new HashMap<>();
         String subSelect;
         String subSelectAlias;
@@ -323,12 +370,15 @@ public class QueryParseUtil {
                 }
             } else return ret;	//if no more subselects are found, return
         }
-    }
+    }	// end - method identifyNestedSelectStatementsToEndOrSetOperator
 
-    /**        Identifies all subselects exactly one level below the select
-     *         statement in question. Returns all subselects from SELECT (inclusive) to either closing parenthesis (exclusive) or to
-     *         first set operator (UNION, MINUS, INTERSECT)  that corresponds to subselect (exclusive). Maps this subselect to
-     *         the subselect's alias name (if present)
+    /**
+     * 	identifySubSelectStatements()
+     * 
+     *  Identifies all sub-selects exactly one level below the select
+     *  statement in question. Returns all sub-selects from SELECT (inclusive) to either closing parenthesis (exclusive) or to
+     *  first set operator (UNION, MINUS, INTERSECT) that corresponds to sub-select (exclusive). Maps this sub-select to
+     *  the sub-select's alias name (if present)
      * @param query Output of a call to identifyFromToEnd() or identifyFromToEndOrSetOperator()
      * @return      Returns the entire subselect from SELECT (inclusive) to the parenthesis ")" that ends the subselect (exclusive)
      *
@@ -336,11 +386,10 @@ public class QueryParseUtil {
      *                                  JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)
      *
      *                   OUTPUT:        The following mapping will be returned, containing both subselects found:
-     *                                      SELECT columnName2 FROM tableName = t1
-     *                                      SELECT columnName3 FROM anotherTableName = t2
+     *                                      SELECT columnName2 FROM tableName , t1
+     *                                      SELECT columnName3 FROM anotherTableName , t2
      */
-    @SuppressWarnings("Duplicates")
-    public static Map<String, String> identifySubselectStatements(String query){
+    public static Map<String, String> identifySubSelectStatements(String query){
         //Find a subselect statement, and parse until it's matching parenthesis is found. Continue until no more subselects exist
         Map<String, String> ret = new HashMap<>();
         String subSelect;
@@ -375,9 +424,11 @@ public class QueryParseUtil {
                 }
             } else return ret;	//if no more subselects are found, return
         }
-    }
+    }	// end - method identifySubSelectStatements
 
     /**
+     * identifySubSelectAlias()
+     * 
      * Utility function for identifying a subselect alias name. Used by identifyNestedSelectStatementsToEndOrSetOperator()
      * and identifySubselectStatementsToEndOrSetOperator()
      * @param query     Output of identifyFromToEnd() or identifyFromToEndOrSetOperator()
@@ -396,16 +447,17 @@ public class QueryParseUtil {
             }
             else return null;
         }
-    }
+    }	// end - method identifySubSelectAlias
 
     /**
+     * identifyAllInnerJoinStatementOnClauses()
+     * 
      * Identifies all equations that correspond to the ON clause of an inner join statement that exists on the same level
      * of a given SELECT statement (i.e. not in a subselect)
      * @param query Return value of either identifyFromToEnd() or identifyFromToEndOrSetOperator()
      * @return  ArrayList that contains all substrings of form "(col1 = col2)" that follow an ON keyword that corresponds to
      *          an inner join statement that exists on the same level as a SELECT statement (i.e. not in a subselect)
      */
-    @SuppressWarnings("Duplicates")
     public static ArrayList<String> identifyAllInnerJoinStatementOnClauses(String query){
         ArrayList<String> ret = new ArrayList<String>();
 
@@ -446,9 +498,11 @@ public class QueryParseUtil {
             else if(append) sb.append(query.charAt(i));
         }
         return ret;
-    }
+    }	// end - method identifyAllInnerJoinStatementOnClauses
 
     /**
+     * identifyEquivalentColumns()
+     * 
      * Using one element of the list returned by a call to identifyAllInnerJoinStatementOnClauses(), will identify the
      * column names of the columns being joined as well as their respective aliases, and return both in the form of an Edge.
      * @param onClause  Return value of identifyAllInnerJoinStatementOnClauses(). Looks like "(col1 = col2)"
@@ -489,9 +543,15 @@ public class QueryParseUtil {
         ret[1] = columns;
 
         return ret;
-    }
+    }	// end - method identifyEquivalentColumns
 
-    //Utility function that returns indexes of all set operators in a query.
+    /**
+     * identifyAllSetOperatorIndexes()
+     * 
+     * Utility function that returns indexes of all set operators in a query.
+     * @param select query as string
+     * @return arraylist of string positions of all set operators (INTERSECT, UNION, and MINUS) in the select query
+     */
     private static ArrayList<Integer> identifyAllSetOperatorIndexes(String query){
         ArrayList<Integer> ret = new ArrayList<>();
         Matcher setOperatorMatcher = Pattern.compile("(?i)\\b(INTERSECT|UNION|MINUS)\\b").matcher(query);
@@ -499,8 +559,9 @@ public class QueryParseUtil {
             ret.add(setOperatorMatcher.start());
         }
         return ret;
-    }
+    }	// end - method identifyAllSetOperatorIndexes
 
+    
     //Utility function that returns indexes of all inner joins in a query
     private static ArrayList<Integer> identifyAllInnerJoinStatementIndexes(String query){
         ArrayList<Integer> ret = new ArrayList<>();
@@ -509,7 +570,7 @@ public class QueryParseUtil {
             ret.add(matcher.start());
         }
         return ret;
-    }
+    }	// end - method identifyAllInnerJoinStatementIndexes
 
     //Utility function that returns indexes of all ON clauses in a query.
     private static ArrayList<Integer> identifyAllOnClauseIndexes(String query){
@@ -519,42 +580,51 @@ public class QueryParseUtil {
             ret.add(matcher.start());
         }
         return ret;
-    }
+    }	// end - nmethod identifyAllOnClauses
 
 
 
-    //Connects two strings in a graph.
-    public static class Edge{
+    // Nested class Edge - connects two strings in a graph
+    //    used here for testing connections between columns
+    public static class Edge {
         String s1;
         String s2;
 
-        public Edge(String s1, String s2){
+        public Edge(String s1, String s2) {
             this.s1 = s1;
             this.s2 = s2;
         }
 
-        public String getOne(){
+        public String getOne() {
             return s1;
         }
 
-        public String getTwo(){
+        public String getTwo() {
             return s2;
         }
 
-        public void setOne(String s){
+        public void setOne(String s) {
             this.s1 = s;
         }
 
-        public void setTwo(String s){
+        public void setTwo(String s) {
             this.s2 = s;
         }
 
-        public String toString(){
+        public String toString() {
             return "(s1: " + s1 + " s2: " + s2 + ")";
         }
-    }
+    }	// end - nested class Edge
 
-    //Check if columns are associated due to JOIN operations present in the query.
+    /**
+     * areConnected()
+     * 
+     * Check if columns are associated due to JOIN operations present in the query.
+     * @param s1 - first column
+     * @param s2 - second column
+     * @param graph - graph of edges between column names
+     * @return boolean whether s1 and s2 are associated
+     */
     public static boolean areConnected (String s1, String s2, ArrayList<Edge> graph){
         ArrayList<String> visited = new ArrayList<String>();
         List<String> queue = new LinkedList<String>();
@@ -574,14 +644,51 @@ public class QueryParseUtil {
             }
         }
         return false;
-    }
+    }	// end - method areConnected
 
-    //Get all column names equivalent to a supplied column name based on equivalence graph.
+    /**
+     * getAdjacent()
+     * 
+     * Get all column names equivalent to a supplied column name based on equivalence graph.
+     * @param s - supplied column name
+     * @param graph - equivalence graph for column associations
+     * @return arraylist of edges between supplied column and others
+     */
     public static ArrayList<Edge> getAdjacent(String s, ArrayList<Edge> graph){
         ArrayList<Edge> ret = new ArrayList<Edge>();
         for(Edge edge : graph){
             if(edge.getOne().equals(s)) ret.add(edge);
         }
         return ret;
-    }
-}
+    }	// end - method getAdjacent
+
+    
+    // temporary main for initial testing
+    public static void main(String [] args) {
+    	@SuppressWarnings("unused")
+    	String simpleQueryString = "SELECT c_id FROM Creature";
+		//String queryString = "SELECT C.c_id, c_name, s_desc FROM Creature C JOIN Achievement A ON C.c_id = A.c_id WHERE a.s_code = 'S';";
+		//String oldStyleQueryString = "SELECT C.c_id, c_name, s_desc FROM Creature C, Achievement A WHERE a.s_code = 'S';";
+    	//String oneTableQueryString = "SELECT C.c_id, c_name FROM Creature C WHERE a.s_code = 'S';";
+		//String mixedQueryString = "SELECT c_id FROM Creature, Achievement JOIN Skill ON Skill.s_code = Achievement.s_code";
+    	//String nestedQueryString = "SELECT C.c_id, c_name, s_desc FROM Creature C JOIN Achievement A ON C.c_id = A.c_id WHERE a.s_code IN (SELECT s_code FROM Skill WHERE s_desc = 'Swim');";
+    	String complexNestedQueryString = "SELECT t1.columnName2, t2.columnName3 \r\n" + 
+    									   "FROM (SELECT columnName2 FROM tableName) t1\r\n" + 
+    									   "JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)" +
+    									   "WHERE t2.columnName3 IN (SELECT columnName4 FROM aThirdTableName);" ;
+    	String result = identifySelectToFrom(simpleQueryString);
+    	System.out.println("result is: >" + result + "<");
+    	
+    	result = identifyFromToEnd(simpleQueryString);
+    	System.out.println("result is: >" + result + "<");   
+    	
+    	result = identifyFromToJoinOrWhere(simpleQueryString);
+    	System.out.println("result is: >" + result + "<");  
+    	
+    	Map<String, String> subResults = identifySubSelectStatements(complexNestedQueryString);
+    	for (Map.Entry<String, String> entry : subResults.entrySet()) {
+    	     System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+    	}
+    }	// end - method main
+    
+}	// end - class QueryParseUtil

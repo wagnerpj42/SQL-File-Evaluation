@@ -36,6 +36,12 @@ public class Utilities {
 	public static int countMatches(String queryString, String subString) {
 		int result = 0;
 		
+		// make sure query string wasn't empty to start with
+		if (queryString == null) {
+			return result;
+		}
+		
+		// otherwise, go through entire string looking for substring
 		//System.out.println("subString being searched for is: >" + subString + "<");
 		queryString = queryString.toUpperCase();
 		int subIndex = queryString.indexOf(subString);

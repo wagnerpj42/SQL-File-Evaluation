@@ -22,7 +22,7 @@ public class CondJoinCount implements ISQLTest {
 		int thisTotalJoinCt = -1;		// total join count in this query
 		boolean compResult = false;		// result of condition evaluation
 		
-		// count number of commas in query
+		// count number of commas in FROM clause of query
 		String reducedString = Utilities.removeSelectFroms(givenQuery.toString());
 		thisCommaCt = Utilities.countMatches(reducedString, ",");
 		//System.out.println("CondJoinCount-comma count is: " + thisCommaCt);

@@ -22,11 +22,11 @@ public class TestResultSetEqualContentTests extends AbstractTest {
 	}
 	
 	@Test
-	public void testResultSetEqual() {
+	public void testResultSetEqualContents() {
 		// two instances of same valid query are equal
 		assertEquals(testRSEC.sqlTest(testDAO, creatureAllQuery, creatureAllQuery.toString()).getScore(), 10);
-		// valid queries of same table with different column selects are not equal
-		assertEquals(testRSEC.sqlTest(testDAO, creatureAllQuery, creatureOneColQuery.toString()).getScore(), 0);
+		// valid queries of same table with different column selects are partially equal
+		assertEquals(testRSEC.sqlTest(testDAO, creatureAllQuery, creatureOneColQuery.toString()).getScore(), 7);
 		// valid queries of same table but different case are equal
 		assertEquals(testRSEC.sqlTest(testDAO, creatureAllQuery, creatureAllQueryLC.toString()).getScore(), 10);
 		// valid queries of same table using * and all columns separately are equal
