@@ -1,7 +1,7 @@
 /*
- * CondJoinExplicitCount - class to evaluate condition for count of explicit SQL-99 joins
+ * CondJoinImplicitCount - class to evaluate condition for count of implicit SQL-92 joins with comma-separated tables
  * 
- * Created - Paul J. Wagner, 20-Feb-2019
+ * Created - Paul J. Wagner, 19-Feb-2020
  */
 package edu.uwec.cs.wagnerpj.sqltest.sqltests;
 
@@ -11,19 +11,19 @@ import javax.script.ScriptException;
 
 import edu.uwec.cs.wagnerpj.sqltest.general.Query;
 import edu.uwec.cs.wagnerpj.sqltest.general.TestResult;
+import edu.uwec.cs.wagnerpj.sqltest.util.QueryParseUtil;
 import edu.uwec.cs.wagnerpj.sqltest.util.Utilities;
 import edu.uwec.cs.wagnerpj.sqltest.general.IDAO;
 
-public class CondJoinExplicitCount implements ISQLTest {
+public class CondJoinImplicitCount implements ISQLTest {
 	public TestResult sqlTest (IDAO dao, Query givenQuery, String condition) {
 		int result;						// result on scale 0 to 10
-		int thisJoinCt = -1;			// explicit join count in this query
+		int thisJoinCt = -1;			// implicit join count in this query
 		boolean compResult = false;		// result of condition evaluation
 				
-		// count number of explicit JOINs in query
-		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "JOIN");
-		//System.out.println("CondJoinExplicitCount-join count is: " + thisJoinCt);	
-		//System.out.println();
+		// count number of implicit JOINs in query by counting number of commas in FROM to (JOIN OR WHERE or end)
+		String reducedString = QueryParseUtil.identifyFromToJoinOrWhere(givenQuery.toString());
+		thisJoinCt = Utilities.countMatches(reducedString, ",");
 
 		// build full condition from string condition
 		String fullCondition = (thisJoinCt + condition);
@@ -35,7 +35,7 @@ public class CondJoinExplicitCount implements ISQLTest {
 			compResult = (Boolean)engine.eval(fullCondition);
 		}
 		catch (ScriptException se) {
-			System.err.println("CondJoinExplicitCount - cannot evaluate condition");
+			System.err.println("CondJoinImplicitCount - cannot evaluate condition");
 		}
 		
 		// compare and generate result
@@ -45,10 +45,10 @@ public class CondJoinExplicitCount implements ISQLTest {
 	}	// end - method sqlTest
 	
 	public String getName() {
-		return "CondJoinExplicitCount";
+		return "CondJoinImplicitCount";
 	}
 	
 	public String getDesc() {
-		return "Answer has appropriate number of explicit JOIN operations";
+		return "Answer has appropriate number of implicit JOIN operations";
 	}
-}	// end - class CondJoinExplicitCount
+}	// end - class CondJoinImplicitCount

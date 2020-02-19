@@ -53,11 +53,13 @@ public abstract class AbstractTest {
 	protected Query unionQuery;			// query with union
 	protected Query intersectQuery;		// query with intersect
 	protected Query minusQuery;			// query with minus
+	protected Query implicitJoinQuery;	// query with multiple implicit joins
+	protected Query complexNestedQuery;	// query with nested selects in FROM, JOIN and WHERE
 	
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
-		testDAO				= new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi5cs");		// hardcoded for now; TODO: how to allow specification?
+		testDAO				= new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi6cs");		// hardcoded for now; TODO: how to allow specification?
 		
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");
@@ -116,6 +118,12 @@ public abstract class AbstractTest {
 		unionQuery			= new Query("SELECT c_id FROM Creature UNION SELECT c_id FROM Achievement");
 		intersectQuery		= new Query("SELECT c_id FROM Creature INTERSECT SELECT c_id FROM Achievement");
 		minusQuery			= new Query("SELECT c_id FROM Creature MINUS SELECT c_id FROM Achievement");
+		implicitJoinQuery	= new Query("SELECT c_name, s_desc FROM Creature, Achievement, Skill WHERE Creature.c_id = Achievement.c_id " +
+											"AND Achievement.s_code = Skill.s_code");
+    	complexNestedQuery = new Query("SELECT t1.columnName2, t2.columnName3 \r\n" + 
+				   							"FROM (SELECT columnName2 FROM tableName) t1\r\n" + 
+				   							"JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)" +
+				   							"WHERE t2.columnName3 IN (SELECT columnName4 FROM aThirdTableName);") ;
 	}	// end - constructor/query initialization
 	
 	// finalize - essentially cross-test fixture teardown
@@ -162,6 +170,8 @@ public abstract class AbstractTest {
 		unionQuery			= null;
 		intersectQuery		= null;
 		minusQuery			= null;
+		implicitJoinQuery	= null;
+		complexNestedQuery	= null;
 		
 		super.finalize();
 	}	// end - method finalize
