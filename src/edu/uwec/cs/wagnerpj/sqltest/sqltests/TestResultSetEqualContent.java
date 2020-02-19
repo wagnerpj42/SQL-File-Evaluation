@@ -190,7 +190,9 @@ public class TestResultSetEqualContent implements ISQLTest {
 		//mapping to find number of matching rows between the two result sets.
 		if(columnAssociations != null){
 			matchResultSetsWithColumnAssociations(columnAssociations, new boolean[givenColCt], new HashMap<Integer, Integer>(), 0, 0);
-			columnAssociationCompleted = true;
+			if(numUnmatchedRows != Integer.MAX_VALUE && numDuplicates != Integer.MAX_VALUE) {
+		        columnAssociationCompleted=true;
+			}
 		}
 		//Find number of matching rows between student and solution result sets, using column content to match the columns.
 		matchResultSets();
