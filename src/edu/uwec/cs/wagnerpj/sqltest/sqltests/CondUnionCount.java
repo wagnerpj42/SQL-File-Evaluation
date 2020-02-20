@@ -21,7 +21,10 @@ public class CondUnionCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisUnionCt = Utilities.countMatches(givenQuery.toString(), "UNION");
+		thisUnionCt = Utilities.countMatches(givenQuery.toString(), "UNION ") +
+					  Utilities.countMatches(givenQuery.toString(), "UNION(") +
+					  Utilities.countMatches(givenQuery.toString(), "UNION\r\n") +
+					  Utilities.countMatches(givenQuery.toString(), "UNION\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisUnionCt + condition);

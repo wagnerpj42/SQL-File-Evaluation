@@ -28,7 +28,7 @@ public class OracleDataAccessObjectTests extends AbstractTest {
 	@Before
 	public void setup() {
 		// TODO: how to hide this information if added to repository?
-		dao = new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi5cs");
+		dao = new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi6cs");
 	}
 
 	@Test

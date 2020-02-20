@@ -21,7 +21,10 @@ public class CondFromCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of froms in query
-		thisFromCt = Utilities.countMatches(givenQuery.toString(), "FROM");
+		thisFromCt = Utilities.countMatches(givenQuery.toString(), "FROM ") +
+					 Utilities.countMatches(givenQuery.toString(), "FROM(") +
+					 Utilities.countMatches(givenQuery.toString(), "FROM\n") +
+					 Utilities.countMatches(givenQuery.toString(), "FROM\r\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisFromCt + condition);

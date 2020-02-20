@@ -21,7 +21,10 @@ public class CondNotCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisNotCt = Utilities.countMatches(givenQuery.toString(), "NOT");
+		thisNotCt = Utilities.countMatches(givenQuery.toString(), "NOT ") +
+					Utilities.countMatches(givenQuery.toString(), "NOT(") +
+					Utilities.countMatches(givenQuery.toString(), "NOT\r\n") +
+					Utilities.countMatches(givenQuery.toString(), "NOT\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisNotCt + condition);

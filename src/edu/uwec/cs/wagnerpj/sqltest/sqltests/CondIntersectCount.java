@@ -21,7 +21,10 @@ public class CondIntersectCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of intersect keywords in query
-		thisIntCt = Utilities.countMatches(givenQuery.toString(), "INTERSECT");
+		thisIntCt = Utilities.countMatches(givenQuery.toString(), "INTERSECT ") +
+					Utilities.countMatches(givenQuery.toString(), "INTERSECT(") +
+					Utilities.countMatches(givenQuery.toString(), "INTERSECT\r\n") +
+					Utilities.countMatches(givenQuery.toString(), "INTERSECT\n");
 		//System.out.println("count of INTERSECTSs is: " + thisIntCt);
 		
 		// build full condition from string condition

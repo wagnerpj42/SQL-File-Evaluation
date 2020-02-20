@@ -17,11 +17,17 @@ public class CondBasicContent implements ISQLTest {
 		int thisFromCt = -1;			// from count in this query
 		
 		// count number of selects in query
-		thisSelectCt = Utilities.countMatches(givenQuery.toString(), "SELECT");
-		//System.out.println("CondBasicContent-select count is: " + thisCommaCt);
+		thisSelectCt = Utilities.countMatches(givenQuery.toString(), "SELECT ") +
+		               Utilities.countMatches(givenQuery.toString(), "SELECT*") +
+					   Utilities.countMatches(givenQuery.toString(), "SELECT\r\n") +
+					   Utilities.countMatches(givenQuery.toString(), "SELECT\n");
+		//System.out.println("CondBasicContent-select count is: " + thisSelectCt);
 		
 		// count number of froms in query
-		thisFromCt = Utilities.countMatches(givenQuery.toString(), "FROM");
+		thisFromCt = Utilities.countMatches(givenQuery.toString(), "FROM ") +
+		             Utilities.countMatches(givenQuery.toString(), "FROM(") +
+		             Utilities.countMatches(givenQuery.toString(), "FROM\r\n") +
+        			 Utilities.countMatches(givenQuery.toString(), "FROM\n");
 		//System.out.println("CondBasicContent-from count is : " + thisFromCt);
 		
 		// compare and generate result

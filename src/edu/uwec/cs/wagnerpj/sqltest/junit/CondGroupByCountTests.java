@@ -30,7 +30,7 @@ public class CondGroupByCountTests extends AbstractTest {
 	@Test
 	public void testSqlCond() {
 		// valid query with one group by
-		assertEquals(condGBC.sqlTest(testDAO, groupByQuery, " >= 1").getScore(), 10);
+		assertEquals(condGBC.sqlTest(testDAO, groupByQuery, " == 1").getScore(), 10);
 		// valid nested query with no group bys
 		assertEquals(condGBC.sqlTest(testDAO, nestedQuery, " == 1").getScore(), 0);
 		// null query has no group bys

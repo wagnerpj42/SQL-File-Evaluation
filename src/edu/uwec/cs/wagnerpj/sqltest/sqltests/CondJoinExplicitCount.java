@@ -21,7 +21,10 @@ public class CondJoinExplicitCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 				
 		// count number of explicit JOINs in query
-		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "JOIN");
+		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "JOIN ") +
+				 Utilities.countMatches(givenQuery.toString(), "JOIN(") +
+				 Utilities.countMatches(givenQuery.toString(), "JOIN\r\n") +
+				 Utilities.countMatches(givenQuery.toString(), "JOIN\n");
 		//System.out.println("CondJoinExplicitCount-join count is: " + thisJoinCt);	
 		//System.out.println();
 

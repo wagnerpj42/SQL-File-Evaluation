@@ -21,8 +21,11 @@ public class CondDistinctCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisDistinctCt = Utilities.countMatches(givenQuery.toString(), "DISTINCT");
-						
+		thisDistinctCt = Utilities.countMatches(givenQuery.toString(), "DISTINCT ") +
+						 Utilities.countMatches(givenQuery.toString(), "DISTINCT(") +
+		 				 Utilities.countMatches(givenQuery.toString(), "DISTINCT\r\n") +
+		 				 Utilities.countMatches(givenQuery.toString(), "DISTINCT\n");
+		 
 		// build full condition from string condition
 		String fullCondition = (thisDistinctCt + condition);
 		

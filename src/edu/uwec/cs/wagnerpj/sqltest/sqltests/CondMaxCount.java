@@ -21,7 +21,10 @@ public class CondMaxCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisMaxCt = Utilities.countMatches(givenQuery.toString(), "MAX");
+		thisMaxCt = Utilities.countMatches(givenQuery.toString(), "MAX ") +
+					Utilities.countMatches(givenQuery.toString(), "MAX(") +
+					Utilities.countMatches(givenQuery.toString(), "MAX\r\n") +
+					Utilities.countMatches(givenQuery.toString(), "MAX\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisMaxCt + condition);

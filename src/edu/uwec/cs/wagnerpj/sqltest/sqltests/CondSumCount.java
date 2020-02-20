@@ -21,7 +21,10 @@ public class CondSumCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisSumCt = Utilities.countMatches(givenQuery.toString(), "SUM");
+		thisSumCt = Utilities.countMatches(givenQuery.toString(), "SUM ") +
+					Utilities.countMatches(givenQuery.toString(), "SUM(") +
+					Utilities.countMatches(givenQuery.toString(), "SUM\r\n") +
+					Utilities.countMatches(givenQuery.toString(), "SUM\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisSumCt + condition);

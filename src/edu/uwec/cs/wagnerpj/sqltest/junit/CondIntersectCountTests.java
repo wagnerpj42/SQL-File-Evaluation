@@ -35,6 +35,8 @@ public class CondIntersectCountTests extends AbstractTest {
 		assertEquals(condIC.sqlTest(testDAO, groupByQuery, " >= 1").getScore(), 0);
 		// valid nested query with two selects but no intersects
 		assertEquals(condIC.sqlTest(testDAO, nestedQuery, " == 0").getScore(), 10);
+		// valid query with intersect at end of line
+		assertEquals(condIC.sqlTest(testDAO, intersect2Query, " == 1").getScore(), 10);		
 		// null query has no intersects
 		assertEquals(condIC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select but little else has no intersects

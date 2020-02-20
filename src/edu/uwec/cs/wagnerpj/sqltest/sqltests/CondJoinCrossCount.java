@@ -21,7 +21,10 @@ public class CondJoinCrossCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 				
 		// count number of CROSS JOINs in query
-		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "CROSS JOIN");
+		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "CROSS JOIN ") +
+					 Utilities.countMatches(givenQuery.toString(), "CROSS JOIN(") +
+					 Utilities.countMatches(givenQuery.toString(), "CROSS JOIN\r\n") +
+					 Utilities.countMatches(givenQuery.toString(), "CROSS JOIN\n");
 		//System.out.println("CondJoinCrossCount-join count is: " + thisJoinCt);	
 		//System.out.println();
 

@@ -21,12 +21,24 @@ public class CondJoinOuterCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 				
 		// count number of explicit JOINs in query
-		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "OUTER JOIN");
+		thisJoinCt = Utilities.countMatches(givenQuery.toString(), "OUTER JOIN ") +
+					 Utilities.countMatches(givenQuery.toString(), "OUTER JOIN(") +
+					 Utilities.countMatches(givenQuery.toString(), "OUTER JOIN\r\n") +
+					 Utilities.countMatches(givenQuery.toString(), "OUTER JOIN\n");
 		//System.out.println("CondJoinOuterCount-join count is: " + thisJoinCt);	
 		//System.out.println();
-		thisJoinCt += Utilities.countMatches(givenQuery.toString(), "LEFT JOIN");
-		thisJoinCt += Utilities.countMatches(givenQuery.toString(), "RIGHT JOIN");
-		thisJoinCt += Utilities.countMatches(givenQuery.toString(), "FULL JOIN");
+		thisJoinCt += Utilities.countMatches(givenQuery.toString(), "LEFT JOIN ") +
+					  Utilities.countMatches(givenQuery.toString(), "LEFT JOIN(") +
+					  Utilities.countMatches(givenQuery.toString(), "LEFT JOIN\r\n") +
+					  Utilities.countMatches(givenQuery.toString(), "LEFT JOIN\n");
+		thisJoinCt += Utilities.countMatches(givenQuery.toString(), "RIGHT JOIN ") +
+				  	  Utilities.countMatches(givenQuery.toString(), "RIGHT JOIN(") +
+				  	  Utilities.countMatches(givenQuery.toString(), "RIGHT JOIN\r\n") +
+				  	  Utilities.countMatches(givenQuery.toString(), "RIGHT JOIN\n");
+		thisJoinCt += Utilities.countMatches(givenQuery.toString(), "FULL JOIN ") +
+				  	  Utilities.countMatches(givenQuery.toString(), "FULL JOIN(") +
+				  	  Utilities.countMatches(givenQuery.toString(), "FULL JOIN\r\n") +
+				  	  Utilities.countMatches(givenQuery.toString(), "FULL JOIN\n");
 
 		// build full condition from string condition
 		String fullCondition = (thisJoinCt + condition);

@@ -21,7 +21,10 @@ public class CondOrderByCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of group bys in query
-		thisOrderByCt = Utilities.countMatches(givenQuery.toString(), "ORDER BY");
+		thisOrderByCt = Utilities.countMatches(givenQuery.toString(), "ORDER BY ") +
+					    Utilities.countMatches(givenQuery.toString(), "ORDER BY(") +
+					    Utilities.countMatches(givenQuery.toString(), "ORDER BY\r\n") +
+					    Utilities.countMatches(givenQuery.toString(), "ORDER BY\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisOrderByCt + condition);

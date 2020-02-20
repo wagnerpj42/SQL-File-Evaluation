@@ -21,8 +21,11 @@ public class CondCountCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisCountCt = Utilities.countMatches(givenQuery.toString(), "COUNT");
-		
+		thisCountCt = Utilities.countMatches(givenQuery.toString(), "COUNT ") +
+		              Utilities.countMatches(givenQuery.toString(), "COUNT(") +
+        			  Utilities.countMatches(givenQuery.toString(), "COUNT\r\n") +	            
+        			  Utilities.countMatches(givenQuery.toString(), "COUNT\n");
+        
 		// build full condition from string condition
 		String fullCondition = (thisCountCt + condition);
 		//System.out.println("CondSelectCount full condition: >" + fullCondition + "<");

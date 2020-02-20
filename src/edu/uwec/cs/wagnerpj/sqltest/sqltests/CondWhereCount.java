@@ -21,7 +21,10 @@ public class CondWhereCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisWhereCt = Utilities.countMatches(givenQuery.toString(), "WHERE");
+		thisWhereCt = Utilities.countMatches(givenQuery.toString(), "WHERE") +
+					  Utilities.countMatches(givenQuery.toString(), "WHERE(") +
+					  Utilities.countMatches(givenQuery.toString(), "WHERE\r\n") +
+					  Utilities.countMatches(givenQuery.toString(), "WHERE\n");
 		//System.out.println("CondWhereCount thisWhereCt = " + thisWhereCt);
 		
 		// build full condition from string condition

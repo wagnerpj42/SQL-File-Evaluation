@@ -30,7 +30,7 @@ public class CondSubselectDepth implements ISQLTest {
 			compResult = (Boolean)engine.eval(fullCondition);
 		}
 		catch (ScriptException se) {
-			System.err.println("CondSumCount - cannot evaluate condition");
+			System.err.println("CondSubselectDepth - cannot evaluate condition");
 		}
 
 		result = compResult ? 10 : 0;
@@ -40,7 +40,6 @@ public class CondSubselectDepth implements ISQLTest {
 	}	// end - condJoinCount
 
 	public static int calculateSubselectDepth(String query, int currentDepth){
-
 
 		//Select FROM to end of the query
 		String fromToEnd = QueryParseUtil.identifyFromToEnd(query);
@@ -55,7 +54,7 @@ public class CondSubselectDepth implements ISQLTest {
 			if(subselectDepth > maxSubselectDepth) maxSubselectDepth = subselectDepth;
 		}
 		return maxSubselectDepth;
-	}
+	}	// end - method calculate SubselectDepth
 
 	public String getName() {
 		return "CondSubselectDepth";

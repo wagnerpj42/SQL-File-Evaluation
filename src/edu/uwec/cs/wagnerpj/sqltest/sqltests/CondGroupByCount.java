@@ -21,8 +21,10 @@ public class CondGroupByCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of group bys in query
-		thisGroupByCt = Utilities.countMatches(givenQuery.toString(), "GROUP BY");
-		
+		thisGroupByCt = Utilities.countMatches(givenQuery.toString(), "GROUP BY ") +
+						Utilities.countMatches(givenQuery.toString(), "GROUP BY(") +
+						Utilities.countMatches(givenQuery.toString(), "GROUP BY\r\n") +
+						Utilities.countMatches(givenQuery.toString(), "GROUP BY\n");
 		// build full condition from string condition
 		String fullCondition = (thisGroupByCt + condition);
 		

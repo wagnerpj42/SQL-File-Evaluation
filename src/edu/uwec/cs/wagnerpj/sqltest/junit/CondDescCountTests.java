@@ -29,9 +29,9 @@ public class CondDescCountTests extends AbstractTest {
 
 	@Test
 	public void testSqlCond() {
-		// valid query with one from
+		// valid query with one from but no DESC
 		assertEquals(condDC.sqlTest(testDAO, creatureAllQuery, " == 0").getScore(), 10);
-		// valid query with one JOIN/ON
+		// valid query with one JOIN/ON but no DESC
 		assertEquals(condDC.sqlTest(testDAO, joinOneQuery, " == 1").getScore(), 0);
 		// valid query with order by but not desc
 		assertEquals(condDC.sqlTest(testDAO, orderByQuery, " == 1").getScore(), 0);
@@ -39,6 +39,8 @@ public class CondDescCountTests extends AbstractTest {
 		assertEquals(condDC.sqlTest(testDAO, orderByDescQuery, " == 1").getScore(), 10);
 		// valid query with order by and descending
 		assertEquals(condDC.sqlTest(testDAO, orderByDesc2Query, " == 1").getScore(), 10);
+		// valid query with two desc/descending
+		assertEquals(condDC.sqlTest(testDAO, orderByDesc3Query, " == 2").getScore(), 10);		
 		// null query has no desc
 		assertEquals(condDC.sqlTest(testDAO, nullQuery, " >= 1").getScore(), 0);
 		// bad query with select/improper column list has no descs

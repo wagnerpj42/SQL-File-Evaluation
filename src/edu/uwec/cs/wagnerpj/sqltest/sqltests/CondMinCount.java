@@ -21,7 +21,10 @@ public class CondMinCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of min keywords in query
-		thisMinCt = Utilities.countMatches(givenQuery.toString(), "MIN");
+		thisMinCt = Utilities.countMatches(givenQuery.toString(), "MIN ") +
+					Utilities.countMatches(givenQuery.toString(), "MIN(") +
+					Utilities.countMatches(givenQuery.toString(), "MIN\r\n") +
+					Utilities.countMatches(givenQuery.toString(), "MIN\n");
 		//System.out.println("count of MINs is: " + thisMinCt);
 		
 		// build full condition from string condition

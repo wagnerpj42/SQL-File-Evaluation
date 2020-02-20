@@ -21,7 +21,10 @@ public class CondLikeCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisLikeCt = Utilities.countMatches(givenQuery.toString(), "LIKE");
+		thisLikeCt = Utilities.countMatches(givenQuery.toString(), "LIKE ") +
+					 Utilities.countMatches(givenQuery.toString(), "LIKE(") +
+					 Utilities.countMatches(givenQuery.toString(), "LIKE\r\n") +
+					 Utilities.countMatches(givenQuery.toString(), "LIKE\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisLikeCt + condition);

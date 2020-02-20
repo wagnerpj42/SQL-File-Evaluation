@@ -21,8 +21,11 @@ public class CondAvgCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisAvgCt = Utilities.countMatches(givenQuery.toString(), "AVG");
-		
+		thisAvgCt = Utilities.countMatches(givenQuery.toString(), "AVG ") +
+		            Utilities.countMatches(givenQuery.toString(), "AVG(") +
+        			Utilities.countMatches(givenQuery.toString(), "AVG\r\n") +
+        			Utilities.countMatches(givenQuery.toString(), "AVG\n");
+        
 		// build full condition from string condition
 		String fullCondition = (thisAvgCt + condition);
 		//System.out.println("CondSelectCount full condition: >" + fullCondition + "<");

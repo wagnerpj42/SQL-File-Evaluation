@@ -37,6 +37,7 @@ public abstract class AbstractTest {
 	protected Query orderByQuery;		// query with order by
 	protected Query orderByDescQuery;	// query with order by descending part
 	protected Query orderByDesc2Query;	// query with order by descending full
+	protected Query orderByDesc3Query;	// query with two order by desc/descending
 	protected Query joinOneQuery;		// query with one join
 	protected Query joinManyQuery;		// query with multiple joins
 	protected Query joinTableSelfQuery;	// query with table joined to itself
@@ -52,9 +53,11 @@ public abstract class AbstractTest {
 	protected Query multiLineQuery;		// query on multiple lines
 	protected Query unionQuery;			// query with union
 	protected Query intersectQuery;		// query with intersect
+	protected Query intersect2Query;	// query with intersect on own line
 	protected Query minusQuery;			// query with minus
 	protected Query implicitJoinQuery;	// query with multiple implicit joins
 	protected Query complexNestedQuery;	// query with nested selects in FROM, JOIN and WHERE
+	protected Query fromFormatQuery;	// query with FROM at end of a line
 	
 	// methods
 	// default constructor - essentially cross-test fixture setup
@@ -88,6 +91,7 @@ public abstract class AbstractTest {
 		orderByQuery		= new Query("SELECT * FROM Achievement ORDER BY c_id, s_code");
 		orderByDescQuery	= new Query("SELECT * FROM Achievement ORDER BY c_id, s_code DESC");
 		orderByDesc2Query	= new Query("SELECT * FROM Achievement ORDER BY c_id, s_code DESCENDING");
+		orderByDesc3Query	= new Query("SELECT * FROM Achievement ORDER BY c_id DESC, s_code DESCENDING");
 		joinOneQuery		= new Query("SELECT * FROM Creature C " +
 											"JOIN Achievement A ON C.c_id = A.c_id");
 		joinManyQuery		= new Query("SELECT c_id FROM Creature, Achievement " + 
@@ -117,6 +121,7 @@ public abstract class AbstractTest {
 											"C.c_id = A.c_id GROUP BY C.c_id");
 		unionQuery			= new Query("SELECT c_id FROM Creature UNION SELECT c_id FROM Achievement");
 		intersectQuery		= new Query("SELECT c_id FROM Creature INTERSECT SELECT c_id FROM Achievement");
+		intersect2Query		= new Query("SELECT c_id FROM Creature INTERSECT\nSELECT c_id FROM Achievement");
 		minusQuery			= new Query("SELECT c_id FROM Creature MINUS SELECT c_id FROM Achievement");
 		implicitJoinQuery	= new Query("SELECT c_name, s_desc FROM Creature, Achievement, Skill WHERE Creature.c_id = Achievement.c_id " +
 											"AND Achievement.s_code = Skill.s_code");
@@ -124,6 +129,7 @@ public abstract class AbstractTest {
 				   							"FROM (SELECT columnName2 FROM tableName) t1\r\n" + 
 				   							"JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)" +
 				   							"WHERE t2.columnName3 IN (SELECT columnName4 FROM aThirdTableName);") ;
+    	fromFormatQuery = new Query("SELECT c_id FROM\nCreature");
 	}	// end - constructor/query initialization
 	
 	// finalize - essentially cross-test fixture teardown
@@ -154,6 +160,7 @@ public abstract class AbstractTest {
 		orderByQuery		= null;
 		orderByDescQuery	= null;
 		orderByDesc2Query	= null;
+		orderByDesc3Query	= null;
 		joinOneQuery		= null;
 		joinManyQuery		= null;
 		joinTableSelfQuery  = null;
@@ -169,9 +176,11 @@ public abstract class AbstractTest {
 		multiLineQuery		= null;
 		unionQuery			= null;
 		intersectQuery		= null;
+		intersect2Query		= null;
 		minusQuery			= null;
 		implicitJoinQuery	= null;
 		complexNestedQuery	= null;
+		fromFormatQuery		= null;
 		
 		super.finalize();
 	}	// end - method finalize

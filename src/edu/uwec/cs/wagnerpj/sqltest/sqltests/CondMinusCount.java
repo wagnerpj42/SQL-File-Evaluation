@@ -21,7 +21,10 @@ public class CondMinusCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of intersect keywords in query
-		thisMinusCt = Utilities.countMatches(givenQuery.toString(), "MINUS");
+		thisMinusCt = Utilities.countMatches(givenQuery.toString(), "MINUS ") +
+					  Utilities.countMatches(givenQuery.toString(), "MINUS(") +
+					  Utilities.countMatches(givenQuery.toString(), "MINUS\r\n") +
+					  Utilities.countMatches(givenQuery.toString(), "MINUS\n");
 		//System.out.println("count of MINUS is: " + thisMinusCt);
 		
 		// build full condition from string condition

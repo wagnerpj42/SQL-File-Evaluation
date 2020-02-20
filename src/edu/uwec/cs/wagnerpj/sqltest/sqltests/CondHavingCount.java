@@ -21,8 +21,10 @@ public class CondHavingCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of havings in query
-		thisHavingCt = Utilities.countMatches(givenQuery.toString(), "HAVING");
-		
+		thisHavingCt = Utilities.countMatches(givenQuery.toString(), "HAVING ") +
+		               Utilities.countMatches(givenQuery.toString(), "HAVING(") +
+        			   Utilities.countMatches(givenQuery.toString(), "HAVING\r\n") +
+        			   Utilities.countMatches(givenQuery.toString(), "HAVING\n");
 		// build full condition from string condition
 		String fullCondition = (thisHavingCt + condition);
 		

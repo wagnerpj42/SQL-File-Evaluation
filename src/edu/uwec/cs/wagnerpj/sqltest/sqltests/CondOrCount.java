@@ -21,7 +21,10 @@ public class CondOrCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		thisOrCt = Utilities.countMatches(givenQuery.toString(), "OR");
+		thisOrCt = Utilities.countMatches(givenQuery.toString(), "OR ") +
+				   Utilities.countMatches(givenQuery.toString(), "OR(") +
+				   Utilities.countMatches(givenQuery.toString(), "OR\r\n") +
+				   Utilities.countMatches(givenQuery.toString(), "OR\n");
 		
 		// build full condition from string condition
 		String fullCondition = (thisOrCt + condition);
