@@ -1,0 +1,134 @@
+Assignment  : CS 260, Fall 2019, Lab Test
+Student Name: Student 30 (added by instructor)
+Answer File : lt_s30.sql
+Total Points: 36.77
+
+Your answers, evaluation and points follow.
+
+1: SELECT CustID,FName, LName
+FROM Customer
+WHERE AccNumber IN(
+    SELECT AccNumber
+    FROM Account
+    WHERE AccClosedDate IN
+    (SELECT AccClosedDate
+    FROM Account
+    WHERE AccClosedDate > ('March 1st, 2017')))
+
+Points given: 2.25 of maximum 15
+
+Answer compiles without errors: 0 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 0 / 1.5
+Answer has same column count as desired result query: 0 / 1.5
+Answer has appropriate number of tables used: 0 / 1.5
+Answer has appropriate number of WHERE keyword: 0 / 1.5
+Answer has same result set content as desired query: 0 / 5.25
+
+2: SELECT AccOpenLocation, AccStatus,COUNT(AccStatus)
+FROM Account
+GROUP BY AccOpenLocation
+HAVING (COUNT(AccStatus)<0)
+
+Points given: 3.2 of maximum 16
+
+Answer compiles without errors: 0 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 0 / 1.6
+Answer has same column count as desired result query: 0 / 1.6
+Answer has same result set content as desired query: 0 / 7.2
+
+3: SELECT AccNumber, AccBalance, AccType
+FROM Account A1
+WHERE AccBalance > 
+    (SELECT AVG (A2.AccBalance)
+    From Account A2
+    WHERE A1.AccType = A2.AccType
+    GROUP BY AccType)
+
+Points given: 13.77 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 0 / 1.8
+Answer has same result set content as desired query: 5.67 / 8.1
+
+4: SELECT TransLocation, TransAmount
+FROM Transaction T1
+WHERE (AVG(TransAmount) AS (NUMBER(*,2))) <
+    (SELECT AVG(TransAmount) AS NUMBER(*,2)
+    WHERE T1.TransLocation = TransLocation
+
+Points given: 3.6 of maximum 18
+
+Answer compiles without errors: 0 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 0 / 1.8
+Answer has appropriate number of GROUP BY keywords: 0 / 1.8
+Answer has appropriate number of ORDER BY keywords: 0 / 1.8
+Answer has appropriate number of DESC keyword: 0 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 5.4
+
+5: SELECT CustID, FName, LName
+FROM Customer C
+WHERE TransAmount=
+    (SELECT MAX TransAmount
+    FROM Transaction C2
+    WHERE c.custid = C2.custid)
+
+Points given: 4.8 of maximum 16
+
+Answer compiles without errors: 0 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 0 / 1.6
+Answer has appropriate number of ORDER BY keywords: 0 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: SELECT CustID, FName, LName
+FROM Customer
+WHERE AccNumber IN
+    (SELECT AccNumber
+    FROM Account
+    WHERE AccStatus in
+    (SELECT AccStatus
+    FROM Account    
+    WHERE AccStatus = 'closed' or AccStatus = 'frozen'))
+
+Points given: 7.65 of maximum 17
+
+Answer compiles without errors: 0 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 0 / 1.7
+Answer has same result set content as desired query: 0 / 5.95
+
+7: SELECT TransLocation
+FROM Transaction
+WHERE AccNumber IN
+    (SELECT AccNumber
+    FROM Account
+    WHERE AccOpenLocation =
+        (SELECT COUNT(AccOpenLocation)
+        FROM Account
+        GROUP BY Account
+        HAVING COUNT(AccOpenLocation)))
+
+Points given: 1.5 of maximum 5
+
+Answer compiles without errors: 0 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+

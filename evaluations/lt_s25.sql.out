@@ -1,0 +1,125 @@
+Assignment  : CS 260, Fall 2019, Lab Test
+Student Name: Student 25
+Answer File : lt_s25.sql
+Total Points: 75.45
+
+Your answers, evaluation and points follow.
+
+1: SELECT DISTINCT c.custID, c.fName, c.lName, a.AccClosedDate
+FROM Customer c
+JOIN Account a
+ON (c.custID = a.Customer)
+WHERE a.accStatus LIKE 'Closed'
+
+Points given: 9 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 0.75 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 0 / 5.25
+
+2: SELECT DISTINCT a.AccOpenLocation, a.AccStatus, COUNT(a.accStatus) AS AccStatusNum
+FROM Account a
+GROUP BY a.AccOpenLocation, a.AccStatus
+ORDER BY a.AccOpenLocation, a.AccStatus ASC
+
+Points given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT a1.accNumber
+FROM Account a1
+WHERE a1.accBalance > 
+    (SELECT AVG(a2.accBalance)
+     FROM Account a2
+     WHERE a1.accType = a2.accType
+    )
+ORDER BY a1.accNumber ASC
+
+Points given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 8.1 / 8.1
+
+4: SELECT DISTINCT t1.transLocation, CAST (AVG(t1.transAmount) AS NUMBER(*,2)) AS TransAmount
+FROM Transaction t1
+WHERE t1.transAmount < 
+    (SELECT AVG(t2.transAmount)
+     FROM Transaction t2
+     WHERE t1.transLocation LIKE t2.transLocation
+    )
+GROUP BY t1.transLocation
+ORDER BY CAST (AVG(t1.transAmount) AS NUMBER(*,2)) DESC
+
+Points given: 12.6 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 5.4
+
+5: SELECT DISTINCT c.custID, c.fName, c.lName, t.transAmount
+FROM Customer c
+JOIN Account a
+ON (Customer = a.customer)
+JOIN Transaction t
+ON (a.accNumber = t.accNumber)
+WHERE t.transType LIKE 'w' AND a.accType = 'savings' 
+GROUP BY c.custID, c.fName, c.lName, t.transAmount
+ORDER BY c.custID ASC
+
+Points given: 8.8 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 0 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: SELECT DISTINCT c.custID, c.fName, c.lName
+FROM Customer c
+LEFT OUTER JOIN Account a
+ON (c.custID = a.Customer)
+WHERE a.accStatus LIKE 'Frozen' OR a.accStatus LIKE 'Closed'
+
+Points given: 11.05 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 0 / 5.95
+
+7: 
+
+Points given: 0 of maximum 5
+
+Answer compiles without errors: 0 / 0.5
+Answer has at least SELECT and FROM: 0 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0 / 0.5
+Answer has appropriate number of tables used: 0 / 0.5
+Answer has appropriate number of COUNT keyword: 0 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+

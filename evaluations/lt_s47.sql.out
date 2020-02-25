@@ -1,0 +1,132 @@
+Assignment  : CS 260, Fall 2019, Lab Test
+Student Name: Student 47
+Answer File : lt_s47.sql
+Total Points: 90.05
+
+Your answers, evaluation and points follow.
+
+1: SELECT c.custid, c.fname, c.lname, a.acccloseddate
+FROM Customer c
+JOIN Account a ON c.custid = a.customer
+WHERE a.accopenlocation = 'Central' AND a.acccloseddate >= '01-MAR-2017'
+
+Points given: 15 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 1.5 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 5.25 / 5.25
+
+2: SELECT a.accopenlocation, a.accstatus, count(a.accnumber)
+FROM Account a
+GROUP BY a.accstatus, a.accopenlocation
+ORDER BY a.accopenlocation ASC, a.accstatus ASC
+
+Points given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT DISTINCT a.accnumber
+FROM Account a
+WHERE a.accbalance >
+    (SELECT AVG(asub.accbalance)
+    FROM Account asub
+    WHERE asub.acctype = a.acctype)
+ORDER BY a.accnumber ASC
+
+Points given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 8.1 / 8.1
+
+4: SELECT t.translocation, CAST (AVG(t.transamount) AS NUMBER(*,2)) AS averageamount
+FROM Transaction t
+WHERE t.transamount > (
+    SELECT AVG(tsub.transamount)
+    FROM Transaction tsub)
+GROUP BY t.translocation
+ORDER BY AVG(t.transamount) DESC
+
+Points given: 12.6 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 5.4
+
+5: SELECT DISTINCT c.custid, c.fname, c.lname, t.transamount
+FROM Account a
+JOIN Customer c ON a.customer = c.custid
+JOIN Transaction t ON t.accnumber = a.accnumber
+WHERE a.acctype = 'savings' AND t.transtype = 'w' AND t.transid IN (
+    SELECT tsub.transid
+    FROM Transaction tsub
+    WHERE tsub.accnumber = a.accnumber AND tsub.transtype = 'w' AND tsub.transamount = (
+        SELECT MAX(tsub2.transamount)
+        FROM Transaction tsub2
+        WHERE tsub2.accnumber = a.accnumber AND tsub2.transtype = 'w'
+        )
+    )
+ORDER BY c.custid
+
+Points given: 14.4 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 0 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 5.6 / 5.6
+
+6: SELECT DISTINCT c.custid, c.fname, c.lname
+FROM Customer c
+LEFT JOIN Account a ON c.custid = a.customer
+WHERE a.accnumber NOT IN (
+    SELECT asub.accnumber
+    FROM Account asub
+    WHERE a.accstatus = 'Active')
+
+Points given: 11.05 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 0 / 5.95
+
+7: SELECT t.translocation, COUNT(a.accnumber)
+FROM Transaction t
+RIGHT JOIN Account a ON t.accnumber = a.accnumber
+WHERE a.accopenlocation = t.translocation
+GROUP BY t.translocation
+
+Points given: 3 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0.5 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0.5 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+

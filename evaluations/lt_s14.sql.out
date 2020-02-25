@@ -1,0 +1,119 @@
+Assignment  : CS 260, Fall 2019, Lab Test
+Student Name: Student 14
+Answer File : lt_s14.sql
+Total Points: 79.3
+
+Your answers, evaluation and points follow.
+
+1: Select c.CustID, c.FName, c.LName
+        from Customer c
+        join Account a on(c.CustID = a.Customer)
+        where a.AccOpenLocation like 'Central' and (a.AccClosedDate > '01-MAR-2017' or a.AccClosedDate like '01-MAR-2017')
+
+Points given: 8.25 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 1.5 / 1.5
+Answer has same column count as desired result query: 0 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 0 / 5.25
+
+2: Select a.AccOpenLocation, a.AccStatus, count(AccStatus)
+        from Account a group by a.AccOpenLocation, a.AccStatus
+        order by (AccOpenLocation)
+
+Points given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: Select a.AccNumber
+        from account a
+        WHERE (a.AccBalance >      
+                      (SELECT AVG(a2.AccBalance)
+                      From Account a2
+                      WHERE(a.AccType = a2.AccType)))
+        Order by a.AccNumber
+
+Points given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 8.1 / 8.1
+
+4: select t1.TransLocation, CAST (AVG(t1.TransAmount) AS NUMBER(*,2))
+        from Transaction t1 
+        where t1.TransAmount < (
+                        Select AVG(t2.TransAmount)
+                        from Transaction t2) 
+        group by t1.TransLocation
+        order by AVG(t1.TransAmount) desc
+
+Points given: 12.6 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 0 / 5.4
+
+5: Select  c.CustID, c.FName, c.LName, MAX(t.transAmount)
+        from Customer c
+        join Account a on(c.CustID = a.Customer)
+        join Transaction t on (a.AccNumber = t.AccNumber) 
+        where t.TransType like 'w' group by c.CustID, c.FName, c.LName
+        order by c.CustID
+
+Points given: 10.4 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: Select  c.CustID, c.FName, c.LName
+        from Customer c
+        left join Account a on(c.CustID = a.Customer)
+        where NOT(a.AccStatus like 'Active') or (a.AccNumber IS NULL)
+
+Points given: 11.05 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 0 / 5.95
+
+7: Select t.TransLocation, Count(a.AccNumber)
+        from Transaction t
+        left outer join Account a on (a.AccNumber = t.AccNumber)
+        where t.transLocation = a.accopenLocation group by t.TransLocation
+
+Points given: 3 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0.5 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0.5 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+

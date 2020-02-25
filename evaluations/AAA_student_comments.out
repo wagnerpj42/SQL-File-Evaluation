@@ -1,25 +1,38 @@
-Assignment  : CS 260, Spring 2019, Lab Test
+Assignment  : CS 260, Fall 2019, Lab Test
 
-files/bennettchristopher_40327_3895398_BENNETCZ5682_LabTest2019.sql: --SELECT A.accopenlocation FROM Account A
-files/bennettchristopher_40327_3895398_BENNETCZ5682_LabTest2019.sql: --GROUP BY A.accopenlocation
-files/bennettchristopher_40327_3895398_BENNETCZ5682_LabTest2019.sql: --ORDER BY A.accopenlocation;
-files/cousineaubraden_35243_3894645_COUSINBM6915.sql: --SELECT AccType, AVG(AccBalance)
-files/cousineaubraden_35243_3894645_COUSINBM6915.sql: --FROM ACCOUNT
-files/cousineaubraden_35243_3894645_COUSINBM6915.sql: --GROUP BY ACCOUNT.AccType;
-files/dekrakerjonathan_37759_3895750_DEKRAKJC9868.sql: --Do not have it working 100% as i do not have, "display the number of accounts opened at that location, even if no 
-files/dekrakerjonathan_37759_3895750_DEKRAKJC9868.sql: --accounts were opened at that location.". The count function doesnt count null values. --
-files/fischernicholas_41017_3894683_fischern4293 Midterm.sql: --LEFT OUTER JOIN Account A ON (T.translocation = A.accopenlocation)
-files/fischernicholas_41017_3894683_fischern4293 Midterm.sql: --GROUP BY T.translocation;
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --SELECT A2.acctype, AVG(A2.accBalance) FROM Account A2 GROUP BY A2.acctype;
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/lafleurcorbin_31147_3895800_lafleucj6782-1.sql: --done
-files/springettchristopher_30627_3894709_springcj6832_exam.sql: --test--SELECT Accbalance, accstatus
-files/springettchristopher_30627_3894709_springcj6832_exam.sql: --from account;
-files/springettchristopher_30627_3894709_springcj6832_exam.sql: --so close :(
-files/telleriamarcelo_40828_3895895_TELLERMA5583-1.sql: --MAKE SURE IT WORKS
-files/zhujiang_59761_3896084_zhuj3128.sql.sql: -- A.ACCSTATUS IS MAKING SURE THE ACCOUNT HAVE BEEN CLOSED.
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --I also tried this solution for question 2:
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Active'
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --    UNION
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Closed')   
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --    UNION
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Frozen');
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s08.sql: --SELECT * FROM Customer;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s08.sql: --SELECT * FROM Account;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s08.sql: --SELECT * FROM Transaction;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s09.sql: --ASSUMED THAT YOU DIDN'T WANT TO DISPLAY IF THEY HAD 0 ACTIVE, CLOSED, OR FROZEN ACCOUNTS
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- SELECT c.custid,c.fname,c.lname,MAX(t.transamount)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- FROM customer c
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- JOIN account a ON c.custid = a.customer
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --JOIN transaction t ON a.accnumber = t.accnumber
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --WHERE t.transtype LIKE 'w'
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- GROUP BY c.custid;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --SELECT MAX(transamount)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --FROM transaction
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --GROUP BY transtype;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s25.sql: --Can join based on a foreign key.
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s25.sql: --THIS ONE IS WRONG
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s25.sql: --Self join
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: -- DO NOT KNOW WHY THIS IS NOT WORKING ORDER BY ACCNUMBER));
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: --WHERE (AVG(T.TRANSAMOUNT) >
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: --(SELECT AVG(T2.TRANSAMOUNT) FROM TRANSAMOUNT TS));
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: --GROUP BY T.TRANSLOCATION, AVG(T.TRANSAMOUNT)));
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s50.sql: -- ASSUMPTION: If the OpenLocation doesn't have Accounts of some type (Active, Closed, Frozen) it won't need to print them

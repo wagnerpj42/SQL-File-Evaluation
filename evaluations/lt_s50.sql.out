@@ -1,0 +1,118 @@
+Assignment  : CS 260, Fall 2019, Lab Test
+Student Name: Student 50
+Answer File : lt_s50.sql
+Total Points: 89.6
+
+Your answers, evaluation and points follow.
+
+1: SELECT C.CustID, C.FName, C.LName, A.AccClosedDate FROM CUSTOMER C
+JOIN ACCOUNT A ON (C.CustID = A.Customer) 
+WHERE A.AccClosedDate >= TO_DATE('01-Mar-2017', 'DD-Mon-YYYY')
+
+Points given: 9 of maximum 15
+
+Answer compiles without errors: 1.5 / 1.5
+Answer has at least SELECT and FROM: 2.25 / 2.25
+Answer has same row count as desired query: 0.75 / 1.5
+Answer has same column count as desired result query: 1.5 / 1.5
+Answer has appropriate number of tables used: 1.5 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
+Answer has same result set content as desired query: 0 / 5.25
+
+2: SELECT DISTINCT AccOpenLocation, AccStatus, count(AccNumber) FROM Account
+group by AccOpenLocation, AccStatus 
+order by AccOpenLocation
+
+Points given: 16 of maximum 16
+
+Answer compiles without errors: 2.4 / 2.4
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has same column count as desired result query: 1.6 / 1.6
+Answer has same result set content as desired query: 7.2 / 7.2
+
+3: SELECT A.AccNumber FROM ACCOUNT A WHERE A.AccBalance > (
+    SELECT AVG(B.AccBalance) FROM ACCOUNT B 
+    WHERE B.AccType = A.AccType) 
+ORDER BY A.AccNumber
+
+Points given: 18 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 1.8 / 1.8
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same column count as desired result query: 1.8 / 1.8
+Answer has same result set content as desired query: 8.1 / 8.1
+
+4: SELECT DISTINCT T.TransLocation, CAST(averageForLoc.average AS NUMBER(*,2)) FROM Transaction T JOIN (
+    SELECT Trans.TransLocation, AVG(Trans.TransAmount) average FROM Transaction Trans 
+    group by Trans.TransLocation) averageForLoc 
+ON(T.TransLocation = averageForLoc.TransLocation) 
+WHERE averageForLoc.average < (
+    SELECT AVG(allTrans.TransAmount) FROM Transaction allTrans) 
+ORDER BY CAST(averageForLoc.average AS NUMBER(*,2)) DESC
+
+Points given: 16.2 of maximum 18
+
+Answer compiles without errors: 2.7 / 2.7
+Answer has at least SELECT and FROM: 1.8 / 1.8
+Answer has appropriate number of AVG keyword: 0 / 1.8
+Answer has appropriate number of GROUP BY keywords: 1.8 / 1.8
+Answer has appropriate number of ORDER BY keywords: 1.8 / 1.8
+Answer has appropriate number of DESC keyword: 0.9 / 0.9
+Answer has appropriate number of tables used: 1.8 / 1.8
+Answer has same result set content as desired query: 5.4 / 5.4
+
+5: SELECT A.Customer, C.FName, C.LName, T.maximum FROM Account A JOIN Customer C ON(C.CustID = A.Customer)
+JOIN (
+    SELECT MAX(Trans.TransAmount) maximum, Trans.AccNumber accnum FROM Transaction Trans 
+    group by Trans.AccNumber) T 
+    ON(T.accnum = A.AccNumber) WHERE A.AccType = 'savings' 
+    ORDER BY A.Customer
+
+Points given: 10.4 of maximum 16
+
+Answer compiles without errors: 1.6 / 1.6
+Answer has at least SELECT and FROM: 1.6 / 1.6
+Answer has appropriate number of MAX keyword: 1.6 / 1.6
+Answer has appropriate number of GROUP BY keywords: 1.6 / 1.6
+Answer has appropriate number of ORDER BY keywords: 1.6 / 1.6
+Answer has appropriate number of tables used: 1.6 / 1.6
+Answer has same column count as desired result query: 0.8 / 0.8
+Answer has same result set content as desired query: 0 / 5.6
+
+6: SELECT C.CustID, C.FName, C.LName FROM Customer C
+WHERE C.CustID NOT IN(
+    SELECT A.Customer FROM Account A)
+OR C.CustID NOT IN(
+    SELECT B.Customer FROM Account B
+    WHERE B.AccStatus = 'Active')
+
+Points given: 17 of maximum 17
+
+Answer compiles without errors: 1.7 / 1.7
+Answer has at least SELECT and FROM: 2.55 / 2.55
+Answer has appropriate number of WHERE keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has same column count as desired result query: 1.7 / 1.7
+Answer has same result set content as desired query: 5.95 / 5.95
+
+7: SELECT DISTINCT TransLocation, locationCount.counter FROM Transaction FULL OUTER JOIN (
+    SELECT count(AccNumber) counter, AccOpenLocation accLocation FROM Account 
+    group by AccOpenLocation) locationCount 
+ON(TransLocation = locationCount.accLocation)
+ORDER BY locationCount.counter
+
+Points given: 3 of maximum 5
+
+Answer compiles without errors: 0.5 / 0.5
+Answer has at least SELECT and FROM: 0.5 / 0.5
+Answer has appropriate number of OUTER/LEFT/RIGHT/BOTH keywords: 0.5 / 0.5
+Answer has appropriate number of GROUP BY keywords: 0.5 / 0.5
+Answer has appropriate number of tables used: 0 / 0.5
+Answer has appropriate number of COUNT keyword: 0.5 / 0.5
+Answer has appropriate number of DISTINCT keyword: 0.5 / 0.5
+Answer has same result set content as desired query: 0 / 1.5
+
