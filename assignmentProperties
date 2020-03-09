@@ -1,4 +1,4 @@
-CS 260, Spring 2019, Lab Test
+CS 260, Fall 2019, Lab Test
 
 1. (15 points)
 SELECT CustID, Fname, Lname, AccClosedDate
@@ -6,7 +6,7 @@ FROM Customer C
 JOIN Account A ON A.Customer = C.CustID
 WHERE AccStatus = 'Closed'
 AND AccOpenLocation = 'Central' 
-AND AccClosedDate >= '01-JAN-2018';
+AND AccClosedDate >= '01-MAR-2017';
 
 CondCompiles 10 ""
 CondBasicContent 15 ""
@@ -17,7 +17,7 @@ CondWhereCount 10 " == 1"
 TestResultSetEqualContent 35
 
 
-2. (16 points) 
+2-1. (16 points) 
 SELECT AccOpenLocation, AccStatus, COUNT(*) AS "Location/Status Ct."
 FROM Account
 GROUP BY AccOpenLocation, AccStatus
@@ -30,6 +30,23 @@ CondOrderByCount 10 " == 1"
 TestColumnCount 10
 TestResultSetEqualContent 45
 
+2-2. (16 points)
+SELECT DISTINCT A1.AccOpenLocation, A2.AccStatus, 
+   COUNT(DISTINCT A3.AccNumber) AS "Location/Status Ct."
+FROM Account A1
+CROSS JOIN Account A2
+LEFT OUTER JOIN Account A3 
+ ON (A1.AccOpenLocation = A3.AccOpenLocation AND A2.AccStatus = A3.AccStatus)
+GROUP BY A1.AccOpenLocation, A2.AccStatus
+ORDER BY A1.AccOpenLocation, A2.AccStatus;
+ 
+CondCompiles 15 ""
+CondBasicContent 10 ""
+CondGroupByCount 10 " == 1"
+CondOrderByCount 10 " == 1"
+CondJoinOuterCount 10 " >= 1"
+TestColumnCount 10
+TestResultSetEqualContent 35
 
 3. (18 points) 
 SELECT A1.AccNumber
@@ -42,7 +59,7 @@ WHERE A1.AccBalance >
 CondCompiles 15 ""
 CondBasicContent 10 ""
 CondAvgCount 10 " >= 1"
-CondTableCount 10 " == 2"
+CondTableCount 10 " >= 1"
 TestColumnCount 10
 TestResultSetEqualContent 45
 
@@ -81,12 +98,12 @@ CondBasicContent 10 ""
 CondMaxCount 10 " >= 1"
 CondGroupByCount 10 " >= 1"
 CondOrderByCount 10 " == 1"
-CondTableCount 10 " >= 3"
+CondTableCount 10 " >= 2"
 TestColumnCount 5
 TestResultSetEqualContent 35
 
 
-6. (17 points) 
+6-1. (17 points) 
 SELECT DISTINCT CustID, FName, LName
 FROM Customer C
 JOIN Account A ON (C.CustID = A.Customer)
@@ -110,6 +127,20 @@ CondTableCount 15 " >= 2"
 TestColumnCount 10
 TestResultSetEqualContent 35
 
+6-2. (17 points)
+SELECT DISTINCT CustID, FName, LName
+FROM Customer
+WHERE Custid NOT IN
+  (SELECT Customer
+   FROM Account
+   WHERE AccStatus = 'Active');
+
+CondCompiles 10 ""
+CondBasicContent 15 ""
+CondWhereCount 15 " >= 1"
+CondSelectCount 15 " >= 2"
+TestColumnCount 10
+TestResultSetEqualContent 35
 
 7. (5 points)
 SELECT TransLocation, COUNT(DISTINCT A.AccNumber)
