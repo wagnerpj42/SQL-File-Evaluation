@@ -14,21 +14,17 @@ import org.junit.Test;
 import sqlfe.general.OracleDataAccessObject;
 import sqlfe.general.ResultSetMetaDataSummary;
 
-public class OracleDataAccessObjectTests extends AbstractTest {
+public class OracleDataAccessObjectTests extends AbstractTest { 
 	// data
-	private OracleDataAccessObject dao;			// data access object
-	private Connection conn;				// database connection
-	private ResultSet  rset;				// query result set
-	private ResultSetMetaDataSummary summary; // result set metadata (rows and columns)
-	private int status;						// return value from some dao methods
-											// test query
-	//private Query creatureAllQuery = new Query("SELECT * FROM Creature");
-	//private Query creatureZeroQuery = new Query("SELECT c_id FROM Creature WHERE c_id = 100");
+	private OracleDataAccessObject dao;			// local data access object for Oracle testing
+	private Connection conn;					// database connection
+	private ResultSet  rset;					// query result set
+	private ResultSetMetaDataSummary summary; 	// result set metadata (rows and columns)
+	private int status;							// return value from some dao methods
 	
 	@Before
 	public void setup() {
-		// TODO: how to hide this information if added to repository?
-		dao = new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi6cs");
+		dao = new OracleDataAccessObject("hostname", "sysid", "username", "password");	// must be changed for running unit tests
 	}
 
 	@Test

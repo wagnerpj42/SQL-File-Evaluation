@@ -71,14 +71,14 @@ public class BackEnd {
 			// TODO: what to do if bad DAO specification?
 		}
 		
-		System.out.println("main folder path is:        " + mainFolderPath);
-		System.out.println("submissions folder path is: " + submissionFolderPath);
-		System.out.println("evaluations folder path is: " + evaluationFolderPath);
+		//System.out.println("main folder path is:        " + mainFolderPath);
+		//System.out.println("submissions folder path is: " + submissionFolderPath);
+		//System.out.println("evaluations folder path is: " + evaluationFolderPath);
 	}	// end - method transferData
 	
 	
 	// -- evaluate() - do the main evaluation work
-	// TODO: do we need to return anything here?
+	// TODO: do we need to return anything here? change to void?
 	public String evaluate () {
 		//Question currQuestion = null;					// current question for a submitted answer
 		ArrayList<Question> currQuestions = null;		// current question(s) for a submitted answer
@@ -86,7 +86,7 @@ public class BackEnd {
 		// read in the assignment properties
 		Assignment a = new Assignment();
 		a.readProperties(assignmentPropertiesFileName);
-		System.out.println(a.toString());
+		//System.out.println(a.toString());
 		ArrayList<Question> questions = a.getQuestions();
 
 		// set up grade summary file
@@ -114,7 +114,7 @@ public class BackEnd {
 		for (int sIndex = 0; sIndex < sc.getTotalSubmissions(); sIndex++) {
 			Submission s = sa.get(sIndex);
 			//System.out.println(s.toString());
-			System.out.println("\nProcessing file " + s.getSubmissionFileName());
+			System.out.print("\n" + s.getSubmissionFileName() + ": ");
 			double submissionPoints = 0;
 			ArrayList<QueryEvaluation> queryEvals = new ArrayList<QueryEvaluation>();
 
@@ -126,8 +126,7 @@ public class BackEnd {
 			for (int qaIndex = 0; qaIndex < qas.size(); qaIndex++) {				
 				// get the next answer for this submission
 				QuestionAnswer qa = qas.get(qaIndex);
-				System.out.println("processing question " + qa.qNumStr
-						+ " for submission " + s.getSubmissionFileName());
+				System.out.print("Q" + qa.qNumStr + ".");
 				
 				Query actualQuery = qa.getActualQuery();
 				//System.out.println("Main-actualQuery: >" + actualQuery.toString() + "<");
@@ -259,6 +258,11 @@ public class BackEnd {
 		finally {
 			gradesWriter.close();
 		}
+
+		// tell user that processing is done
+		System.out.println();
+		System.out.println();
+		System.out.println("Processing of this submission set completed.");
 		
 		return resultString;		
 	}	// end - method evaluate

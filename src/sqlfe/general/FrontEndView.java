@@ -60,7 +60,7 @@ public class FrontEndView extends JFrame {
 		JLabel workareaLabel = new JLabel();			// label - evaluation work area folder
 		JLabel assignpropLabel = new JLabel();			// label - assignment properties file
 		JLabel displayLabel = new JLabel();				// label - status display area
-		Button authButton = new Button("Start Evaluation"); // button to start evaluation processing
+		Button startButton = new Button("Start Evaluation"); // button to start evaluation processing
 		
 		try {
 			// set up the application frame
@@ -165,22 +165,25 @@ public class FrontEndView extends JFrame {
 			// construct the display text area
 			displayArea.setBounds(280, 380, 300, 80);
 			displayArea.setEditable(false);
-			//displayArea.setLineWrap(true);
-			displayPanel.setBounds(280, 380, 300, 80);
+			displayArea.setLineWrap(true);
+			
+			displayPanel.setBounds(280, 380, 300, 80);		// temporarily commented for testing TextAreaOutputStream
 		
 			// redirect standard output to the display text area
-			PrintStream printStream = new PrintStream(new GUIOutputStream(displayArea, displayPanel));
-//			System.setOut(printStream);
-//			System.setErr(printStream);
+			// PrintStream printStream = new PrintStream(new GUIOutputStream(displayArea, displayPanel));
+			//PrintStream printStream = new PrintStream(new TextAreaOutputStream(displayArea));		// tested new output stream class - not working
+			// System.setOut(printStream);
+			// System.setErr(printStream);
 
-			// construct the button	
-			authButton.setBounds(60, 430, 180, 35);
-			authButton.addActionListener( new ActionListener(){
+			// construct the button
+			startButton.setBounds(60, 430, 180, 35);
+			startButton.addActionListener( new ActionListener(){
 				public void actionPerformed(ActionEvent e){							
 					// send the input data to the FrontEnd for passing on to the BackEnd
-					System.out.println("workAreaChooser is: " + workAreaChooser);
-					System.out.println("wac.selected file is: " + workAreaChooser.getSelectedFile());
-					System.out.println("wac.sf.absolute path is: " + workAreaChooser.getSelectedFile().getAbsolutePath());
+					//System.out.println("workAreaChooser is: " + workAreaChooser);
+					//System.out.println("wac.selected file is: " + workAreaChooser.getSelectedFile());
+					//System.out.println("wac.sf.absolute path is: " + workAreaChooser.getSelectedFile().getAbsolutePath());
+					//System.out.println();
 					
 					aFrontEnd.processInput( (String)dbmsBox.getSelectedItem(), hostBox.getText(), idBox.getText(), 
 																	userBox.getText(), passBox.getText(),
@@ -207,13 +210,13 @@ public class FrontEndView extends JFrame {
 			sqlFileEvalContentPane.add(workareaLabel);
 			sqlFileEvalContentPane.add(workAreaChooser);
 			
-			sqlFileEvalContentPane.add(displayLabel);	
+			//sqlFileEvalContentPane.add(displayLabel);	
 
-			//sqlFileEvalContentPane.add(displayArea);
-			sqlFileEvalContentPane.add(displayPanel);
-			sqlFileEvalContentPane.add(authButton);
+			//sqlFileEvalContentPane.add(displayArea);		// must be commented out for display panel to work
+			//sqlFileEvalContentPane.add(displayPanel);
+			sqlFileEvalContentPane.add(startButton);
 				
-			// --- finally, set the content pane
+			// --- finally, set the content pane overall
 			setContentPane(sqlFileEvalContentPane);
 
 		} catch (java.lang.Throwable ivjExc) {

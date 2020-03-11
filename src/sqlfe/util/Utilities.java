@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utilities {
+public class Utilities { 
 	// -- sortString - sort a string into ordered component parts
 	public static String sortString(String origString) {
 		String result = "";
@@ -135,22 +135,25 @@ public class Utilities {
 		return localLine;
 	}	// end = method processUserComments
 	
-	// -- isInstructorComment - check if line has three dashes at beginning, for header lines or question lines
+	// -- isInstructorComment - check if line has two dashes at beginning, then blank, then two more dashes
+	//                          for header comment lines or question comment lines from instructor template
 	public static boolean isInstructorComment (String line) {
 		boolean result = false;
 
-		if (line != null && line.length() >= 3 && line.charAt(0) == '-' && line.charAt(1) == '-' && line.charAt(2) == '-') {
+		if (line != null && line.length() >= 5 && line.charAt(0) == '-' && line.charAt(1) == '-' && line.charAt(2) == ' ' &&
+												  line.charAt(3) == '-' && line.charAt(4) == '-') {
 			result = true;
 		}
 		
 		return result;
 	}	// end - method isInstructorComment
 	
-	// -- isUserComment - check if line has two dashes at beginning, for any added user comment in submission
+	// -- isUserComment - check if line has two dashes at beginning and not instructor comment, for any added user comment in submission
 	public static boolean isUserComment (String line) {
 		boolean result = false;
 
-		if (line != null && line.length() >= 3 && line.charAt(0) == '-' && line.charAt(1) == '-' && line.charAt(2) != '-') {
+		if (line != null && line.length() >= 3 && line.charAt(0) == '-' && line.charAt(1) == '-' && line.charAt(2) != '-' &&
+				!isInstructorComment(line)) {
 			result = true;
 		}
 		

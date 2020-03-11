@@ -16,7 +16,7 @@ import sqlfe.util.Utilities;
 
 import java.util.regex.Matcher;
 
-public class Assignment {
+public class Assignment { 
 	// data
 	private String	assignmentName;					// name of assignment
 	private ArrayList<Question> questions;			// list of questions in assignment
@@ -108,7 +108,7 @@ public class Assignment {
 			// read assignment name
 			line = br.readLine();			
 			assignmentName = line;							// first line = assignment name
-			System.out.println("assignment is: " + assignmentName);
+			System.out.println("\nAssignment: " + assignmentName);
 			line = br.readLine();							// get next line after assignment name
 			
 			if (questions == null) {						// initialize questions list
@@ -182,7 +182,7 @@ public class Assignment {
 						//System.out.println("test line is: >" + line + "<");
 						if (line != null && !line.equals("") && 
 								(line.substring(0, 4).equals("Test") || 
-								(line.substring(0,4).equals("Cond") )) ) {
+								(line.substring(0, 4).equals("Cond") )) ) {
 							// process as a test/condition
 							// get test name - from beginning of line to first space
 							int firstSpacePos = line.indexOf(' ');
