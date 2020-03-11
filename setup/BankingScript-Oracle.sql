@@ -1,5 +1,5 @@
--- CS 260, Spring 2019
--- Lab Test Banking data script
+-- CS 260, Fall 2019, Lab Test
+-- Banking tables and data script for Oracle
 
 -- 1. Cleanup (drop any existing tables)
 DROP TABLE Transaction;
