@@ -6,6 +6,7 @@
  */
 package sqlfe.general;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
@@ -53,12 +54,24 @@ public class BackEnd {
 		username = aFrontEnd.getDbmsUsername();							// get DBMS username directly "
 		password = aFrontEnd.getDbmsPassword();							// get DBMS password directly "
 																		// get main folder path directly "
-		mainFolderPath = Utilities.processSlashes(aFrontEnd.getEvaluationFolder());				
+		mainFolderPath = Utilities.processSlashes(aFrontEnd.getEvaluationFolder());	
+		
+		// set folder paths under main folder
 		submissionFolderPath = mainFolderPath + "/files/"; 				// set location of submission files relative to workspace folder
 		evaluationFolderPath = mainFolderPath + "/evaluations/"; 		// set location of evaluation output files relative to workspace folder
 		assignmentPropertiesFileName = mainFolderPath + "/" + aFrontEnd.getAssignPropFile();	// get assignment properties file name directly "
 
-		gradesFileName = evaluationFolderPath + "AAA_grade_summary.out"; // set grades summary file name in evaluations folder
+		// make sure evaluations folder exists, and create it if not
+		File directory = new File(String.valueOf(evaluationFolderPath));
+		if (!directory.exists()) {										// if evaluations folder doesn't exist, create it
+			directory.mkdir();
+		} else {														// else clear out existing files
+			for (File f: directory.listFiles()) 
+				  f.delete();
+		}
+		
+		// set grades summary file name in evaluations folder
+		gradesFileName = evaluationFolderPath + "AAA_grade_summary.out";
 		
 		switch (dbmsName) {
 		case "Oracle":
