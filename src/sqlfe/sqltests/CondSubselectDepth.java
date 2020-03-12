@@ -1,7 +1,7 @@
 /*
- * CondJoinCount - class to evaluate condition for count of joins
+ * CondSubselectDepthCount - class to evaluate condition for subselect depth count
  * 
- * Created - Paul J. Wagner, 1-Oct-2018
+ * Created - Ryan Vaughan, January 2020
  */
 package sqlfe.sqltests;
 
@@ -23,6 +23,7 @@ public class CondSubselectDepth implements ISQLTest {
 
 		boolean compResult = false;
 		String fullCondition = subselectDepth + condition;
+		
 		// evaluate full condition
 		ScriptEngineManager factory = new ScriptEngineManager();
 		ScriptEngine engine = factory.getEngineByName("JavaScript");
@@ -37,8 +38,9 @@ public class CondSubselectDepth implements ISQLTest {
 
 		
 		return new TestResult(result);
-	}	// end - condJoinCount
+	}	// end - method sqlTest
 
+	// calculateSubselectDepth - recursively calculate the subselect depth for the given query or part of query
 	public static int calculateSubselectDepth(String query, int currentDepth){
 
 		//Select FROM to end of the query
@@ -54,15 +56,18 @@ public class CondSubselectDepth implements ISQLTest {
 			if(subselectDepth > maxSubselectDepth) maxSubselectDepth = subselectDepth;
 		}
 		return maxSubselectDepth;
-	}	// end - method calculate SubselectDepth
+	}	// end - method calculateSubselectDepth
 
+	// getName - return the test name
 	public String getName() {
 		return "CondSubselectDepth";
 	}
 	
+	// getDesc - return the test description
 	public String getDesc() {
-		return "Answer has appropriate maximum subselect statement depth";
+		return "Answer has appropriate maximum subselect query depth";
 	}
-}	// end - class CondJoinCount
+
+}	// end - class CondSubselectDepthCount
 
 
