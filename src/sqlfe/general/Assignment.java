@@ -109,6 +109,7 @@ public class Assignment {
 			line = br.readLine();			
 			assignmentName = line;							// first line = assignment name
 			System.out.println("\nAssignment: " + assignmentName);
+			System.out.println();
 			line = br.readLine();							// get next line after assignment name
 			
 			if (questions == null) {						// initialize questions list

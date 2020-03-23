@@ -121,7 +121,7 @@ public class SubmissionCollection {
 			for (int index = 0; index < listOfFiles.length; index++) {
 				if (listOfFiles[index].isFile()) {
 					String fileName = listOfFiles[index].getName();
-					//System.out.println("File: " + fileName);
+					System.out.println("Parsing file: " + fileName);
 					Submission s = new Submission();
 					s.readSubmission(folderPath + fileName, commWriter);		// get initial submission information
 					String submissionFileName = s.getSubmissionFileName();
