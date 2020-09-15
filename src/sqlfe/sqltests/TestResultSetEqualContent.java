@@ -157,7 +157,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 			summaryDesired = dao.processResultSet(rsetDesired);
 			rsetDesired.beforeFirst();
 		} catch (Exception e) {
-			System.err.println("Error executing SQL/processing result set for desired");
+			//System.err.println("Error executing SQL/processing result set for desired");
 		}
 
 		desiredRowCt = summaryDesired.getNumRows();
