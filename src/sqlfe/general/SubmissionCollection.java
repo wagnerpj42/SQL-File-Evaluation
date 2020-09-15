@@ -107,15 +107,28 @@ public class SubmissionCollection {
 		submissions = new ArrayList<Submission>();				// list of submissions
 		int fileCount = 0;										// count of submission files read
 		PrintWriter commWriter = null;							// comment file writer
+		PrintWriter parseWriter = null;							// parse file writer
 		
-		// -- set up comments file for comments from each submission file
+		// -- set up comments file name for comments from each submission file
 		String commFileName = evaluationFolderPath + "AAA_student_comments.out";
+		// -- set up parsing file name for parsing problems information from submission files
+		String parseFileName = evaluationFolderPath + "AAA_parse_problems.out";		
+
+		// process all each submission
 		try {
+			// output files setup
 			commWriter = new PrintWriter(commFileName, "UTF-8");
-			// output general information
+			parseWriter = new PrintWriter(parseFileName, "UTF-8");
+			
+			// output general comment file information
 			commWriter.println("Assignment  : " + assignmentName);
 			commWriter.println("");
 		
+			// output general parse file information
+			parseWriter.println("Assignment  : " + assignmentName);
+			parseWriter.println("");
+			
+			// process all files
 			File folder = new File(folderPath);
 			File[] listOfFiles = folder.listFiles();
 			for (int index = 0; index < listOfFiles.length; index++) {
@@ -123,7 +136,7 @@ public class SubmissionCollection {
 					String fileName = listOfFiles[index].getName();
 					System.out.println("Parsing file: " + fileName);
 					Submission s = new Submission();
-					s.readSubmission(folderPath + fileName, commWriter);		// get initial submission information
+					s.readSubmission(folderPath + fileName, commWriter, parseWriter);	// get submission information
 					String submissionFileName = s.getSubmissionFileName();
 					s.setSubmissionFileName(submissionFileName.substring(submissionFileName.lastIndexOf("/") + 1));
 					// add this submission to the list
@@ -136,9 +149,10 @@ public class SubmissionCollection {
 				}
 			}	// end - for
 		} catch (IOException ioe) {
-			System.err.println("IOException in writing to file " + commFileName);
+			System.err.println("IOException in writing to file " + commFileName + " or " + parseFileName);
 		} finally {
 			commWriter.close();
+			parseWriter.close();
 		}
 		totalSubmissions = fileCount;
 		//System.out.println("read in " + totalSubmissions + " files");

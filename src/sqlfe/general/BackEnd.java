@@ -123,11 +123,10 @@ public class BackEnd {
 		
 		// process each submission in the collection
 		ArrayList<Submission> sa = sc.getSubmissions();
-		
 		for (int sIndex = 0; sIndex < sc.getTotalSubmissions(); sIndex++) {
 			Submission s = sa.get(sIndex);
 			//System.out.println(s.toString());
-			System.out.print("\n" + s.getSubmissionFileName() + ": ");
+			System.out.print("\nEvaluating " + s.getSubmissionFileName() + ": ");
 			double submissionPoints = 0;
 			ArrayList<QueryEvaluation> queryEvals = new ArrayList<QueryEvaluation>();
 
@@ -136,122 +135,124 @@ public class BackEnd {
 			
 			// process each question answer in the submission
 			ArrayList<QuestionAnswer> qas = s.getAnswers();
-			for (int qaIndex = 0; qaIndex < qas.size(); qaIndex++) {				
-				// get the next answer for this submission
-				QuestionAnswer qa = qas.get(qaIndex);
-				System.out.print("Q" + qa.qNumStr + ".");
-				
-				Query actualQuery = qa.getActualQuery();
-				//System.out.println("Main-actualQuery: >" + actualQuery.toString() + "<");
-				
-				// find the matching question(s) for the answer
-				currQuestions = new ArrayList<Question>();
-				boolean foundOne = false;
-				boolean foundAll = false;
-				int qIndex = 0;
-				while (qIndex < questions.size() && !foundAll) {
-					//System.out.println("student qa is : >" + qa.getQNumStr() + "<");
-					//System.out.println("instr. ques is: >" + questions.get(qIndex).getQNumStr());
-					// first match
-					if (!foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) == 0) {
-						foundOne = true;
-						currQuestions.add(questions.get(qIndex));		// use this question
-						qIndex++;
-					}
-					// subsequent match
-					else if (foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) == 0) {
-						currQuestions.add(questions.get(qIndex));		// add this question too
-						qIndex++;
-					}
-					// first non-match after subsequent match
-					else if (foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) != 0) {
-						foundAll = true;
-						qIndex++;
-					}
-					// not a match
-					else {
-						qIndex++;
-					}
-				}	// end - while looking for question(s) to match student answer
-				
-				// TODO: how to do error handling for finding question to match submission answer number?
-				//       may need try/catch block to avoid later work
-				if (!foundOne) {
-					System.out.println("cannot find question");
-				}
-				
-				// loop through all possible questions, evaluate, choose max
-				double highestPoints = -1.0;			// set below zero so any evaluation is better
-				double qPoints = 0.0;
-				QueryEvaluation qe = null;
-				QueryEvaluation maxQE = null;
-				
-				for (int qcIndex = 0; qcIndex < currQuestions.size(); qcIndex++) {
-					// get the desired query for this question
-					Query desiredQuery = currQuestions.get(qcIndex).getDesiredQuery(); 
-					//System.out.println("evaluating answer: " + currQuestions.get(qcIndex).getQNumStr());
-					//System.out.println("Main-desiredQuery: >" + desiredQuery.toString() + "<");
+			if (qas != null) {
+				for (int qaIndex = 0; qaIndex < qas.size(); qaIndex++) {				
+					// get the next answer for this submission
+					QuestionAnswer qa = qas.get(qaIndex);
+					System.out.print("Q" + qa.qNumStr + ".");
 					
-					// get the evaluation components for this question
-					ArrayList<EvalComponentInQuestion> questionEvalComps = currQuestions.get(qcIndex).getTests(); 
-					int maxPoints = currQuestions.get(qcIndex).getQuestionPoints();
+					Query actualQuery = qa.getActualQuery();
+					//System.out.println("Main-actualQuery: >" + actualQuery.toString() + "<");
 					
-					ArrayList<ISQLTest> questionTests = new ArrayList<ISQLTest>();
-					ArrayList<Integer> questionPcts  = new ArrayList<Integer>();
-					ArrayList<String> questionConditions = new ArrayList<String>();
-					
-					// evaluate all tests for this question
-					for (int tiqIndex = 0; tiqIndex < questionEvalComps.size(); tiqIndex++) {
-						// get test names
-						String currTestName = questionEvalComps.get(tiqIndex).getEvalComponentName();
-						currTestName = "sqlfe.sqltests." + currTestName;
-						//System.out.println("test name is: >" + currTestName + "<");
-	
-						// make test object out of test name
-						try {
-							Class<?> aClass = Class.forName(currTestName);
-							Object oTest = aClass.newInstance();
-							ISQLTest test = (ISQLTest)oTest;
-							questionTests.add(test);
+					// find the matching question(s) for the answer
+					currQuestions = new ArrayList<Question>();
+					boolean foundOne = false;
+					boolean foundAll = false;
+					int qIndex = 0;
+					while (qIndex < questions.size() && !foundAll) {
+						//System.out.println("student qa is : >" + qa.getQNumStr() + "<");
+						//System.out.println("instr. ques is: >" + questions.get(qIndex).getQNumStr());
+						// first match
+						if (!foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) == 0) {
+							foundOne = true;
+							currQuestions.add(questions.get(qIndex));		// use this question
+							qIndex++;
 						}
-						catch (Exception e) {
-							System.out.println("exception in generating class object from name");
+						// subsequent match
+						else if (foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) == 0) {
+							currQuestions.add(questions.get(qIndex));		// add this question too
+							qIndex++;
 						}
-
-						// get percents
-						int currTestPct = questionEvalComps.get(tiqIndex).getPercent();
-						questionPcts.add(currTestPct);
+						// first non-match after subsequent match
+						else if (foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) != 0) {
+							foundAll = true;
+							qIndex++;
+						}
+						// not a match
+						else {
+							qIndex++;
+						}
+					}	// end - while looking for question(s) to match student answer
+					
+					// TODO: how to do error handling for finding question to match submission answer number?
+					//       may need try/catch block to avoid later work
+					if (!foundOne) {
+						System.out.println("cannot find question");
+					}
+					
+					// loop through all possible questions, evaluate, choose max
+					double highestPoints = -1.0;			// set below zero so any evaluation is better
+					double qPoints = 0.0;
+					QueryEvaluation qe = null;
+					QueryEvaluation maxQE = null;
+					
+					for (int qcIndex = 0; qcIndex < currQuestions.size(); qcIndex++) {
+						// get the desired query for this question
+						Query desiredQuery = currQuestions.get(qcIndex).getDesiredQuery(); 
+						//System.out.println("evaluating answer: " + currQuestions.get(qcIndex).getQNumStr());
+						//System.out.println("Main-desiredQuery: >" + desiredQuery.toString() + "<");
 						
-						// get condition
-						String currTestCondition = questionEvalComps.get(tiqIndex).getCondition();
-						questionConditions.add(currTestCondition);
-					}	// end - for each test in question
-
-					// build a query evaluation, evaluate and add this qe to the current submission
-					qe = new QueryEvaluation(actualQuery, desiredQuery, dao, maxPoints, 
-												questionTests, questionPcts, questionConditions, null, 0.0);
-					qPoints = qe.evaluate();
-					//System.out.println("weighted points from evaluation: " + qPoints);
-					//System.out.println();
-					if (qPoints > highestPoints) {
-						highestPoints = qPoints;
-						maxQE = qe;
-					}
-				}		// end - for each question
-				queryEvals.add(maxQE);					// add best qe for this answer to the list
+						// get the evaluation components for this question
+						ArrayList<EvalComponentInQuestion> questionEvalComps = currQuestions.get(qcIndex).getTests(); 
+						int maxPoints = currQuestions.get(qcIndex).getQuestionPoints();
+						
+						ArrayList<ISQLTest> questionTests = new ArrayList<ISQLTest>();
+						ArrayList<Integer> questionPcts  = new ArrayList<Integer>();
+						ArrayList<String> questionConditions = new ArrayList<String>();
+						
+						// evaluate all tests for this question
+						for (int tiqIndex = 0; tiqIndex < questionEvalComps.size(); tiqIndex++) {
+							// get test names
+							String currTestName = questionEvalComps.get(tiqIndex).getEvalComponentName();
+							currTestName = "sqlfe.sqltests." + currTestName;
+							//System.out.println("test name is: >" + currTestName + "<");
+		
+							// make test object out of test name
+							try {
+								Class<?> aClass = Class.forName(currTestName);
+								Object oTest = aClass.newInstance();
+								ISQLTest test = (ISQLTest)oTest;
+								questionTests.add(test);
+							}
+							catch (Exception e) {
+								System.out.println("exception in generating class object from name");
+							}
+	
+							// get percents
+							int currTestPct = questionEvalComps.get(tiqIndex).getPercent();
+							questionPcts.add(currTestPct);
+							
+							// get condition
+							String currTestCondition = questionEvalComps.get(tiqIndex).getCondition();
+							questionConditions.add(currTestCondition);
+						}	// end - for each test in question
+	
+						// build a query evaluation, evaluate and add this qe to the current submission
+						qe = new QueryEvaluation(actualQuery, desiredQuery, dao, maxPoints, 
+													questionTests, questionPcts, questionConditions, null, 0.0);
+						qPoints = qe.evaluate();
+						//System.out.println("weighted points from evaluation: " + qPoints);
+						//System.out.println();
+						if (qPoints > highestPoints) {
+							highestPoints = qPoints;
+							maxQE = qe;
+						}
+					}		// end - for each question
+					queryEvals.add(maxQE);					// add best qe for this answer to the list
+						
+					submissionPoints += highestPoints;		// add the highest question score to the submission total
 					
-				submissionPoints += highestPoints;		// add the highest question score to the submission total
+					outputPointString += (df.format(highestPoints) + ", ");	// add highest points to string for grade summary output
+				}	// end - for each question answer
+				//System.out.println("Total points for this submission: " + submissionPoints);
+				//System.out.println();
+				s.setTotalPoints(submissionPoints);				// add the total points to the submission
+				s.setQueryEvals(queryEvals);					// add the query evaluations to the submission
 				
-				outputPointString += (df.format(highestPoints) + ", ");	// add highest points to string for grade summary output
-			}	// end - for each question answer
-			//System.out.println("Total points for this submission: " + submissionPoints);
-			//System.out.println();
-			s.setTotalPoints(submissionPoints);				// add the total points to the submission
-			s.setQueryEvals(queryEvals);					// add the query evaluations to the submission
+				//System.out.println("finished processing submission " + s.getSubmissionFileName() + ", now writing it out");
+				s.writeSubmission(evaluationFolderPath);		// write out each submission's output file
+			}	// end - if any question answers exist
 			
-			//System.out.println("finished processing submission " + s.getSubmissionFileName() + ", now writing it out");
-			s.writeSubmission(evaluationFolderPath);		// write out each submission's output file
-
 			// write each total grade to grades file
 			try {
 				gradesWriter.println(s.getStudentName() + ": " + df.format(s.getTotalPoints()) + outputPointString);

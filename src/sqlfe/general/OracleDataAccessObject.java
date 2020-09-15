@@ -60,7 +60,7 @@ public class OracleDataAccessObject implements IDAO {
 		   rset = stmt.executeQuery(sqlQuery);
 		}
 		catch (SQLException e) {
-			System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
+			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
 		}
 		//finally {
 		//	if (stmt != null) {
@@ -80,7 +80,7 @@ public class OracleDataAccessObject implements IDAO {
 		   rset = pStmt.executeQuery();
 		}
 		catch (SQLException e) {
-			System.err.println("Could not execute SQL statement: " + sqlQuery);
+			//System.err.println("Could not execute SQL statement: " + sqlQuery);
 		}
 		return rset;
 	}	// end - method executeSQLQueryPrepared
@@ -95,8 +95,8 @@ public class OracleDataAccessObject implements IDAO {
 		   returnValue = stmt.executeUpdate(sqlCommand);
 		}
 		catch (SQLException e) {
-			System.err.println("Could not execute SQL command: >" + sqlCommand + "<");
-			System.err.println("Return value: " + returnValue);
+			//System.err.println("Could not execute SQL command: >" + sqlCommand + "<");
+			//System.err.println("Return value: " + returnValue);
 		}
 		return returnValue;
 	}	// end - method executeSQLNonQuery
@@ -138,10 +138,10 @@ public class OracleDataAccessObject implements IDAO {
 			summary.setResultString(resultString);
 		}
 		catch (SQLException sqle) {
-			System.err.println("Error in processing result set");
+			//System.err.println("Error in processing result set");
 		}
 		catch (NullPointerException npe) {
-			System.err.println("DAO, processResultSet() - no result set generated");
+			//System.err.println("DAO, processResultSet() - no result set generated");
 		}
 		return summary;
 	}	// end - method processResultSet

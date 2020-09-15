@@ -20,6 +20,7 @@ import sqlfe.util.Utilities;
 
 public class Submission {
 	// data
+	static final int MAX_LINE_ATTEMPTS = 15;		// max. times to try before generating parse exception
 	private String submissionFileName;				// name of file submission came from
 	private String submissionName;					// name of assignment as submitted - from template
 	private String studentName;						// name of the student
@@ -176,11 +177,10 @@ public class Submission {
 	}
 	
 	// readSubmission - read one submission from a file
-	public void readSubmission(String submissionFileName, PrintWriter commWriter) {
+	public void readSubmission(String submissionFileName, PrintWriter commWriter, PrintWriter parseWriter) {
 		FileReader fr = null;						// file stream for reading SQL submission file
 		BufferedReader br = null;					// buffered reader for that stream
 		String answerQueryStr = "";					// each answer string given in assignment
-		String instructorCommentMarker = "-- --";	// special comment marker for instructor comments in answer template file
 		boolean moreLinesForAnswer = false;			// are there more query answer lines coming?
 		String qNumStr = "";						// question number as a string; e.g. 1.c)
 		String regexp = "-- -- \\d+[a-z]*[.]";		// regular expression for question, e.g. >-- --1a. or -- --23.<
@@ -197,7 +197,7 @@ public class Submission {
 			// TODO - make how many lines are in an assignment customizable? e.g. add student id
 			line = br.readLine(); 											// get first line
 			line = Utilities.skipBlankLines(br, line);						// skip blanks if any
-			final int BASE_PROMPT_LENGTH = 6;								// length of >-- -- <
+			final int BASE_PROMPT_LENGTH = 6;								// length of instructor comment marker >-- -- <
 			submissionName = line.substring(BASE_PROMPT_LENGTH);			// first line = assignment name, strip off leading >-- -- <
 			//System.out.println("submission name: " + submissionName);
 			line = br.readLine();											// second line = (student) name
@@ -215,13 +215,20 @@ public class Submission {
 			//System.out.println("after any blanks, next line is: >" + line + "<");
 			
 			// if not already at the first question, look for any other instructor comments and trailing blanks and skip them
+			int attemptCount = 0;							// number of line attempts so far
 			matcher = pattern.matcher(line);
-	        while (!Utilities.isUserComment(line) && !matcher.find()) {				// stop if user comments or start of new question			
+															// stop if user comments or start of new question
+	        while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !matcher.find() && 
+	        		attemptCount <= MAX_LINE_ATTEMPTS) {						
 	        	line = Utilities.skipInstructorComments(br, line);
 	        	//System.out.println("after instructor comments, next line is: >" + line + "<");
 	        	line = Utilities.skipBlankLines(br, line);			
 	        	//System.out.println("after next set of blanks, next line is: >" + line + "<");
 	        	matcher = pattern.matcher(line);
+	        	attemptCount++;
+	        	if (attemptCount > MAX_LINE_ATTEMPTS) {
+	        		throw new SQLFEParseException("\nParse Exception in file: " + submissionFileName + ", approx. line: >" + line + "<");
+	        	}
 	        }
 			
 			// initialize answers and total points
@@ -233,7 +240,7 @@ public class Submission {
 			// process student's answers
 			int loopCount = 0;						// for debugging
 			//line = br.readLine();               	// get first answer line - assume at least one question number on template
-			final int MAX_TIMES_TO_TRY = 15;		// maximum number of times to try processing line before saying stuck and move on
+			final int MAX_TIMES_TO_TRY = 25;		// maximum number of times to try processing line before saying stuck and move on
 			System.out.print("   Parsing: ");
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
@@ -261,24 +268,40 @@ public class Submission {
 						int periodPos = line.indexOf('.');
 						// check if beginning of new question
 						if (periodPos >= 0) {
+							// get question number as string
 							qNumStr = line.substring(BASE_PROMPT_LENGTH, periodPos);	// skip past -- -- and space
 							System.out.print("Q" + qNumStr + ".");
+
+							// skip all instructor comment sections (one or more)
+							boolean isNewQuestion = false;
+							while (line != null && Utilities.isInstructorComment(line) && !isNewQuestion) {
+								// skip remaining instructor comment lines with question text
+								line = Utilities.skipInstructorComments(br, line);
+								//System.out.println("line after skipping instructor comments with question text is: >" + line + "<");
+								
+								// skip any blank lines after instructor comments
+								line = Utilities.skipBlankLines(br, line);
+								//System.out.println("line after skipping blanks after instructor comments is: >" + line + "<");
+								
+								// process any user comments above the answer
+								line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+								//System.out.println("line after skipping user comments above answer is: >" + line + "<");
+								
+								// skip any remaining blank lines before answer
+								line = Utilities.skipBlankLines(br, line);
+								//System.out.println("line after skipping any remaining blank lines before answer is: >" + line + "<");
 							
-							// skip remaining instructor comments with question text
-							line = Utilities.skipInstructorComments(br, line);
-							//System.out.println("line after skipping instructor comments with question text is: >" + line + "<");
-							
-							// skip any blank lines after instructor comments
-							line = Utilities.skipBlankLines(br, line);
-							//System.out.println("line after skipping blanks after instructor comments is: >" + line + "<");
-							
-							// process any user comments above the answer
-							line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
-							//System.out.println("line after skipping user comments above answer is: >" + line + "<");
-							
-							// skip any remaining blank lines before answer
-							line = Utilities.skipBlankLines(br, line);
-							//System.out.println("line after skipping any remaining blank lines before answer is: >" + line + "<");
+								// check the new line to see if is new question instructor comment
+								if (line != null && Utilities.isInstructorComment(line)) {
+							        matcher = pattern.matcher(line);
+							        if (matcher.find()) {				// start of new question
+							        	isNewQuestion = true;
+							        	//System.out.println("parsing instructor comments, but found new question");
+							        } else {
+							        	//System.out.println("parsing instructor comments, found another instructor comment for same question");
+							        }
+								}
+							}	// end - while
 							
 							// next line should be start of answer (possibly complete on one line)
 							//   unless no answer present, then make answerQueryStr blank
@@ -311,13 +334,14 @@ public class Submission {
 							        	//System.out.println("found additional answer line");
 							        	answerQueryStr += ("\n" + line); //  if not found, still part of answer
 							        }
-							        else if (line.indexOf(';') != -1) { // found semicolon, is end of answer								// 
+							        else if (line.indexOf(';') != -1) { // found semicolon, is end of answer 
 							        	//System.out.println("found last question line, with semicolon");
 							        	answerQueryStr += ("\n" + line);
 							        	moreLinesForAnswer = false;
 										line = br.readLine();			// start toward next question
 							        }
-							        else if (Utilities.isUserComment(line)) { // found user comment embedded in answer
+							        else if (Utilities.isUserCommentSingleLine(line) ||
+							        		 Utilities.isUserCommentMultiLineStart(line)) { 		// found user comment embedded in answer
 							        	line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 							        }
 							        else {
@@ -332,6 +356,25 @@ public class Submission {
 							line = Utilities.skipBlankLines(br, line);
 							line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 							line = Utilities.skipBlankLines(br, line);
+							
+							// ignore any following lines after first answer and user comments before instructor comment/question start or end of file
+							isNewQuestion = false;
+							if (line != null) {
+								matcher = pattern.matcher(line);
+								if (matcher.find()) {										// start of new question
+									isNewQuestion = true;
+								}
+						    }
+							while (line != null && !isNewQuestion) {
+								line = br.readLine();										// go to next line and check that line
+								if (line != null) {
+							        matcher = pattern.matcher(line);
+							        if (matcher.find()) {							
+							        	isNewQuestion = true;
+							        }
+								}
+							}	// end - while
+							
 						}	// end - if period
 					
 						// remove any trailing semicolon from the answer
@@ -355,6 +398,9 @@ public class Submission {
 			System.err.println("Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
 			System.err.println("Cannot read from file " + submissionFileName);
+		} catch (SQLFEParseException sqlfepe) {
+			System.err.println(sqlfepe.getMessage());
+			parseWriter.println(sqlfepe.getMessage());
 		}
 
 	}	// end - method readSubmission

@@ -10,10 +10,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class Utilities { 
+public class Utilities { 	
+	// methods
 	// -- sortString - sort a string into ordered component parts
 	public static String sortString(String origString) {
 		String result = "";
@@ -115,6 +114,7 @@ public class Utilities {
 		catch (IOException ioe) {
 			System.err.println("skipInstructorComments() - Cannot read from properties file");
 		}
+
 		return localLine;
 	}	// end = method skipInstructorComments
 
@@ -122,15 +122,36 @@ public class Utilities {
 	public static String processUserComments (BufferedReader br, String line, 
 											PrintWriter commWriter, String submissionFileName) {
 		String localLine = line;
-		try {
-			while (localLine != null && isUserComment(localLine)) {
+		boolean isSingleLineComment = isUserCommentSingleLine(line);
+		boolean isMultiLineComment = isUserCommentMultiLineStart(line);
+		//System.out.println("Utilities, processUserComments() - is user comment single line? " + isSingleLineComment);
+		//System.out.println("Utilities, processUserComments() - is user comment multi line start? " + isMultiLineComment);
+		if (isSingleLineComment) {							// is single-line comment, process until don't find any more
+			try {
+				while (localLine != null && isUserCommentSingleLine(localLine)) {
+					commWriter.println(submissionFileName + ": " + localLine);
+					localLine = br.readLine();
+					//System.out.println("processUserComments();, processing user comment line, new line is: >" + localLine + "<");
+				}
+			} 
+			catch (IOException ioe) {
+				System.err.println("processUserComments() - Either, cannot read from submission file, or write to comments file");
+			}
+		} else if (isMultiLineComment) {					// is multi-line comment, process to end of this comment
+			try {
+				while (localLine != null && !isUserCommentMultiLineEnd(localLine)) {
+					commWriter.println(submissionFileName + ": " + localLine);
+					localLine = br.readLine();
+					//System.out.println("processUserComments();, processing user comment line, new line is: >" + localLine + "<");
+				}
+				// process the multi-line comment end line
 				commWriter.println(submissionFileName + ": " + localLine);
 				localLine = br.readLine();
-				//System.out.println("processUserComments();, processing user comment line, new line is: >" + localLine + "<");
-			}
-		} 
-		catch (IOException ioe) {
-			System.err.println("processUserComments() - Either, cannot read from properties file, or write to comments file");
+			} 
+			catch (IOException ioe) {
+				System.err.println("processUserComments() - Either, cannot read from submission file, or write to comments file");
+			}	
+			// TODO: look for multiple multi-line comments or combination of single and multi-line comments?
 		}
 		return localLine;
 	}	// end = method processUserComments
@@ -148,18 +169,51 @@ public class Utilities {
 		return result;
 	}	// end - method isInstructorComment
 	
-	// -- isUserComment - check if line has two dashes at beginning and not instructor comment, for any added user comment in submission
-	public static boolean isUserComment (String line) {
+	// -- isUserCommentSingleLine - check if line is user comment (not instructor comment), for any added user comment in submission
+	// --        has two dashes at beginning (i.e. -- comment)
+	public static boolean isUserCommentSingleLine (String line) {
 		boolean result = false;
-
-		if (line != null && line.length() >= 3 && line.charAt(0) == '-' && line.charAt(1) == '-' && line.charAt(2) != '-' &&
+		if (line != null) {
+			line = line.trim();
+		}
+		if (line != null && 
+				(line.length() >= 3 && line.charAt(0) == '-' && line.charAt(1) == '-' && line.charAt(2) != '-') &&			// is -- comment
 				!isInstructorComment(line)) {
 			result = true;
 		}
-		
 		return result;
-	}	// end - method isUserComment
+	}	// end - method isUserCommentSingleLine
 
+	// -- isUserCommentMultiLineStart - check if line is user comment (not instructor comment), for any added user comment in submission
+	// --		  has /*, and will continue until */
+	public static boolean isUserCommentMultiLineStart (String line) {
+		boolean result = false;
+
+		if (line != null) {
+			line = line.trim();
+		}
+		if (line != null && 
+				 (line.length() >= 2 && line.charAt(0) == '/' && line.charAt(1) == '*') &&								// is /* comment start
+				!isInstructorComment(line)) {
+			result = true;
+		}
+		return result;
+	}	// end - method isUserCommentMultiLineStart
+
+	// -- isUserCommentMultiLineEnd - check if line is multi-line user comment ending (that is, has */ at end of line)
+	public static boolean isUserCommentMultiLineEnd (String line) {
+		boolean result = false;
+
+		if (line != null) {
+			line = line.trim();
+		}
+		if (line != null && 
+				 (line.length() >= 2 && line.charAt(line.length()-2) == '*' && line.charAt(line.length()-1) == '/') &&								// is /* comment start
+				!isInstructorComment(line)) {
+			result = true;
+		}
+		return result;
+	}	// end - method isUserCommentMultiLineEnd
 	
 	// -- processSlashes - change Windows format backslashes to slashes, which can be processed in Java
 	public static String processSlashes(String path) {
