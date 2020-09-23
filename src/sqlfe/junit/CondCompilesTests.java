@@ -20,10 +20,12 @@ public class CondCompilesTests extends AbstractTest {
 	@Before
 	public void setUp() throws Exception {
 		condC = new CondCompiles();
+		testDAO.connect();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		testDAO.disconnect();
 		condC = null;
 	}
 

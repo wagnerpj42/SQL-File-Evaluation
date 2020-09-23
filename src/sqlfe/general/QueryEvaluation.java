@@ -201,13 +201,14 @@ public class QueryEvaluation {
 		for (ISQLTest aTest: allTests) {
 			String testString = null;		// test string to evaluate
 			String aTestName = aTest.getName();
+			//System.out.println("Now processing test " + testIndex + ", " + aTestName);
 			if (aTestName.substring(0, 4).equals("Test")) {
-				testString = desiredQuery.toString();
+				testString = desiredQuery.toString().trim();
 			}
 			else if (aTestName.substring(0, 4).equals("Cond")) {
 				testString = allTestsConditions.get(testIndex);
 			}
-			//System.out.println("QueryEvaluation-evaluate() - testString is: >" +  testString + "<");
+			//System.out.println("QueryEvaluation-evaluate() - testString " + testIndex + " is: >" +  testString + "<");
 			TestResult testResult = aTest.sqlTest(dao, givenQuery, testString); // or some condition string
 			//System.out.println("testResult is: " + testResult);
 			int currentPercent = allTestsPercents.get(testIndex);

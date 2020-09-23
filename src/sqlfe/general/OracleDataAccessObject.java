@@ -36,7 +36,7 @@ public class OracleDataAccessObject implements IDAO {
 		   Class.forName ("oracle.jdbc.OracleDriver");
 		}
 		catch (ClassNotFoundException e) {
-		   System.err.println ("Could not get class object for Driver");
+		   System.err.println ("Could not get class object for Driver, check if connector JAR is on project path");
 		}
 
 		// --- 2) connect to database
@@ -45,7 +45,7 @@ public class OracleDataAccessObject implements IDAO {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
-		   System.err.println ("Could not make connection to database");
+		   System.err.println ("Could not make connection to database, " + sqle.getMessage());
 		}
 		return conn;
 	}	// end - method connect
@@ -79,8 +79,8 @@ public class OracleDataAccessObject implements IDAO {
 		   pStmt = conn.prepareStatement(sqlQuery);
 		   rset = pStmt.executeQuery();
 		}
-		catch (SQLException e) {
-			//System.err.println("Could not execute SQL statement: " + sqlQuery);
+		catch (SQLException sqle) {
+			System.err.println("Could not execute SQL statement: >" + sqlQuery + "<, " + sqle.getMessage());
 		}
 		return rset;
 	}	// end - method executeSQLQueryPrepared
@@ -94,8 +94,8 @@ public class OracleDataAccessObject implements IDAO {
 		   stmt = conn.createStatement();
 		   returnValue = stmt.executeUpdate(sqlCommand);
 		}
-		catch (SQLException e) {
-			//System.err.println("Could not execute SQL command: >" + sqlCommand + "<");
+		catch (SQLException sqle) {
+			System.err.println("Could not execute SQL command: >" + sqlCommand + "<, " + sqle.getMessage());
 			//System.err.println("Return value: " + returnValue);
 		}
 		return returnValue;

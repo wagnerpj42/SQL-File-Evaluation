@@ -19,6 +19,7 @@ public class TestRowCountTests extends AbstractTest {
 	@Before
 	public void setup() {
 		testRC = new TestRowCount();
+		testDAO.connect();
 	}
 
 	@Test
@@ -39,6 +40,7 @@ public class TestRowCountTests extends AbstractTest {
 	
 	@After
 	public void teardown () {
+		testDAO.disconnect();
 		testRC = null;
 	}
 	

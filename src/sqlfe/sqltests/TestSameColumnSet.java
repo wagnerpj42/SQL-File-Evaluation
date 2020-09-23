@@ -28,24 +28,18 @@ public class TestSameColumnSet implements ISQLTest {
 		Query desiredQuery = new Query(desiredQueryString);
 	
 		// 1) execute given query, get column count for this query
-		dao.connect();
-
 		rset = dao.executeSQLQuery(givenQuery.toString());
 		summary = dao.processResultSet(rset);
 		thisColSet = summary.getColumnSet();
 		
-		dao.disconnect();
 		rset = null;
 		summary = null;
 			
 		// 2) execute desired query, get counts for this query
-		dao.connect();
-
 		rset = dao.executeSQLQuery(desiredQuery.toString());
 		summary = dao.processResultSet(rset);
 		desiredColSet = summary.getColumnSet();
 		
-		dao.disconnect();
 		rset = null;
 		summary = null;
 		

@@ -27,13 +27,11 @@ public class CondRowCount implements ISQLTest {
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
 	
 		// execute given query, get row count for this query
-		dao.connect();
 		rset = dao.executeSQLQuery(givenQuery.toString());
 		summary = dao.processResultSet(rset);
 		thisQRowCt = summary.getNumRows();
 		
 		// clean up from running given query
-		dao.disconnect();
 		rset = null;
 		summary = null;
 

@@ -19,6 +19,7 @@ public class TestColumnCountTests extends AbstractTest {
 	@Before
 	public void setup() {
 		testCC = new TestColumnCount();
+		testDAO.connect();
 	}
 
 	@Test
@@ -42,6 +43,7 @@ public class TestColumnCountTests extends AbstractTest {
 	
 	@After
 	public void teardown () {
+		testDAO.disconnect();
 		testCC = null;
 	}
 	

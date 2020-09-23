@@ -27,24 +27,18 @@ public class TestRowCount implements ISQLTest {
 		Query desiredQuery = new Query(desiredQueryString);
 	
 		// 1) execute given query, get counts for this query
-		dao.connect();
-
 		rset = dao.executeSQLQuery(givenQuery.toString());
 		summary = dao.processResultSet(rset);
 		thisQRowCt = summary.getNumRows();
 		
-		dao.disconnect();
 		rset = null;
 		summary = null;
 		
 		// 2) execute desired query, get counts for this query
-		dao.connect();
-		
 		rset = dao.executeSQLQuery(desiredQuery.toString());
 		summary = dao.processResultSet(rset);
 		desiredQRowCt = summary.getNumRows();
 		
-		dao.disconnect();
 		rset = null;
 		summary = null;
 		

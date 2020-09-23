@@ -6,7 +6,7 @@
 package sqlfe.junit;
 
 import sqlfe.general.IDAO;
-import sqlfe.general.OracleDataAccessObject;
+import sqlfe.general.OracleDataAccessObject;			// need to change/add if using MySQL, other DBMS
 import sqlfe.general.Query;
 
 public abstract class AbstractTest {
@@ -62,7 +62,7 @@ public abstract class AbstractTest {
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
-		testDAO				= new OracleDataAccessObject("hostname", "sysid", "username", "password");		// must be changed to run unit tests
+		testDAO				= new OracleDataAccessObject("localhost", "toldidb", "paul", "toldi7cs");		// must be changed to run unit tests
 		
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");

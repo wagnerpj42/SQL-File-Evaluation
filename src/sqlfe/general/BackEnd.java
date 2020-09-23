@@ -132,6 +132,9 @@ public class BackEnd {
 
 			// initialize output point string for grade summary file
 			String outputPointString = ": ";
+
+			// connect to data access object for each submission
+			dao.connect();
 			
 			// process each question answer in the submission
 			ArrayList<QuestionAnswer> qas = s.getAnswers();
@@ -252,6 +255,8 @@ public class BackEnd {
 				//System.out.println("finished processing submission " + s.getSubmissionFileName() + ", now writing it out");
 				s.writeSubmission(evaluationFolderPath);		// write out each submission's output file
 			}	// end - if any question answers exist
+			// clean up/disconnect data access object
+			dao.disconnect();
 			
 			// write each total grade to grades file
 			try {
@@ -261,7 +266,7 @@ public class BackEnd {
 				System.err.println("Error in writing to grades file " + gradesFileName);
 			}
 		}	// end - for each submission
-
+		
 		// close evaluation folder / grades file
 		try {
 			gradesWriter.close();

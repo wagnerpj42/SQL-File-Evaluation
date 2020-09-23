@@ -19,11 +19,7 @@ public class CondCompiles implements ISQLTest {
 		ResultSet rset = null;			// result set for SQL query
 		
 		// try to execute given query, see result
-		dao.connect();
-
 		rset = dao.executeSQLQuery(givenQuery.toString());
-		
-		dao.disconnect();
 
 		// NOTE: no need to evaluate condition here; all based on query and result set itself
 		

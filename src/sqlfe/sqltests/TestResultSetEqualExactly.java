@@ -28,8 +28,6 @@ public class TestResultSetEqualExactly implements ISQLTest {
 		// TODO: do we need to build query from string, just to use toString() later?
 		
 		// 1) execute given query, get result set string for this query
-		dao.connect();
-
 		try {
 			rset = dao.executeSQLQuery(givenQuery.toString());
 			summary = dao.processResultSet(rset);
@@ -39,13 +37,10 @@ public class TestResultSetEqualExactly implements ISQLTest {
 			thisResultString = "given_error";
 		}
 		
-		dao.disconnect();
 		rset = null;
 		summary = null;
 		
-		// 2) execute desired query, get counts for this query
-		dao.connect();
-		
+		// 2) execute desired query, get counts for this query	
 		try {
 			rset = dao.executeSQLQuery(desiredQuery.toString());
 			summary = dao.processResultSet(rset);
@@ -55,7 +50,6 @@ public class TestResultSetEqualExactly implements ISQLTest {
 			desiredResultString = "desired_error";
 		}
 
-		dao.disconnect();
 		rset = null;
 		summary = null;
 		
@@ -71,7 +65,7 @@ public class TestResultSetEqualExactly implements ISQLTest {
 			}
 		}
 		catch (NullPointerException npe) {
-			System.err.println("TestResultSetEqualExactly - sqlTest - submitted query does not generate result string");
+			//System.err.println("TestResultSetEqualExactly - sqlTest - submitted query does not generate result string");
 		}
 		
 		return new TestResult(result);

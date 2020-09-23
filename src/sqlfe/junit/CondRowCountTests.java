@@ -20,10 +20,12 @@ public class CondRowCountTests extends AbstractTest {
 	@Before
 	public void setUp() throws Exception {
 		condRC = new CondRowCount();
+		testDAO.connect();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		testDAO.disconnect();
 		condRC = null;
 	}
 

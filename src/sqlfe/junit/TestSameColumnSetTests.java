@@ -19,6 +19,7 @@ public class TestSameColumnSetTests extends AbstractTest {
 	@Before
 	public void setup() {
 		testSCS = new TestSameColumnSet();
+		testDAO.connect();
 	}
 
 	@Test
@@ -43,6 +44,7 @@ public class TestSameColumnSetTests extends AbstractTest {
 	
 	@After
 	public void teardown () {
+		testDAO.disconnect();
 		testSCS = null;
 	}
 	

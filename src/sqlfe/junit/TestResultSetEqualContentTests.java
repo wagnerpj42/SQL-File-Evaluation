@@ -19,6 +19,7 @@ public class TestResultSetEqualContentTests extends AbstractTest {
 	@Before
 	public void setup () {
 		testRSEC = new TestResultSetEqualContent();
+		testDAO.connect();
 	}
 	
 	@Test
@@ -47,6 +48,7 @@ public class TestResultSetEqualContentTests extends AbstractTest {
 	
 	@After
 	public void teardown () {
+		testDAO.disconnect();
 		testRSEC = null;
 	}
 	

@@ -83,11 +83,9 @@ import java.util.regex.Pattern;
  * 		 be mistaken for column names or functions during calls to identifyColumnName() or identifyColumnFunctions().
  */
 
-
-@SuppressWarnings("Duplicates")
 public class TestResultSetEqualContent implements ISQLTest {
 	private int numDuplicates;															//total number of student's duplicate rows
-	private int numUnmatchedRows;														//total number of student's stricly incorrect rows
+	private int numUnmatchedRows;														//total number of student's strictly incorrect rows
 
 	private ArrayList<Map<Integer, Integer>> failedMappings = new ArrayList<Map<Integer, Integer>>();		//attempted column mappings performed by algorithm
 	private ArrayList<Map<Integer, Integer>> failedMappingTemp = new ArrayList<Map<Integer, Integer>>();	//temporary storage for failed mappings
@@ -133,8 +131,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 		int desiredColCt = 0;
 		//String desiredColSet = null;
 
-		// 1) execute given query, get resultSet and Metadata
-		dao.connect();
+		// 1) execute given query, get resultSet and metadata
 		try {
 			rsetGiven = dao.executeSQLQuery(givenQuery.toString());
 			rsmdGiven = rsetGiven.getMetaData();
@@ -184,7 +181,6 @@ public class TestResultSetEqualContent implements ISQLTest {
 			return new TestResult(0);
 		}
 		//System.out.println("GIVEN:\n" + Arrays.deepToString(givenResultMatrix) + "\n\n" + "DESIRED:\n" + Arrays.deepToString(desiredResultMatrix) + "\n");
-		dao.disconnect();
 
 
 		//if student and solution's column indexes successfully matched based off of column names, then use the
@@ -309,7 +305,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 	 * If the rows match, then matchRest() will be called to determine how many other rows in the result sets can be
 	 * matched according to the same index-association used to make the first match.
 	 */
-	@SuppressWarnings("Duplicates")
+	@SuppressWarnings("unchecked")
 	private boolean matchOne(String[] desiredRow, String[] givenRow, boolean[] desiredMarked, boolean[] givenMarked,
 							 HashMap<Integer, Integer> columnMapping,
 							 int numMatched, int desiredColumnIndex, int givenRowIndex, int desiredRowIndex, boolean[] isReversedDate) {
@@ -753,7 +749,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 			return columnMappings;
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();		 // should not normally get here, and falls back to second algorithm anyway, so only use for developer debugging
 			return null;
 		}
 	}

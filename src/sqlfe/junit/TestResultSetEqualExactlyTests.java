@@ -19,10 +19,11 @@ public class TestResultSetEqualExactlyTests extends AbstractTest {
 	@Before
 	public void setup () {
 		testRSE = new TestResultSetEqualExactly();
+		testDAO.connect();
 	}
 	
 	@Test
-	public void testResultSetEqual() {
+	public void testResultSetEqualExactly() {
 		// two instances of same valid query are equal
 		assertEquals(testRSE.sqlTest(testDAO, creatureAllQuery, creatureAllQuery.toString()).getScore(), 10);
 		// queries of same table with different column selects are not equal
@@ -45,6 +46,7 @@ public class TestResultSetEqualExactlyTests extends AbstractTest {
 	
 	@After
 	public void teardown () {
+		testDAO.disconnect();
 		testRSE = null;
 	}
 	

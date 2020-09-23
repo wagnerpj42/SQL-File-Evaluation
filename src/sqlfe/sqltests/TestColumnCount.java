@@ -28,24 +28,24 @@ public class TestColumnCount implements ISQLTest {
 		Query desiredQuery = new Query(desiredQueryString);
 	
 		// 1) execute given query, get column count for this query's result set
-		dao.connect();
+		//dao.connect();
 
 		rset = dao.executeSQLQuery(givenQuery.toString());
 		summary = dao.processResultSet(rset);
 		thisQColCt = summary.getNumCols();
 		
-		dao.disconnect();
+		//dao.disconnect();
 		rset = null;
 		summary = null;
 			
 		// 2) execute desired query, get counts for this query
-		dao.connect();
+		//dao.connect();
 
 		rset = dao.executeSQLQuery(desiredQuery.toString());
 		summary = dao.processResultSet(rset);
 		desiredQColCt = summary.getNumCols();
 		
-		dao.disconnect();
+		//dao.disconnect();
 		rset = null;
 		summary = null;
 		
