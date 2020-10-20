@@ -13,7 +13,7 @@ CondBasicContent 15 ""
 TestRowCount 10
 TestColumnCount 10
 CondTableCount 10 " == 2"
-CondWhereCount 10 " == 1"
+CondWhereCount 10 " >= 1"
 TestResultSetEqualContent 35
 
 
@@ -25,8 +25,8 @@ ORDER BY AccOpenLocation, AccStatus;
 
 CondCompiles 15 ""
 CondBasicContent 10 ""
-CondGroupByCount 10 " == 1"
-CondOrderByCount 10 " == 1"
+CondGroupByCount 10 " >= 1"
+CondOrderByCount 10 " >= 1"
 TestColumnCount 10
 TestResultSetEqualContent 45
 
@@ -42,8 +42,8 @@ ORDER BY A1.AccOpenLocation, A2.AccStatus;
  
 CondCompiles 15 ""
 CondBasicContent 10 ""
-CondGroupByCount 10 " == 1"
-CondOrderByCount 10 " == 1"
+CondGroupByCount 10 " >= 1"
+CondOrderByCount 10 " >= 1"
 CondJoinOuterCount 10 " >= 1"
 TestColumnCount 10
 TestResultSetEqualContent 35
@@ -77,8 +77,8 @@ CondCompiles 15 ""
 CondBasicContent 10 ""
 CondAvgCount 10 " >= 3"
 CondGroupByCount 10 " >= 1"
-CondOrderByCount 10 " == 1"
-CondDescCount 5 " == 1"
+CondOrderByCount 10 " >= 1"
+CondDescCount 5 " >= 1"
 CondTableCount 10 " >= 1"
 TestResultSetEqualContent 30
 
@@ -97,7 +97,7 @@ CondCompiles 10 ""
 CondBasicContent 10 ""
 CondMaxCount 10 " >= 1"
 CondGroupByCount 10 " >= 1"
-CondOrderByCount 10 " == 1"
+CondOrderByCount 10 " >= 1"
 CondTableCount 10 " >= 2"
 TestColumnCount 5
 TestResultSetEqualContent 35
@@ -150,7 +150,7 @@ GROUP BY TransLocation;
 
 CondCompiles 10 ""
 CondBasicContent 10 ""
-CondJoinOuterCount 10 " == 1"
+CondJoinOuterCount 10 " >= 1"
 CondGroupByCount 10 " >= 1"
 CondTableCount 10 " == 2"
 CondCountCount 10 " >= 1"
