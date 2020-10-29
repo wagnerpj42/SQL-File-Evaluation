@@ -37,17 +37,18 @@ public class MySQLDataAccessObject implements IDAO {
 		   Class.forName ("com.mysql.jdbc.Driver");
 		}
 		catch (ClassNotFoundException e) {
-		   System.err.println ("Could not get class object for Driver");
+		   System.err.println ("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
 		}
 
 		// --- 2) connect to database
-		// format of connect string: jdbc:mysql://localhost/listproj ; doesn't use port if standard?
+		// format of connect string: jdbc:mysql://localhost/listproj ; doesn't require port if using standard port (3306)
 		String connectString = "jdbc:mysql://" + hostName + "/" + idName;
 		try {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
 		   System.err.println ("Could not make connection to database");
+		   System.err.println(sqle.getMessage());
 		}
 		return conn;
 	}	// end - method connect
