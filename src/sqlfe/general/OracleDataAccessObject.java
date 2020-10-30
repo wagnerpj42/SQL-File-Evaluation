@@ -36,7 +36,7 @@ public class OracleDataAccessObject implements IDAO {
 		   Class.forName ("oracle.jdbc.OracleDriver");
 		}
 		catch (ClassNotFoundException e) {
-		   System.err.println ("Could not get class object for Driver, check if connector JAR is on project path");
+		   System.err.println ("Could not get class object for Driver, check if Oracle connector JAR is on project path");
 		}
 
 		// --- 2) connect to database
@@ -46,6 +46,7 @@ public class OracleDataAccessObject implements IDAO {
 		}
 		catch (SQLException sqle) {
 		   System.err.println ("Could not make connection to database, " + sqle.getMessage());
+		   System.err.println(sqle.getMessage());
 		}
 		return conn;
 	}	// end - method connect
