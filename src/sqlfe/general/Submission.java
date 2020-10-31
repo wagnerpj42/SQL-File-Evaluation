@@ -305,21 +305,11 @@ public class Submission {
 							
 							// next line should be start of answer (possibly complete on one line)
 							//   unless no answer present, then make answerQueryStr blank
-							if (line != null && !Utilities.isInstructorComment(line)) {
-								answerQueryStr = line;
-							} else if (Utilities.isInstructorComment(line)) {	// if found next question - no answer submitted
-								answerQueryStr = "";
-							} else {											//  if line is null
-								answerQueryStr = "";
-							}
+							answerQueryStr = (line != null && !Utilities.isInstructorComment(line)? line : "");	
 							//System.out.println("start of answerQueryStr is: >" + answerQueryStr + "<");
 											
 							// process the remaining lines for that answer to get the complete query
-							if (line != null && !Utilities.isInstructorComment(line)) {
-								moreLinesForAnswer = true;
-							} else {
-								moreLinesForAnswer = false;
-							}
+							moreLinesForAnswer = (line != null && !Utilities.isInstructorComment(line));
 							while (line != null && moreLinesForAnswer) {
 								line = br.readLine();					// get next line
 								if (line != null) {						// if not at end of file...
