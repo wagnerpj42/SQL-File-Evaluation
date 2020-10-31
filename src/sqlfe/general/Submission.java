@@ -12,8 +12,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import sqlfe.sqltests.ISQLTest;
 import sqlfe.util.Utilities;
@@ -183,9 +181,6 @@ public class Submission {
 		String answerQueryStr = "";					// each answer string given in assignment
 		boolean moreLinesForAnswer = false;			// are there more query answer lines coming?
 		String qNumStr = "";						// question number as a string; e.g. 1.c)
-		String regexp = "-- -- \\d+[a-z]*[.]";		// regular expression for question, e.g. >-- --1a. or -- --23.<
-		Pattern pattern = Pattern.compile(regexp);	// pattern for regexp pattern matching
-		Matcher matcher = null;						// matcher for regexp pattern matching		
 		
 		try {
 			fr = new FileReader(submissionFileName);
@@ -216,15 +211,13 @@ public class Submission {
 			
 			// if not already at the first question, look for any other instructor comments and trailing blanks and skip them
 			int attemptCount = 0;							// number of line attempts so far
-			matcher = pattern.matcher(line);
 															// stop if user comments or start of new question
-	        while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !matcher.find() && 
+	        while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isMatchfound(line) && 
 	        		attemptCount <= MAX_LINE_ATTEMPTS) {						
 	        	line = Utilities.skipInstructorComments(br, line);
 	        	//System.out.println("after instructor comments, next line is: >" + line + "<");
 	        	line = Utilities.skipBlankLines(br, line);			
 	        	//System.out.println("after next set of blanks, next line is: >" + line + "<");
-	        	matcher = pattern.matcher(line);
 	        	attemptCount++;
 	        	if (attemptCount > MAX_LINE_ATTEMPTS) {
 	        		throw new SQLFEParseException("\nParse Exception in file: " + submissionFileName + ", approx. line: >" + line + "<");
@@ -250,18 +243,15 @@ public class Submission {
 				line = Utilities.skipBlankLines(br, line);
 				
 				// remove 0, 1 or more user comment sections and blank sections
-				matcher = pattern.matcher(line);
-				while (line != null && !matcher.find() ) {
+				while (line != null && !Utilities.isMatchfound(line)) {
 					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 					line = Utilities.skipBlankLines(br, line);
-					matcher = pattern.matcher(line);
 				}
 				//System.out.println("next line to analyze is: >" + line + "<");				
 				
 				// if not at end of file, process as answer or non-answer text to be skipped
 				if (line != null) {
-			        matcher = pattern.matcher(line);
-			        if (matcher.find()) {				// start of new question
+			        if (Utilities.isMatchfound(line)) {				// start of new question
 			        	//System.out.println("found new question...");
 						// process the first line to get question number and desired query
 			        	// TODO: need to generalize to support . or ) as in pattern
@@ -293,8 +283,7 @@ public class Submission {
 							
 								// check the new line to see if is new question instructor comment
 								if (line != null && Utilities.isInstructorComment(line)) {
-							        matcher = pattern.matcher(line);
-							        if (matcher.find()) {				// start of new question
+							        if (Utilities.isMatchfound(line)) {				// start of new question
 							        	isNewQuestion = true;
 							        	//System.out.println("parsing instructor comments, but found new question");
 							        } else {
@@ -313,10 +302,9 @@ public class Submission {
 							while (line != null && moreLinesForAnswer) {
 								line = br.readLine();					// get next line
 								if (line != null) {						// if not at end of file...
-							        matcher = pattern.matcher(line);
 							        // TODO - need to generally check for . or )
 							        // TODO - need better new question check than period at less than hard-coded position
-							        if (matcher.find() && line.indexOf('.') < 8) {	// if find start of next question
+							        if (Utilities.isMatchfound(line) && line.indexOf('.') < 8) {	// if find start of next question
 							        	//System.out.println("found start of next question");
 							        	moreLinesForAnswer = false;
 							        }
@@ -350,16 +338,14 @@ public class Submission {
 							// ignore any following lines after first answer and user comments before instructor comment/question start or end of file
 							isNewQuestion = false;
 							if (line != null) {
-								matcher = pattern.matcher(line);
-								if (matcher.find()) {										// start of new question
+								if (Utilities.isMatchfound(line)) {										// start of new question
 									isNewQuestion = true;
 								}
 						    }
 							while (line != null && !isNewQuestion) {
 								line = br.readLine();										// go to next line and check that line
 								if (line != null) {
-							        matcher = pattern.matcher(line);
-							        if (matcher.find()) {							
+							        if (Utilities.isMatchfound(line)) {							
 							        	isNewQuestion = true;
 							        }
 								}

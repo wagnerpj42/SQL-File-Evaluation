@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utilities { 	
 	// methods
@@ -225,5 +227,12 @@ public class Utilities {
 		
 		return resultPath;
 	}	// end - method processSlashes
+	
+	public static boolean isMatchfound(String line){
+		String regexp = "-- -- \\d+[a-z]*[.]";		// regular expression for question, e.g. >-- --1a. or -- --23.<
+		Pattern pattern = Pattern.compile(regexp);	// pattern for regexp pattern matching
+		Matcher matcher = pattern.matcher(line);
+        return matcher.find();
+    }
 	
 }	// end - class Utilities
