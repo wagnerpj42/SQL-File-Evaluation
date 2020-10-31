@@ -212,7 +212,7 @@ public class Submission {
 			// if not already at the first question, look for any other instructor comments and trailing blanks and skip them
 			int attemptCount = 0;							// number of line attempts so far
 															// stop if user comments or start of new question
-	        while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isMatchfound(line) && 
+	        while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isQuestionFound(line) && 
 	        		attemptCount <= MAX_LINE_ATTEMPTS) {						
 	        	line = Utilities.skipInstructorComments(br, line);
 	        	//System.out.println("after instructor comments, next line is: >" + line + "<");
@@ -243,7 +243,7 @@ public class Submission {
 				line = Utilities.skipBlankLines(br, line);
 				
 				// remove 0, 1 or more user comment sections and blank sections
-				while (line != null && !Utilities.isMatchfound(line)) {
+				while (line != null && !Utilities.isQuestionFound(line)) {
 					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 					line = Utilities.skipBlankLines(br, line);
 				}
@@ -251,7 +251,7 @@ public class Submission {
 				
 				// if not at end of file, process as answer or non-answer text to be skipped
 				if (line != null) {
-			        if (Utilities.isMatchfound(line)) {				// start of new question
+			        if (Utilities.isQuestionFound(line)) {				// start of new question
 			        	//System.out.println("found new question...");
 						// process the first line to get question number and desired query
 			        	// TODO: need to generalize to support . or ) as in pattern
@@ -283,7 +283,7 @@ public class Submission {
 							
 								// check the new line to see if is new question instructor comment
 								if (line != null && Utilities.isInstructorComment(line)) {
-							        if (Utilities.isMatchfound(line)) {				// start of new question
+							        if (Utilities.isQuestionFound(line)) {				// start of new question
 							        	isNewQuestion = true;
 							        	//System.out.println("parsing instructor comments, but found new question");
 							        } else {
@@ -304,7 +304,7 @@ public class Submission {
 								if (line != null) {						// if not at end of file...
 							        // TODO - need to generally check for . or )
 							        // TODO - need better new question check than period at less than hard-coded position
-							        if (Utilities.isMatchfound(line) && line.indexOf('.') < 8) {	// if find start of next question
+							        if (Utilities.isQuestionFound(line) && line.indexOf('.') < 8) {	// if find start of next question
 							        	//System.out.println("found start of next question");
 							        	moreLinesForAnswer = false;
 							        }
@@ -338,14 +338,14 @@ public class Submission {
 							// ignore any following lines after first answer and user comments before instructor comment/question start or end of file
 							isNewQuestion = false;
 							if (line != null) {
-								if (Utilities.isMatchfound(line)) {										// start of new question
+								if (Utilities.isQuestionFound(line)) {										// start of new question
 									isNewQuestion = true;
 								}
 						    }
 							while (line != null && !isNewQuestion) {
 								line = br.readLine();										// go to next line and check that line
 								if (line != null) {
-							        if (Utilities.isMatchfound(line)) {							
+							        if (Utilities.isQuestionFound(line)) {							
 							        	isNewQuestion = true;
 							        }
 								}

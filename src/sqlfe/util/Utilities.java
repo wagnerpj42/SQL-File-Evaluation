@@ -228,7 +228,7 @@ public class Utilities {
 		return resultPath;
 	}	// end - method processSlashes
 	
-	public static boolean isMatchfound(String line){
+	public static boolean isQuestionFound(String line){
 		String regexp = "-- -- \\d+[a-z]*[.]";		// regular expression for question, e.g. >-- --1a. or -- --23.<
 		Pattern pattern = Pattern.compile(regexp);	// pattern for regexp pattern matching
 		Matcher matcher = pattern.matcher(line);
