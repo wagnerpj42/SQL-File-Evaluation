@@ -180,9 +180,6 @@ public class Submission {
 	public String readSQLquery(String line, String answerQueryStr, BufferedReader br,PrintWriter commWriter)
 	{
 		System.out.println("In read SQL quey");
-		String regexp = "-- -- \\d+[a-z]*[.]";		// regular expression for question, e.g. >-- --1a. or -- --23.<
-		Pattern pattern = Pattern.compile(regexp);	// pattern for regexp pattern matching
-		Matcher matcher = null;						// matcher for regexp pattern matching		
 
 		if (line != null && !Utilities.isInstructorComment(line)) {
 			answerQueryStr = line;
@@ -197,10 +194,9 @@ public class Submission {
 			while((line = br.readLine())!= null) {
 				
 				// if not at end of file...
-			    matcher = pattern.matcher(line);
 			    // TODO - need to generally check for . or )
 			    // TODO - need better new question check than period at less than hard-coded position
-			    if (matcher.find() && line.indexOf('.') < 8) {	// if find start of next question
+			    if (Utilities.isQuestionFound(line) && line.indexOf('.') < 8) {	// if find start of next question
 			    	//System.out.println("found start of next question");
 			    	break;
 			    }
@@ -235,7 +231,6 @@ public class Submission {
 		FileReader fr = null;						// file stream for reading SQL submission file
 		BufferedReader br = null;					// buffered reader for that stream
 		String answerQueryStr = "";					// each answer string given in assignment
-		boolean moreLinesForAnswer = false;			// are there more query answer lines coming?
 		String qNumStr = "";						// question number as a string; e.g. 1.c)
 		
 		try {
@@ -391,8 +386,6 @@ public class Submission {
 							
 							answerQueryStr = readSQLquery(line,answerQueryStr,br,commWriter);
 
-							
-							
 							// process any remaining lines, looking for user comments, possibly surrounded by blank lines
 							line = Utilities.skipBlankLines(br, line);
 							line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
