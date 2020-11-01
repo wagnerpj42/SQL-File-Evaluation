@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import sqlfe.sqltests.ISQLTest;
 import sqlfe.util.Utilities;
@@ -174,6 +176,60 @@ public class Submission {
 				+ queryEvals + ", totalPoints=" + totalPoints + "]";
 	}
 	
+	
+	public String readSQLquery(String line, String answerQueryStr, BufferedReader br,PrintWriter commWriter)
+	{
+		System.out.println("In read SQL quey");
+		String regexp = "-- -- \\d+[a-z]*[.]";		// regular expression for question, e.g. >-- --1a. or -- --23.<
+		Pattern pattern = Pattern.compile(regexp);	// pattern for regexp pattern matching
+		Matcher matcher = null;						// matcher for regexp pattern matching		
+
+		if (line != null && !Utilities.isInstructorComment(line)) {
+			answerQueryStr = line;
+		}else if (Utilities.isInstructorComment(line)) {	// if found next question - no answer submitted
+			answerQueryStr = "";
+			return answerQueryStr;
+		}else {
+			answerQueryStr = "";
+		} 
+			
+		try {
+			while((line = br.readLine())!= null) {
+				
+				// if not at end of file...
+			    matcher = pattern.matcher(line);
+			    // TODO - need to generally check for . or )
+			    // TODO - need better new question check than period at less than hard-coded position
+			    if (matcher.find() && line.indexOf('.') < 8) {	// if find start of next question
+			    	//System.out.println("found start of next question");
+			    	break;
+			    }
+			    else if (line.indexOf(';') == -1) {	// look for terminating semicolon,						
+			    	//System.out.println("found additional answer line");
+			    	answerQueryStr += ("\n" + line); //  if not found, still part of answer
+			    }
+			    else if (line.indexOf(';') != -1) { // found semicolon, is end of answer 
+			    	//System.out.println("found last question line, with semicolon");
+			    	answerQueryStr += ("\n" + line);
+			    	break;
+			    }
+			    else if (Utilities.isUserCommentSingleLine(line) ||
+			    		 Utilities.isUserCommentMultiLineStart(line)) { 		// found user comment embedded in answer
+			    	line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+			    }
+			    else {
+			    	System.err.println("unexpected answer line condition");
+			    }
+			    //System.out.println("next line is: >" + line + "<");
+			}
+		} catch (FileNotFoundException e) {
+			System.err.println("Cannot find file " + submissionFileName);
+		} catch (IOException ioe) {
+			System.err.println("Cannot read from file " + submissionFileName);
+		}
+		return answerQueryStr;
+	}
+	
 	// readSubmission - read one submission from a file
 	public void readSubmission(String submissionFileName, PrintWriter commWriter, PrintWriter parseWriter) {
 		FileReader fr = null;						// file stream for reading SQL submission file
@@ -294,6 +350,8 @@ public class Submission {
 							
 							// next line should be start of answer (possibly complete on one line)
 							//   unless no answer present, then make answerQueryStr blank
+							
+							/* ----- Funcntionality shifted in readSQLquery()
 							answerQueryStr = (line != null && !Utilities.isInstructorComment(line)? line : "");	
 							//System.out.println("start of answerQueryStr is: >" + answerQueryStr + "<");
 											
@@ -329,6 +387,11 @@ public class Submission {
 								}	// end - if line is not null
 							}	// end - while more lines for answer
 							//System.out.println("final answer before blank/comment check for " + qNumStr + " is: >" + answerQueryStr.trim() + "<\n");
+							*/
+							
+							answerQueryStr = readSQLquery(line,answerQueryStr,br,commWriter);
+
+							
 							
 							// process any remaining lines, looking for user comments, possibly surrounded by blank lines
 							line = Utilities.skipBlankLines(br, line);
