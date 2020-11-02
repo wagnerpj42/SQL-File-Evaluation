@@ -177,6 +177,30 @@ public class Submission {
 	}
 	
 	
+	public String parseComments(String line, BufferedReader br , PrintWriter commWriter )
+	{
+		
+		line = Utilities.skipInstructorComments(br, line);
+		//System.out.println("line after skipping instructor comments with question text is: >" + line + "<");
+		// skip any blank lines after instructor comments
+		
+		line = Utilities.skipBlankLines(br, line);
+		//System.out.println("line after skipping blanks after instructor comments is: >" + line + "<");
+	
+		// process any user comments above the answer
+		line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+		//System.out.println("line after skipping user comments above answer is: >" + line + "<");
+		
+		// skip any remaining blank lines before answer
+		line = Utilities.skipBlankLines(br, line);
+		//System.out.println("line after skipping any remaining blank lines before answer is: >" + line + "<");
+	
+		return line;
+	}
+
+	
+	
+	
 	public String readSQLquery(String line, String answerQueryStr, BufferedReader br,PrintWriter commWriter)
 	{
 		System.out.println("In read SQL quey");
@@ -315,6 +339,12 @@ public class Submission {
 
 							// skip all instructor comment sections (one or more)
 							boolean isNewQuestion = false;
+							
+							
+							
+							line = parseComments(line, br , commWriter);
+							
+									/*		
 							while (line != null && Utilities.isInstructorComment(line) && !isNewQuestion) {
 								// skip remaining instructor comment lines with question text
 								line = Utilities.skipInstructorComments(br, line);
@@ -342,6 +372,9 @@ public class Submission {
 							        }
 								}
 							}	// end - while
+							
+							
+							*/
 							
 							// next line should be start of answer (possibly complete on one line)
 							//   unless no answer present, then make answerQueryStr blank
@@ -385,30 +418,23 @@ public class Submission {
 							*/
 							
 							answerQueryStr = readSQLquery(line,answerQueryStr,br,commWriter);
+							line = br.readLine();										// go to next line and check that line
 
 							// process any remaining lines, looking for user comments, possibly surrounded by blank lines
 							line = Utilities.skipBlankLines(br, line);
 							line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 							line = Utilities.skipBlankLines(br, line);
 							
-							// ignore any following lines after first answer and user comments before instructor comment/question start or end of file
 							isNewQuestion = false;
-							if (line != null) {
+							while (line != null && Utilities.isInstructorComment(line)&& !isNewQuestion) {
 								if (Utilities.isQuestionFound(line)) {										// start of new question
 									isNewQuestion = true;
 								}
-						    }
-							while (line != null && !isNewQuestion) {
-								line = br.readLine();										// go to next line and check that line
-								if (line != null) {
-							        if (Utilities.isQuestionFound(line)) {							
-							        	isNewQuestion = true;
-							        }
+								else {
+									line = br.readLine();										// go to next line and check that line
 								}
-							}	// end - while
-							
-						}	// end - if period
-					
+							}
+						}
 						// remove any trailing semicolon from the answer
 						int semiPos = answerQueryStr.indexOf(';');
 						if (semiPos != -1) {
@@ -426,6 +452,7 @@ public class Submission {
 				}	// end - if line not null
 			}	// end - while more answers to process
 			System.out.println(); 									// end parsing output to console
+		 
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
