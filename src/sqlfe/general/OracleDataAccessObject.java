@@ -17,13 +17,15 @@ public class OracleDataAccessObject implements IDAO {
 	private ResultSet rset = null;			// result set for queries
 	private int returnValue;				// return value for all other commands
 	private String hostName;				// DBMS host
+	private String portString;				// DBMS port
 	private String idName;					// DBMS system id
 	private String username;				// DBMS user name
 	private String password;				// DBMS user password
 	
 	// --- constructor
-	public OracleDataAccessObject (String hostName, String idName, String username, String password) {
+	public OracleDataAccessObject (String hostName, String portString, String idName, String username, String password) {
 		this.hostName = hostName;
+		this.portString = portString;
 		this.idName = idName;
 		this.username = username;
 		this.password = password;
@@ -40,7 +42,7 @@ public class OracleDataAccessObject implements IDAO {
 		}
 
 		// --- 2) connect to database
-		String connectString = "jdbc:oracle:thin:@" + hostName + ":1521:" + idName;
+		String connectString = "jdbc:oracle:thin:@" + hostName.trim() + ":" + portString.trim() + ":" + idName.trim();
 		try {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
@@ -57,11 +59,12 @@ public class OracleDataAccessObject implements IDAO {
 		Statement stmt = null;		// SQL statement object
 		rset = null;				// initialize result set
 		try	{
-		   stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-		   rset = stmt.executeQuery(sqlQuery);
+			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			rset = stmt.executeQuery(sqlQuery);
 		}
 		catch (SQLException e) {
 			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
+			//System.err.println(e.getMessage());
 		}
 		//finally {
 		//	if (stmt != null) {

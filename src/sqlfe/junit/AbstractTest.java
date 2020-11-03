@@ -62,7 +62,8 @@ public abstract class AbstractTest {
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
-		testDAO				= new OracleDataAccessObject("host", "dbsysid", "username","password");		// must be changed to run unit tests
+		// DAO setup - change type of object instantiated (if necessary) and arguments to make this functional 
+		testDAO				= new OracleDataAccessObject("host", "port", "sysid", "username", "password");		// must be changed to run unit tests
 		
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");

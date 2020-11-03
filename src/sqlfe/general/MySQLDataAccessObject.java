@@ -18,13 +18,15 @@ public class MySQLDataAccessObject implements IDAO {
 	private ResultSet rset = null;			// result set for queries
 	private int returnValue;				// return value for all other commands
 	private String hostName;				// DBMS host
+	private String portString;				// DBMS port
 	private String idName;					// DBMS system id
 	private String username;				// DBMS user name
 	private String password;				// DBMS user password
 	
 	// --- constructor
-	public MySQLDataAccessObject (String hostName, String idName, String username, String password) {
+	public MySQLDataAccessObject (String hostName, String portString, String idName, String username, String password) {
 		this.hostName = hostName;
+		this.portString = portString;
 		this.idName = idName;
 		this.username = username;
 		this.password = password;
@@ -41,9 +43,7 @@ public class MySQLDataAccessObject implements IDAO {
 		}
 
 		// --- 2) connect to database
-		// format of connect string: jdbc:mysql://localhost/listproj ; doesn't require port if using standard port (3306)
-		final int port = 3306;
-		String connectString = "jdbc:mysql://" + hostName + ":" + port + "/" + idName;
+		String connectString = "jdbc:mysql://" + hostName.trim() + ":" + portString.trim() + "/" + idName.trim();
 		try {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
