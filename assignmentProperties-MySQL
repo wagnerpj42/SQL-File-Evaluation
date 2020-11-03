@@ -1,0 +1,135 @@
+CS 260, Fall 2019, Lab Test
+
+1. (15 points)
+SELECT CustID, Fname, Lname, AccClosedDate
+FROM Customer C
+JOIN Account A ON A.Customer = C.CustID
+WHERE AccStatus = 'Closed'
+AND AccOpenLocation = 'Central' 
+AND AccClosedDate >= '2017-03-01';
+
+CondCompiles 10 ""
+CondBasicContent 15 ""
+TestRowCount 10
+TestColumnCount 10
+CondTableCount 10 " == 2"
+CondWhereCount 10 " >= 1"
+TestResultSetEqualContent 35
+
+
+2-1. (16 points) 
+SELECT AccOpenLocation, AccStatus, COUNT(*) AS "Location/Status Ct."
+FROM Account
+GROUP BY AccOpenLocation, AccStatus
+ORDER BY AccOpenLocation, AccStatus;
+
+CondCompiles 15 ""
+CondBasicContent 10 ""
+CondGroupByCount 10 " >= 1"
+CondOrderByCount 10 " >= 1"
+TestColumnCount 10
+TestResultSetEqualContent 45
+
+2-2. (16 points)
+SELECT DISTINCT A1.AccOpenLocation, A2.AccStatus, 
+   COUNT(DISTINCT A3.AccNumber) AS "Location/Status Ct."
+FROM Account A1
+CROSS JOIN Account A2
+LEFT OUTER JOIN Account A3 
+ ON (A1.AccOpenLocation = A3.AccOpenLocation AND A2.AccStatus = A3.AccStatus)
+GROUP BY A1.AccOpenLocation, A2.AccStatus
+ORDER BY A1.AccOpenLocation, A2.AccStatus;
+ 
+CondCompiles 15 ""
+CondBasicContent 10 ""
+CondGroupByCount 10 " >= 1"
+CondOrderByCount 10 " >= 1"
+CondJoinOuterCount 10 " >= 1"
+TestColumnCount 10
+TestResultSetEqualContent 35
+
+
+3. (18 points) 
+SELECT A1.AccNumber
+FROM Account A1
+WHERE A1.AccBalance >
+   (SELECT AVG(A2.AccBalance)
+    FROM Account A2
+    WHERE A2.AccType = A1.AccType);
+
+CondCompiles 15 ""
+CondBasicContent 10 ""
+CondAvgCount 10 " >= 1"
+CondTableCount 10 " >= 1"
+TestColumnCount 10
+TestResultSetEqualContent 45
+
+
+4. (18 points) 
+SELECT TransLocation, AVG(TransAmount) AS TransLocAvg
+FROM Transaction
+GROUP BY TransLocation
+HAVING AVG(TransAmount) <
+    (SELECT AVG(TransAmount)
+     FROM Transaction)
+ORDER BY AVG(TransAmount) DESC;
+
+CondCompiles 15 ""
+CondBasicContent 10 ""
+CondAvgCount 10 " >= 3"
+CondGroupByCount 10 " >= 1"
+CondOrderByCount 10 " >= 1"
+CondDescCount 5 " >= 1"
+CondTableCount 10 " >= 1"
+TestResultSetEqualContent 30
+
+
+5. (16 points)
+SELECT CustID, FName, LName, MAX(TransAmount) AS MaxWithdrawal
+FROM Customer C
+JOIN Account A ON C.CustID = A.Customer
+JOIN Transaction T ON (A.AccNumber = T.AccNumber)
+WHERE AccType = 'savings'
+AND TransType = 'w'
+GROUP BY CustID, FName, LName
+ORDER BY CustID;
+
+CondCompiles 10 ""
+CondBasicContent 10 ""
+CondMaxCount 10 " >= 1"
+CondGroupByCount 10 " >= 1"
+CondOrderByCount 10 " >= 1"
+CondTableCount 10 " >= 2"
+TestColumnCount 5
+TestResultSetEqualContent 35
+
+6. (17 points)
+SELECT DISTINCT CustID, FName, LName
+FROM Customer
+WHERE Custid NOT IN
+  (SELECT Customer
+   FROM Account
+   WHERE AccStatus = 'Active');
+
+CondCompiles 10 ""
+CondBasicContent 15 ""
+CondWhereCount 15 " >= 1"
+CondSelectCount 15 " >= 2"
+TestColumnCount 10
+TestResultSetEqualContent 35
+
+7. (5 points)
+SELECT TransLocation, COUNT(DISTINCT A.AccNumber)
+FROM Transaction T
+LEFT OUTER JOIN Account A ON (T.TransLocation = A.AccOpenLocation)
+GROUP BY TransLocation;
+
+CondCompiles 10 ""
+CondBasicContent 10 ""
+CondJoinOuterCount 10 " >= 1"
+CondGroupByCount 10 " >= 1"
+CondTableCount 10 " == 2"
+CondCountCount 10 " >= 1"
+CondDistinctCount 10 " >= 1"
+TestResultSetEqualContent 30
+
