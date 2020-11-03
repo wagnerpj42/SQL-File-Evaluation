@@ -34,7 +34,7 @@ public class MySQLDataAccessObject implements IDAO {
 	public Connection connect() {
 		// --- 1) get the Class object for the driver 
 		try {
-		   Class.forName ("com.mysql.jdbc.Driver");
+		   Class.forName ("com.mysql.cj.jdbc.Driver");
 		}
 		catch (ClassNotFoundException e) {
 		   System.err.println ("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
@@ -42,7 +42,8 @@ public class MySQLDataAccessObject implements IDAO {
 
 		// --- 2) connect to database
 		// format of connect string: jdbc:mysql://localhost/listproj ; doesn't require port if using standard port (3306)
-		String connectString = "jdbc:mysql://" + hostName + "/" + idName;
+		final int port = 3306;
+		String connectString = "jdbc:mysql://" + hostName + ":" + port + "/" + idName;
 		try {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
@@ -59,11 +60,12 @@ public class MySQLDataAccessObject implements IDAO {
 		Statement stmt = null;		// SQL statement object
 		rset = null;				// initialize result set
 		try	{
-		   stmt = conn.createStatement();
+		   stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		   rset = stmt.executeQuery(sqlQuery);
 		}
-		catch (SQLException e) {
+		catch (SQLException sqle) {
 			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
+			//System.err.println("SQL error message: " + sqle.getMessage());
 		}
 		//finally {
 		//	if (stmt != null) {
