@@ -234,5 +234,26 @@ public class Utilities {
 		Matcher matcher = pattern.matcher(line);
         return matcher.find();
     }
+
+	public static String skipExtraQueries(BufferedReader br, String line) {
+		if (line != null) {
+			line = line.trim();
+		}
+		String regexp = "^(?!-- --).*$";
+		Pattern pattern = Pattern.compile(regexp);
+		Matcher matcher = pattern.matcher(line);
+		String localLine = line;
+		try {
+			while (localLine != null && matcher.find()) {
+				localLine = br.readLine();
+				//System.out.println("skipInstructorComments();, skipping line, new line is: >" + localLine + "<");
+			}
+		} 
+		catch (IOException ioe) {
+			System.err.println("skipInstructorComments() - Cannot read from properties file");
+		}
+
+		return localLine;
+	}
 	
 }	// end - class Utilities
