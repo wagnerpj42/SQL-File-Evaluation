@@ -1,9 +1,9 @@
 /*
- * Class MySQLDataAccessObject
+ * Class MySQL80DataAccessObject - DAO for MySQL 8.0.22 (and possibly similar future version) servers
  * 
  * Created by Paul J. Wagner, 13-OCT-2019
  * 
- * Notes: needs xxxxxx.jar on build path/project
+ * Notes: needs mysql-connector-java-8.0.22.jar (or possibly similar) on build path/project
  *
  */
 package sqlfe.general;
@@ -12,7 +12,7 @@ import java.sql.*;
 
 import sqlfe.util.Utilities;
 
-public class MySQLDataAccessObject implements IDAO {
+public class MySQL80DataAccessObject implements IDAO {
 
 	private Connection conn = null;			// JDBC connection
 	private ResultSet rset = null;			// result set for queries
@@ -24,7 +24,7 @@ public class MySQLDataAccessObject implements IDAO {
 	private String password;				// DBMS user password
 	
 	// --- constructor
-	public MySQLDataAccessObject (String hostName, String portString, String idName, String username, String password) {
+	public MySQL80DataAccessObject (String hostName, String portString, String idName, String username, String password) {
 		this.hostName = hostName;
 		this.portString = portString;
 		this.idName = idName;

@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+//import java.io.PrintStream;
 import java.util.Properties;
 
 import javax.swing.*;
@@ -42,7 +42,7 @@ public class FrontEndView extends JFrame {
 	// initialize - method to set up the graphical display
 	private void initialize() {
 		JPanel sqlFileEvalContentPane = new JPanel();	// overall content panel
-	    String[] choices = { "Oracle", "MySQL" };		// DBMS choices currently implemented
+	    String[] choices = { "Oracle", "MySQL 5.x", "MySQL 8.0" };		// DBMS choices currently implemented
 	    dbmsBox = new JComboBox<String>(choices);		// combox box for DBMS choices
 		hostBox = new JTextField("");					// DBMS hostname/number
 		portBox = new JTextField("");					// DBMS port

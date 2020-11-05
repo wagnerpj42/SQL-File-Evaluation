@@ -79,8 +79,11 @@ public class BackEnd {
 		case "Oracle":
 			dao = new OracleDataAccessObject(hostName, portString, idName, username, password);
 			break;
-		case "MySQL":
-			dao = new MySQLDataAccessObject(hostName, portString, idName, username, password);
+		case "MySQL 5.x":
+			dao = new MySQL5xDataAccessObject(hostName, portString, idName, username, password);
+			break;
+		case "MySQL 8.0":
+			dao = new MySQL80DataAccessObject(hostName, portString, idName, username, password);
 			break;
 		default:
 			// TODO: what to do if bad DAO specification?
