@@ -175,8 +175,8 @@ public class Submission {
 	}
 	
 	// Skip comments or blank spaces before reaching a new question or an instructor comment
-	private String parseComments(String line, BufferedReader br , PrintWriter commWriter, boolean isNewQuestion ){
-		while (line != null && Utilities.isInstructorComment(line) && !isNewQuestion) {			
+	private String parseComments(String line, BufferedReader br , PrintWriter commWriter ){
+		while (line != null && Utilities.isInstructorComment(line)) {			
 		// skip remaining instructor comment lines with question text
 			line = Utilities.skipInstructorComments(br, line);
 			//System.out.println("line after skipping instructor comments with question text is: >" + line + "<");
@@ -194,20 +194,19 @@ public class Submission {
 			//System.out.println("line after skipping any remaining blank lines before answer is: >" + line + "<");
 		
 			// check the new line to see if is new question instructor comment
-			if (line != null && Utilities.isInstructorComment(line)) {
-		        if (Utilities.isQuestionFound(line)) {				// start of new question
-		        	isNewQuestion = true;
-		        	//System.out.println("parsing instructor comments, but found new question");
-		        } else {
-		        	//System.out.println("parsing instructor comments, found another instructor comment for same question");
-		        }
-			}
+	        if (Utilities.isQuestionFound(line)) {				// start of new question
+	        	break;
+	        	//System.out.println("parsing instructor comments, but found new question");
+	        } else {
+	        	continue;
+	        	//System.out.println("parsing instructor comments, found another instructor comment for same question");
+	        }
 		}	// end - while
 		return line;
 	}
 	
 	//Get the complete SQL query written by student and return the answer query string
-	public String readSQLquery(String line, String answerQueryStr, BufferedReader br,PrintWriter commWriter)
+	private String getAnswerQuery(String line, String answerQueryStr, BufferedReader br,PrintWriter commWriter)
 	{
 		//start of answer (possibly complete on one line) unless no answer present, then make answerQueryStr blank
 		if (line != null && !Utilities.isInstructorComment(line)) {
@@ -225,9 +224,7 @@ public class Submission {
 			while((line = br.readLine())!= null) {
 				
 				// if not at end of file...
-			    // TODO - need to generally check for . or )
-			    // TODO - need better new question check than period at less than hard-coded position
-			    if (Utilities.isQuestionFound(line) && line.indexOf('.') < 8) {	// if find start of next question
+			    if (Utilities.isQuestionFound(line)) {	// if find start of next question
 			    	//System.out.println("found start of next question");
 			    	br.reset();
 			    	break;
@@ -274,20 +271,18 @@ public class Submission {
 			this.submissionFileName = submissionFileName;
 			///System.out.println("\nReading in file " + submissionFileName);
 			
-			final int BASE_PROMPT_LENGTH = 6;								// length of instructor comment marker >-- -- <
-
+			// initialize answers and total points
+			if (answers == null) {					// initialize questions list
+				answers = new ArrayList<QuestionAnswer>();
+			}
+			totalPoints = 0;
+			
 			// Parse and store the first three lines of file which include fields class name, 
 			// student name and a blank space for maintaining separation from the next section
 			line = getFileMetadata(br);
 			
 			// Parse through any additional lines(empty or non-empty) before reaching the first question
 	        line = reachFirstQuestion(br, line);
-			
-			// initialize answers and total points
-			if (answers == null) {					// initialize questions list
-				answers = new ArrayList<QuestionAnswer>();
-			}
-			totalPoints = 0;
 
 			// process student's answers
 			int loopCount = 0;						// for debugging
@@ -297,62 +292,49 @@ public class Submission {
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
 				// skip white lines before/between/after questions
+				// TODO - need better new question check than period at less than hard-coded position
 				// TODO: need general way of detecting non-query text; e.g. comments, garbage
 				//System.out.println("line before skipping any blanks is: >" + line + "<");
 				line = Utilities.skipBlankLines(br, line);
 				
 				// remove 0, 1 or more user comment sections and blank sections
-				while (line != null && !Utilities.isQuestionFound(line)) {
+				while (!Utilities.isQuestionFound(line)) {
 					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 					line = Utilities.skipBlankLines(br, line);
 				}
 				//System.out.println("next line to analyze is: >" + line + "<");				
 				
-				// if not at end of file, process as answer or non-answer text to be skipped
-				if (line != null) {
-			        if (Utilities.isQuestionFound(line)) {				// start of new question
-			        	//System.out.println("found new question...");
-						// process the first line to get question number and desired query
-			        	// TODO: need to generalize to support . or ) as in pattern
-						int periodPos = line.indexOf('.');
-						// check if beginning of new question
-						if (periodPos >= 0) {
-							// get question number as string
-							qNumStr = line.substring(BASE_PROMPT_LENGTH, periodPos);	// skip past -- -- and space
-							System.out.print("Q" + qNumStr + ".");
+		        if (Utilities.isQuestionFound(line)) {				// start of new question
+		        	//System.out.println("found new question...");
+					// process the first line to get question number and desired query
+		        	// TODO: need to generalize to support . or ) as in pattern
+					
+		        	// get question number as string from the line with a '.' or ')'
+					qNumStr = Utilities.getQuestionNumber(line);	// skip past -- -- and space
+					System.out.print("Q" + qNumStr + ".");
 
-							// skip all instructor comment sections (one or more)
-							boolean isNewQuestion = false;
-							
-							//Scan any comments, blank lines before reaching the line containing answerQuery
-							line = parseComments(line, br , commWriter, isNewQuestion);
-							
-							//Parse the answer query as a string and store it in answerQuerySt
-							answerQueryStr = readSQLquery(line,answerQueryStr,br,commWriter);
-							line = br.readLine();										// go to next line and check that line
+					//Scan any comments, blank lines before reaching the line containing answerQuery
+					line = parseComments(line, br , commWriter);
+					
+					//Parse the answer query as a string and store it in answerQuerySt
+					answerQueryStr = getAnswerQuery(line,answerQueryStr,br,commWriter);
 
-							// process any remaining lines, looking for user comments, possibly surrounded by blank lines
-							line = Utilities.skipBlankLines(br, line);
-							line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
-							line = Utilities.skipBlankLines(br, line);
-							
-							isNewQuestion = false;
-							while (line != null && !isNewQuestion) {
-								if (line != null) {
-							        if (Utilities.isQuestionFound(line)) {							
-							        	isNewQuestion = true;
-							        }
-							        else {
-							        	line = br.readLine();										// go to next line and check that line
-							        }
-								}
-							}	// end - while
-						}
-						//Write the Question and answer pair in the QuestionAnswer list
-						writeToQuestionAnswerList(qNumStr, answerQueryStr);
-						
-					}	// end - if matcher found the start of a question
-				}	// end - if line not null
+					//Write the Question number and answer pair in the QuestionAnswer list
+					writeToQuestionAnswerList(qNumStr, answerQueryStr);
+					
+					line = br.readLine();										// go to next line and check that line
+
+					// process any remaining lines, looking for user comments, possibly surrounded by blank lines
+					line = Utilities.skipBlankLines(br, line);
+					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+					line = Utilities.skipBlankLines(br, line);
+					
+					// skip any lines that contain anything other than user comments until reaching the next question  
+					while (line != null && !Utilities.isQuestionFound(line)) {
+			        	line = br.readLine();										// go to next line and check that line
+					}	// end - while
+					
+				}	// end - if matcher found the start of a question
 			}	// end - while more answers to process
 			System.out.println(); 									// end parsing output to console
 		 
