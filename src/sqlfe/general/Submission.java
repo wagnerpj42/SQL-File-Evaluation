@@ -224,7 +224,7 @@ public class Submission {
 		try {
 			while((line = br.readLine())!= null) {
 				
-				// if not at end of file...
+			    // if not at end of file...
 			    if (Utilities.isQuestionFound(line)) {	// if find start of next question
 			    	//System.out.println("found start of next question");
 			    	br.reset();
@@ -332,7 +332,7 @@ public class Submission {
 					
 					// skip any lines that contain anything other than user comments until reaching the next question  
 					while (line != null && !Utilities.isQuestionFound(line)) {
-			        	line = br.readLine();										// go to next line and check that line
+			        		line = br.readLine();									// go to next line and check that line
 					}	// end - while
 					
 				}	// end - if matcher found the start of a question
@@ -358,10 +358,13 @@ public class Submission {
 		try {
 			line = br.readLine(); 											// get first line
 			line = Utilities.skipBlankLines(br, line);						// skip blanks if any
+			
 			final int BASE_PROMPT_LENGTH = 6;								// length of instructor comment marker >-- -- <
 			submissionName = line.substring(BASE_PROMPT_LENGTH);			// first line = assignment name, strip off leading >-- -- <
 			//System.out.println("submission name: " + submissionName);
+			
 			line = br.readLine();											// second line = (student) name
+			
 			final int NAME_PROMPT_LENGTH = 11;								// length of >-- -- Name:<
 			if (line.length() > NAME_PROMPT_LENGTH) {
 				studentName = line.substring(NAME_PROMPT_LENGTH).trim();	// name is whatever is after prompt
