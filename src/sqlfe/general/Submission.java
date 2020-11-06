@@ -177,7 +177,8 @@ public class Submission {
 	// Skip comments or blank spaces before reaching a new question or an instructor comment
 	private String parseComments(String line, BufferedReader br , PrintWriter commWriter ){
 		while (line != null && Utilities.isInstructorComment(line)) {			
-		// skip remaining instructor comment lines with question text
+			
+			// skip remaining instructor comment lines with question text
 			line = Utilities.skipInstructorComments(br, line);
 			//System.out.println("line after skipping instructor comments with question text is: >" + line + "<");
 			
@@ -197,10 +198,10 @@ public class Submission {
 			if (Utilities.isQuestionFound(line)) {				// start of new question
 				//System.out.println("parsing instructor comments, but found new question");
 				break;
-	        } else {
-	        	continue;
-	        	//System.out.println("parsing instructor comments, found another instructor comment for same question");
-	        }
+	        	} else {
+	        		continue;
+	        		//System.out.println("parsing instructor comments, found another instructor comment for same question");
+	        	}
 		}	// end - while
 		return line;
 	}
@@ -305,11 +306,11 @@ public class Submission {
 				//System.out.println("next line to analyze is: >" + line + "<");				
 				
 				if (Utilities.isQuestionFound(line)) {				// start of new question
-		        	//System.out.println("found new question...");
+					//System.out.println("found new question...");
 					// process the first line to get question number and desired query
-		        	// TODO: need to generalize to support . or ) as in pattern
-					
-		        	// get question number as string from the line with a '.' or ')'
+					// TODO: need to generalize to support . or ) as in pattern
+
+					// get question number as string from the line with a '.' or ')'
 					qNumStr = Utilities.getQuestionNumber(line);	// skip past -- -- and space
 					System.out.print("Q" + qNumStr + ".");
 
@@ -388,16 +389,16 @@ public class Submission {
 		while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isQuestionFound(line) && 
         		attemptCount <= MAX_LINE_ATTEMPTS) {						
 			line = Utilities.skipInstructorComments(br, line);
-        	//System.out.println("after instructor comments, next line is: >" + line + "<");
-			line = Utilities.skipBlankLines(br, line);			
-        	//System.out.println("after next set of blanks, next line is: >" + line + "<");
-			line = Utilities.skipExtraQueries(br, line);
-        	//System.out.println("after next set of drop queries, next line is: >" + line + "<");
-        	attemptCount++;
-        	if (attemptCount > MAX_LINE_ATTEMPTS) {
-        		throw new SQLFEParseException("\nParse Exception in file: " + submissionFileName + ", approx. line: >" + line + "<");
-        	}
-        }
+			//System.out.println("after instructor comments, next line is: >" + line + "<");
+				line = Utilities.skipBlankLines(br, line);			
+			//System.out.println("after next set of blanks, next line is: >" + line + "<");
+				line = Utilities.skipExtraQueries(br, line);
+			//System.out.println("after next set of drop queries, next line is: >" + line + "<");
+			attemptCount++;
+			if (attemptCount > MAX_LINE_ATTEMPTS) {
+				throw new SQLFEParseException("\nParse Exception in file: " + submissionFileName + ", approx. line: >" + line + "<");
+			}
+		}
 		return line;
 	}
 
