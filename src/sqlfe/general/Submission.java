@@ -194,9 +194,9 @@ public class Submission {
 			//System.out.println("line after skipping any remaining blank lines before answer is: >" + line + "<");
 		
 			// check the new line to see if is new question instructor comment
-	        if (Utilities.isQuestionFound(line)) {				// start of new question
-	        	break;
-	        	//System.out.println("parsing instructor comments, but found new question");
+			if (Utilities.isQuestionFound(line)) {				// start of new question
+				//System.out.println("parsing instructor comments, but found new question");
+				break;
 	        } else {
 	        	continue;
 	        	//System.out.println("parsing instructor comments, found another instructor comment for same question");
@@ -282,7 +282,7 @@ public class Submission {
 			line = getFileMetadata(br);
 			
 			// Parse through any additional lines(empty or non-empty) before reaching the first question
-	        line = reachFirstQuestion(br, line);
+			line = reachFirstQuestion(br, line);
 
 			// process student's answers
 			int loopCount = 0;						// for debugging
@@ -304,7 +304,7 @@ public class Submission {
 				}
 				//System.out.println("next line to analyze is: >" + line + "<");				
 				
-		        if (Utilities.isQuestionFound(line)) {				// start of new question
+				if (Utilities.isQuestionFound(line)) {				// start of new question
 		        	//System.out.println("found new question...");
 					// process the first line to get question number and desired query
 		        	// TODO: need to generalize to support . or ) as in pattern
@@ -385,13 +385,13 @@ public class Submission {
 		// if not already at the first question, look for any other instructor comments and trailing blanks and skip them
 		int attemptCount = 0;							// number of line attempts so far
 														// stop if user comments or start of new question
-        while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isQuestionFound(line) && 
+		while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isQuestionFound(line) && 
         		attemptCount <= MAX_LINE_ATTEMPTS) {						
-        	line = Utilities.skipInstructorComments(br, line);
+			line = Utilities.skipInstructorComments(br, line);
         	//System.out.println("after instructor comments, next line is: >" + line + "<");
-        	line = Utilities.skipBlankLines(br, line);			
+			line = Utilities.skipBlankLines(br, line);			
         	//System.out.println("after next set of blanks, next line is: >" + line + "<");
-        	line = Utilities.skipExtraQueries(br, line);
+			line = Utilities.skipExtraQueries(br, line);
         	//System.out.println("after next set of drop queries, next line is: >" + line + "<");
         	attemptCount++;
         	if (attemptCount > MAX_LINE_ATTEMPTS) {
