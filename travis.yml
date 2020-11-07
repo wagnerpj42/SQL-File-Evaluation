@@ -1,5 +1,6 @@
 branches:
   only:
+    - master
     - CItools
 
 language: java
