@@ -1,15 +1,18 @@
+branches:
+  only:
+    - CItools
+
 language: java
 
 jdk:
-	- oraclejdk8
+  - oraclejdk8
 
 service:
-	- mysql
-	
+  - mysql
+
 before_script: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
 script: cd setup && BankingScript-MySQL.sql && mvn test -B
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  
