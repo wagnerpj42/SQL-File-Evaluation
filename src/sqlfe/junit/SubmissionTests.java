@@ -55,18 +55,14 @@ public class SubmissionTests extends AbstractTest {
             String qString = "SELECT CustID, FName, LName, AccClosedDate\n" +
                     "FROM Customer C\n" +
                     "JOIN Account A ON (C.CustID = A.Customer)\n" +
-                    "WHERE A.AccOpenLocation = 'Central' AND A.AccClosedDate >= '01-MAR-2017'";
+                    "WHERE A.AccOpenLocation = 'Central' AND A.AccClosedDate >= '2017-03-01'";
             assertEquals(qString, a.getActualQuery().toString());
 
             //Test cross join
             a = answers.get(5);
             qString = "SELECT CustID, FName, LName\n" +
                     "FROM Customer\n" +
-                    "WHERE CustID IN(\n" +
-                    "    SELECT CustID\n" +
-                    "    FROM Customer C1\n" +
-                    "    CROSS JOIN Account A1\n" +
-                    "        MINUS\n" +
+                    "WHERE CustID NOT IN(\n" +
                     "    SELECT CustID\n" +
                     "    FROM Customer C2\n" +
                     "    JOIN Account A2 ON (C2.CustID = A2.Customer)\n" +
