@@ -8,11 +8,10 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.12</version>
-        <scope>sqlfe/junit</scope>
     </dependency>
    </dependencies>
   <build>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/sqlfe/general</sourceDirectory>
     <testSourceDirectory>src/sqlife/junit</testSourceDirectory>
     <plugins>
 		<plugin>
