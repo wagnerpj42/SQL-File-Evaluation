@@ -8,8 +8,5 @@ service:
 
 before_script: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
 
-script:
-  - setup/BankingScript-MySQL.sql
-
 after_success:
   - bash <(curl -s https://codecov.io/bash)
