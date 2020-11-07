@@ -264,11 +264,13 @@ public class Submission {
 		BufferedReader br = null;					// buffered reader for that stream
 		String answerQueryStr = "";					// each answer string given in assignment
 		String qNumStr = "";						// question number as a string; e.g. 1.c)
-		
+		int loopCount = 0;							// for debugging
+		final int MAX_TIMES_TO_TRY = 25;			// maximum number of times to try processing line before saying stuck and move on
+		String line = null;
+
 		try {
 			fr = new FileReader(submissionFileName);
 			br = new BufferedReader(fr);
-			String line;
 			this.submissionFileName = submissionFileName;
 			///System.out.println("\nReading in file " + submissionFileName);
 			
@@ -285,17 +287,13 @@ public class Submission {
 			// Parse through any additional lines(empty or non-empty) before reaching the first question
 			line = reachFirstQuestion(br, line);
 
-			// process student's answers
-			int loopCount = 0;						// for debugging
-			//line = br.readLine();               	// get first answer line - assume at least one question number on template
-			final int MAX_TIMES_TO_TRY = 25;		// maximum number of times to try processing line before saying stuck and move on
+			// get first answer and the subsequent questions & answers in the file
 			System.out.print("   Parsing: ");
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
-				// skip white lines before/between/after questions
-				// TODO - need better new question check than period at less than hard-coded position
 				// TODO: need general way of detecting non-query text; e.g. comments, garbage
 				//System.out.println("line before skipping any blanks is: >" + line + "<");
+				// skip white lines before/between/after questions
 				line = Utilities.skipBlankLines(br, line);
 				
 				// remove 0, 1 or more user comment sections and blank sections
@@ -308,7 +306,6 @@ public class Submission {
 				if (Utilities.isQuestionFound(line)) {				// start of new question
 					//System.out.println("found new question...");
 					// process the first line to get question number and desired query
-					// TODO: need to generalize to support . or ) as in pattern
 
 					// get question number as string from the line with a '.' or ')'
 					qNumStr = Utilities.getQuestionNumber(line);	// skip past -- -- and space
@@ -323,17 +320,8 @@ public class Submission {
 					//Write the Question number and answer pair in the QuestionAnswer list
 					writeToQuestionAnswerList(qNumStr, answerQueryStr);
 					
-					line = br.readLine();										// go to next line and check that line
-
-					// process any remaining lines, looking for user comments, possibly surrounded by blank lines
-					line = Utilities.skipBlankLines(br, line);
-					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
-					line = Utilities.skipBlankLines(br, line);
-					
-					// skip any lines that contain anything other than user comments until reaching the next question  
-					while (line != null && !Utilities.isQuestionFound(line)) {
-			        		line = br.readLine();									// go to next line and check that line
-					}	// end - while
+					//Reach next question after the answer has been parsed completely and stored in the List 
+					line = reachNextQuestion(br, commWriter);
 					
 				}	// end - if matcher found the start of a question
 			}	// end - while more answers to process
@@ -341,15 +329,13 @@ public class Submission {
 		 
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
-		} catch (IOException ioe) {
-			System.err.println("Cannot read from file " + submissionFileName);
 		} catch (SQLFEParseException sqlfepe) {
 			System.err.println(sqlfepe.getMessage());
 			parseWriter.println(sqlfepe.getMessage());
 		}
 
 	}	// end - method readSubmission
-	
+
 	// Get the details of the file and store them in submissionName and studentName
 	private String getFileMetadata(BufferedReader br) {
 		// TODO - remove -- -- from these three lines before writing out
@@ -420,7 +406,30 @@ public class Submission {
 		QuestionAnswer answer = new QuestionAnswer(qNumStr, new Query(answerQueryStr), 0.0);
 		answers.add(answer);
 	}
-
+	
+	//Get to the next question after parsing through other user comments found along the buffer read
+	private String reachNextQuestion(BufferedReader br, PrintWriter commWriter) {
+		String line = null;
+		try {
+			line = br.readLine();										// go to next line and check that line
+			
+			// process any remaining lines, looking for user comments, possibly surrounded by blank lines
+			line = Utilities.skipBlankLines(br, line);
+			line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
+			line = Utilities.skipBlankLines(br, line);
+			
+			// skip any lines that contain anything other than user comments until reaching the next question  
+			while (line != null && !Utilities.isQuestionFound(line)) {
+				line = br.readLine();									// go to next line and check that line
+			}	// end - while
+		}catch (FileNotFoundException e) {
+			System.err.println("Cannot find file " + submissionFileName);
+		} catch (IOException ioe) {
+			System.err.println("Cannot read from file " + submissionFileName);
+		}
+		return line;
+	}
+	
 	// writeSubmission - write a submission out to file
 	public void writeSubmission(String evaluationFolderPath) {
 		PrintWriter outWriter = null;						// output file writer
