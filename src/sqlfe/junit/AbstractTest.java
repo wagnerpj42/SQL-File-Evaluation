@@ -1,6 +1,6 @@
 /*
  * AbstractTest - abstract class to hold common fixture data for JUnit tests
- * 
+ *
  * Created - Paul J. Wagner, 30-Oct-2017
  */
 package sqlfe.junit;
@@ -8,11 +8,12 @@ package sqlfe.junit;
 import sqlfe.general.IDAO;
 import sqlfe.general.OracleDataAccessObject;			// need to change/add if using MySQL, other DBMS
 import sqlfe.general.Query;
+import sqlfe.general.MySQLDataAccessObject;
 
 public abstract class AbstractTest {
 	// data
 	protected IDAO  testDAO;			// DAO for testing
-	
+
 	protected Query achievementAllQuery;// select all achievements
 	protected Query creatureAllQuery;	// select all creatures
 	protected Query creatureAllQueryLC;	// select all creatures, in lower case
@@ -21,7 +22,7 @@ public abstract class AbstractTest {
 	protected Query creatureOneColQuery;// select one column, all rows
 	protected Query creatureOneRowQuery;// select one row with where clause
 	protected Query creatureAndQuery;	// select multiple rows with where/and clause
-	protected Query creatureOrQuery;	// select multiple rows with where/or clause	
+	protected Query creatureOrQuery;	// select multiple rows with where/or clause
 	protected Query creatureNotQuery;	// select multiple rows with where/not clause
 	protected Query creatureZeroQuery;	// select with where to get no creature rows
 	protected Query skillAllQuery;		// select all skills
@@ -48,7 +49,7 @@ public abstract class AbstractTest {
 	protected Query avgQuery;			// query with avg function
 	protected Query maxQuery;			// query with max function
 	protected Query minQuery;			// query with min function
-	protected Query sumQuery;			// query with sum function	
+	protected Query sumQuery;			// query with sum function
 	protected Query likeQuery;			// query with like keyword
 	protected Query multiLineQuery;		// query on multiple lines
 	protected Query unionQuery;			// query with union
@@ -58,12 +59,13 @@ public abstract class AbstractTest {
 	protected Query implicitJoinQuery;	// query with multiple implicit joins
 	protected Query complexNestedQuery;	// query with nested selects in FROM, JOIN and WHERE
 	protected Query fromFormatQuery;	// query with FROM at end of a line
-	
+
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
-		testDAO				= new OracleDataAccessObject("host", "dbsysid", "username","password");		// must be changed to run unit tests
-		
+		testDAO				= new MySQLDataAccessObject("host", "dbsysid", "username","password");		// must be changed to run unit tests
+    // testDAO				= new OracleDataAccessObject("host", "dbsysid", "username","password");
+
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");
 		creatureAllQueryLC  = new Query("select * from creature");
@@ -79,7 +81,7 @@ public abstract class AbstractTest {
 		jobAllQuery			= new Query("SELECT * FROM Job");
 		aspirationAllQuery  = new Query("SELECT * FROM Aspiration");
 		nullQuery           = new Query("");
-		badQuery            = new Query("select something");	
+		badQuery            = new Query("select something");
 		badQuery2			= new Query("SELECT * FROM CreatureTable");
 		garbageQuery		= new Query("xlkjxlkjxlk ;lkj");
 		nestedQuery			= new Query("SELECT DISTINCT c_name FROM Creature WHERE c_id IN " +
@@ -94,13 +96,13 @@ public abstract class AbstractTest {
 		orderByDesc3Query	= new Query("SELECT * FROM Achievement ORDER BY c_id DESC, s_code DESCENDING");
 		joinOneQuery		= new Query("SELECT * FROM Creature C " +
 											"JOIN Achievement A ON C.c_id = A.c_id");
-		joinManyQuery		= new Query("SELECT c_id FROM Creature, Achievement " + 
+		joinManyQuery		= new Query("SELECT c_id FROM Creature, Achievement " +
 											"JOIN Skill ON Skill.s_code = Achievement.s_code");
 		joinTableSelfQuery  = new Query("SELECT C1.c_id, C2.c_id FROM Creature C1 " +
 											"JOIN Creature C2 ON C1.c_id = C2.c_id");
 		joinOuterQuery		= new Query("SELECT C.c_id, COUNT(s_code) FROM Creature C " +
 											"LEFT OUTER JOIN Achievement A ON " +
-											"C.c_id = A.c_id GROUP BY C.c_id"); 
+											"C.c_id = A.c_id GROUP BY C.c_id");
 		joinOuter2Query		= new Query("SELECT C.c_id, COUNT(s_code) FROM Creature C " +
 											"LEFT JOIN Achievement A ON " +
 											"C.c_id = A.c_id GROUP BY C.c_id");
@@ -109,7 +111,7 @@ public abstract class AbstractTest {
 		avgQuery			= new Query("SELECT s_code, AVG(DISTINCT c_id) FROM Achievement " +
 											"GROUP BY s_code");
 		maxQuery			= new Query("SELECT s_code, MAX(DISTINCT c_id) FROM Achievement " +
-											"GROUP BY s_code");		
+											"GROUP BY s_code");
 		minQuery			= new Query("SELECT s_code, MIN(DISTINCT c_id) FROM Achievement " +
 											"GROUP BY s_code");
 		sumQuery			= new Query("SELECT s_code, SUM(DISTINCT c_id) FROM Achievement " +
@@ -125,17 +127,17 @@ public abstract class AbstractTest {
 		minusQuery			= new Query("SELECT c_id FROM Creature MINUS SELECT c_id FROM Achievement");
 		implicitJoinQuery	= new Query("SELECT c_name, s_desc FROM Creature, Achievement, Skill WHERE Creature.c_id = Achievement.c_id " +
 											"AND Achievement.s_code = Skill.s_code");
-    	complexNestedQuery = new Query("SELECT t1.columnName2, t2.columnName3 \r\n" + 
-				   							"FROM (SELECT columnName2 FROM tableName) t1\r\n" + 
+    	complexNestedQuery = new Query("SELECT t1.columnName2, t2.columnName3 \r\n" +
+				   							"FROM (SELECT columnName2 FROM tableName) t1\r\n" +
 				   							"JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)" +
 				   							"WHERE t2.columnName3 IN (SELECT columnName4 FROM aThirdTableName);") ;
     	fromFormatQuery = new Query("SELECT c_id FROM\nCreature");
 	}	// end - constructor/query initialization
-	
+
 	// finalize - essentially cross-test fixture teardown
 	protected void finalize() throws Throwable {
 		testDAO				= null;
-		
+
 		achievementAllQuery = null;
 		creatureAllQuery    = null;
 		creatureAllQueryLC  = null;
@@ -181,7 +183,7 @@ public abstract class AbstractTest {
 		implicitJoinQuery	= null;
 		complexNestedQuery	= null;
 		fromFormatQuery		= null;
-		
+
 		super.finalize();
 	}	// end - method finalize
 
