@@ -6,6 +6,9 @@ jdk:
 service:
   - mysql
 
+before_install:
+  - mysql -e "CREATE DATABASE IF NOT EXISTS submissionsdb;"
+
 before_script: mvn install -Dmaven.javadoc.skip=true -B -V
 
 after_success:
