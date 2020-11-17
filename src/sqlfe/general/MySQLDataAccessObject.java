@@ -48,6 +48,7 @@ public class MySQLDataAccessObject implements IDAO {
 		}
 		catch (SQLException sqle) {
 		   System.err.println ("Could not make connection to database");
+		   System.err.println(sqle.getMessage());
 		}
 		return conn;
 	}	// end - method connect
