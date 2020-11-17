@@ -16,6 +16,7 @@ public class FrontEnd {
 	// data
 	private String dbmsChoice;			// DBMS being used for evaluation (e.g. Oracle, MySQL)
 	private String dbmsHost;			// host name or number for evaluation DBMS
+	private String dbmsPort;			// port used by DBMS on host
 	private String dbmsSystemID;		// host system/ID to identify system on host
 	private String dbmsUsername;		// DBMS username
 	private String dbmsPassword;		// DBMS password
@@ -52,6 +53,14 @@ public class FrontEnd {
 		this.dbmsHost = dbmsHost;
 	}
 
+	public String getDbmsPort() {
+		return dbmsPort;
+	}
+
+	public void setDbmsPort(String dbmsPort) {
+		this.dbmsPort = dbmsPort;
+	}
+	
 	public String getDbmsSystemID() {
 		return dbmsSystemID;
 	}
@@ -102,12 +111,13 @@ public class FrontEnd {
 
 	
 	// processInput - process the GUI input and set for backend usage
-	public void processInput(String dbmsChoice, String dbmsHost, String dbmsSystemID, String dbmsUsername, String dbmsPassword,
+	public void processInput(String dbmsChoice, String dbmsHost, String dbmsPort, String dbmsSystemID, String dbmsUsername, String dbmsPassword,
 								String evaluationFolder, String assignPropFile) {
 		// populate FrontEnd
 		//System.out.println("in FrontEnd, method processInput() - setting data members using passed values");
 		setDbmsChoice(dbmsChoice);
 		setDbmsHost(dbmsHost);
+		setDbmsPort(dbmsPort);
 		setDbmsSystemID(dbmsSystemID);
 		setDbmsUsername(dbmsUsername);
 		setDbmsPassword(dbmsPassword);
@@ -119,22 +129,17 @@ public class FrontEnd {
 		final String CONFIG_PROP_NAME = "config.properties";
 		Properties configProp = new Properties();
 		File propFile = new File(CONFIG_PROP_NAME);
-/*		if (propFile.exists()) {			// replace old values
-			configProp.replace("dbmsChoice", dbmsChoice);
-			configProp.replace("dbmsHost", dbmsHost);
-			configProp.replace("dbmsSystemID", dbmsSystemID);
-			configProp.replace("dbmsUsername", dbmsUsername);
-			configProp.replace("evalFolder", evaluationFolder);
-			configProp.replace("assignPropFile", assignPropFile);	
-		} else {						// write new values
-*/			configProp.setProperty("dbmsChoice", dbmsChoice);
-			configProp.setProperty("dbmsHost", dbmsHost);
-			configProp.setProperty("dbmsSystemID", dbmsSystemID);
-			configProp.setProperty("dbmsUsername", dbmsUsername);
-			configProp.setProperty("evalFolder", evaluationFolder);
-			configProp.setProperty("assignPropFile", assignPropFile);
-/*		}
-*/		try {
+		
+		// write new values
+		configProp.setProperty("dbmsChoice", dbmsChoice);
+		configProp.setProperty("dbmsHost", dbmsHost);
+		configProp.setProperty("dbmsPort",  dbmsPort);
+		configProp.setProperty("dbmsSystemID", dbmsSystemID);
+		configProp.setProperty("dbmsUsername", dbmsUsername);
+		configProp.setProperty("evalFolder", evaluationFolder);
+		configProp.setProperty("assignPropFile", assignPropFile);
+
+		try {
 			configProp.store(new FileOutputStream(CONFIG_PROP_NAME), null);
 		} catch (IOException ioe) {
 			System.err.println("error saving config properties");

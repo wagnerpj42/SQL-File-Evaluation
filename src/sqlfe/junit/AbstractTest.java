@@ -63,6 +63,7 @@ public abstract class AbstractTest {
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
+    // DAO setup - change type of object instantiated (if necessary) and arguments to make this functional
 		testDAO				= new MySQLDataAccessObject("host", "dbsysid", "username","password");		// must be changed to run unit tests
     // testDAO				= new OracleDataAccessObject("host", "dbsysid", "username","password");
 

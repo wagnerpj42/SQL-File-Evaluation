@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
+//import java.io.PrintStream;
 import java.util.Properties;
 
 import javax.swing.*;
@@ -25,6 +25,7 @@ public class FrontEndView extends JFrame {
 	private JScrollPane displayPanel = null;			// scrollable panel to hold display text area
     private JComboBox<String> dbmsBox;					// combo box for DBMS choice
 	private JTextField hostBox = null;					// DBMS host (name or number string)
+	private JTextField portBox = null;					// DBMS port
 	private JTextField idBox = null;					// DBMS id
 	private JTextField userBox = null;					// DBMS username
 	private JTextField passBox = null;					// DBMS password
@@ -41,9 +42,10 @@ public class FrontEndView extends JFrame {
 	// initialize - method to set up the graphical display
 	private void initialize() {
 		JPanel sqlFileEvalContentPane = new JPanel();	// overall content panel
-	    String[] choices = { "Oracle", "MySQL" };		// DBMS choices currently implemented
+	    String[] choices = { "Oracle", "MySQL 5.x", "MySQL 8.0" };		// DBMS choices currently implemented
 	    dbmsBox = new JComboBox<String>(choices);		// combox box for DBMS choices
 		hostBox = new JTextField("");					// DBMS hostname/number
+		portBox = new JTextField("");					// DBMS port
 		idBox = new JTextField("");						// DBMS id 
 	    userBox = new JTextField("");					// DBMS username
 		passBox = new JTextField("");					// DBMS password
@@ -54,6 +56,7 @@ public class FrontEndView extends JFrame {
 		JLabel title = new JLabel();					// title in content panel
 		JLabel dbLabel   = new JLabel();				// label - DBMS choice
 		JLabel hostLabel = new JLabel();				// label - DBMS hostname/number
+		JLabel portLabel = new JLabel();				// label - DBMS port
 		JLabel idLabel = new JLabel();					// label - DBMS id
 		JLabel userLabel = new JLabel();				// label - DBMS username
 		JLabel passLabel = new JLabel();				// label - DBMS password
@@ -85,25 +88,30 @@ public class FrontEndView extends JFrame {
 			hostLabel.setText("DB Host:");
 			hostLabel.setBounds(50, 100, 140, 35);
 			hostLabel.setForeground(java.awt.Color.black);
-			
+
+			portLabel.setFont(new java.awt.Font("Arial", 1, 14));
+			portLabel.setText("DB Port:");
+			portLabel.setBounds(50, 160, 140, 35);
+			portLabel.setForeground(java.awt.Color.black);
+						
 			idLabel.setFont(new java.awt.Font("Arial", 1, 14));
 			idLabel.setText("DB System/ID:");
-			idLabel.setBounds(50, 170, 140, 35);
+			idLabel.setBounds(50, 220, 140, 35);
 			idLabel.setForeground(java.awt.Color.black);
 			
 			userLabel.setFont(new java.awt.Font("Arial", 1, 14));
 			userLabel.setText("DB Username:");
-			userLabel.setBounds(50, 240, 140, 35);
+			userLabel.setBounds(50, 280, 140, 35);
 			userLabel.setForeground(java.awt.Color.black);
 
 			passLabel.setFont(new java.awt.Font("Arial", 1, 14));
 			passLabel.setText("DB Password:");
-			passLabel.setBounds(50, 310, 140, 35);
+			passLabel.setBounds(50, 340, 140, 35);
 			passLabel.setForeground(java.awt.Color.black);
 
 			assignpropLabel.setFont(new java.awt.Font("Arial", 1, 14));
 			assignpropLabel.setText("Assignment Properties file:");
-			assignpropLabel.setBounds(50, 370, 210, 35);
+			assignpropLabel.setBounds(50, 400, 210, 35);
 			assignpropLabel.setForeground(java.awt.Color.black);
 			
 			workareaLabel.setFont(new java.awt.Font("Arial", 1, 14));
@@ -124,18 +132,21 @@ public class FrontEndView extends JFrame {
 			hostBox.setBounds(50, 130, 200, 25);
 			hostBox.setEditable(true);
 
-			idBox.setBounds(50, 200, 200, 25);
+			portBox.setBounds(50, 190, 200, 25);
+			portBox.setEditable(true);
+			
+			idBox.setBounds(50, 250, 200, 25);
 			idBox.setEditable(true);
 		    
-		    userBox.setBounds(50, 270, 200, 25);
+		    userBox.setBounds(50, 310, 200, 25);
 			userBox.setEditable(true);
 			
-			passBox.setBounds(50, 340, 200, 25);
+			passBox.setBounds(50, 370, 200, 25);
 			passBox.setEditable(true);
 
-			assignpropBox.setBounds(50, 400, 210, 25);
+			assignpropBox.setBounds(50, 430, 210, 25);
 			assignpropBox.setEditable(true);
-			
+ 			
 			workAreaChooser.setBounds(280, 80, 300, 270);
 			workAreaChooser.setCurrentDirectory(null);
 			workAreaChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -151,6 +162,7 @@ public class FrontEndView extends JFrame {
 					configProp.load(in);
 				    dbmsBox.setSelectedItem(configProp.getProperty("dbmsChoice"));
 					hostBox.setText(configProp.getProperty("dbmsHost"));
+					portBox.setText(configProp.getProperty("dbmsPort"));
 					idBox.setText(configProp.getProperty("dbmsSystemID"));
 					userBox.setText(configProp.getProperty("dbmsUsername"));
 					//workAreaChooser.setCurrentDirectory(new File(configProp.getProperty("evalFolder")));
@@ -176,7 +188,7 @@ public class FrontEndView extends JFrame {
 			// System.setErr(printStream);
 
 			// construct the button
-			startButton.setBounds(60, 430, 180, 35);
+			startButton.setBounds(330, 380, 180, 35);
 			startButton.addActionListener( new ActionListener(){
 				public void actionPerformed(ActionEvent e){							
 					// send the input data to the FrontEnd for passing on to the BackEnd
@@ -185,7 +197,7 @@ public class FrontEndView extends JFrame {
 					//System.out.println("wac.sf.absolute path is: " + workAreaChooser.getSelectedFile().getAbsolutePath());
 					//System.out.println();
 					
-					aFrontEnd.processInput( (String)dbmsBox.getSelectedItem(), hostBox.getText(), idBox.getText(), 
+					aFrontEnd.processInput( (String)dbmsBox.getSelectedItem(), hostBox.getText(), portBox.getText(), idBox.getText(), 
 																	userBox.getText(), passBox.getText(),
 																	workAreaChooser.getSelectedFile().getAbsolutePath(),
 																	assignpropBox.getText() );
@@ -198,6 +210,8 @@ public class FrontEndView extends JFrame {
 			sqlFileEvalContentPane.add(dbmsBox);
 			sqlFileEvalContentPane.add(hostLabel);
 			sqlFileEvalContentPane.add(hostBox);
+			sqlFileEvalContentPane.add(portLabel);
+			sqlFileEvalContentPane.add(portBox);
 			sqlFileEvalContentPane.add(idLabel);			
 			sqlFileEvalContentPane.add(idBox);	
 			sqlFileEvalContentPane.add(userLabel);

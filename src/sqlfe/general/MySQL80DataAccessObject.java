@@ -1,9 +1,10 @@
 /*
- * Class DataAccessObject
+ * Class MySQL80DataAccessObject - DAO for MySQL 8.0.22 (and possibly similar future version) servers
  * 
- * Created by Paul J. Wagner, 22-SEP-2017
+ * Created by Paul J. Wagner, 13-OCT-2019
  * 
- * Notes: needs ojdbc7.jar on build path/project as of 11/2019
+ * Notes: needs mysql-connector-java-8.0.22.jar (or possibly similar) on build path/project
+ *
  */
 package sqlfe.general;
 
@@ -11,7 +12,7 @@ import java.sql.*;
 
 import sqlfe.util.Utilities;
 
-public class OracleDataAccessObject implements IDAO {
+public class MySQL80DataAccessObject implements IDAO {
 
 	private Connection conn = null;			// JDBC connection
 	private ResultSet rset = null;			// result set for queries
@@ -23,7 +24,7 @@ public class OracleDataAccessObject implements IDAO {
 	private String password;				// DBMS user password
 	
 	// --- constructor
-	public OracleDataAccessObject (String hostName, String portString, String idName, String username, String password) {
+	public MySQL80DataAccessObject (String hostName, String portString, String idName, String username, String password) {
 		this.hostName = hostName;
 		this.portString = portString;
 		this.idName = idName;
@@ -31,23 +32,23 @@ public class OracleDataAccessObject implements IDAO {
 		this.password = password;
 	}
 		
-	// --- connect - connect to the Oracle database
+	// --- connect - connect to the MySQL database
 	public Connection connect() {
 		// --- 1) get the Class object for the driver 
 		try {
-		   Class.forName ("oracle.jdbc.OracleDriver");
+		   Class.forName ("com.mysql.cj.jdbc.Driver");
 		}
 		catch (ClassNotFoundException e) {
-		   System.err.println ("Could not get class object for Driver, check if Oracle connector JAR is on project path");
+		   System.err.println ("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
 		}
 
 		// --- 2) connect to database
-		String connectString = "jdbc:oracle:thin:@" + hostName.trim() + ":" + portString.trim() + ":" + idName.trim();
+		String connectString = "jdbc:mysql://" + hostName.trim() + ":" + portString.trim() + "/" + idName.trim();
 		try {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
-		   System.err.println ("Could not make connection to database, " + sqle.getMessage());
+		   System.err.println ("Could not make connection to database");
 		   System.err.println(sqle.getMessage());
 		}
 		return conn;
@@ -59,12 +60,12 @@ public class OracleDataAccessObject implements IDAO {
 		Statement stmt = null;		// SQL statement object
 		rset = null;				// initialize result set
 		try	{
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			rset = stmt.executeQuery(sqlQuery);
+		   stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		   rset = stmt.executeQuery(sqlQuery);
 		}
-		catch (SQLException e) {
+		catch (SQLException sqle) {
 			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
-			//System.err.println(e.getMessage());
+			//System.err.println("SQL error message: " + sqle.getMessage());
 		}
 		//finally {
 		//	if (stmt != null) {
@@ -83,8 +84,8 @@ public class OracleDataAccessObject implements IDAO {
 		   pStmt = conn.prepareStatement(sqlQuery);
 		   rset = pStmt.executeQuery();
 		}
-		catch (SQLException sqle) {
-			System.err.println("Could not execute SQL statement: >" + sqlQuery + "<, " + sqle.getMessage());
+		catch (SQLException e) {
+			//System.err.println("Could not execute SQL statement: " + sqlQuery);
 		}
 		return rset;
 	}	// end - method executeSQLQueryPrepared
@@ -98,8 +99,8 @@ public class OracleDataAccessObject implements IDAO {
 		   stmt = conn.createStatement();
 		   returnValue = stmt.executeUpdate(sqlCommand);
 		}
-		catch (SQLException sqle) {
-			System.err.println("Could not execute SQL command: >" + sqlCommand + "<, " + sqle.getMessage());
+		catch (SQLException e) {
+			//System.err.println("Could not execute SQL command: >" + sqlCommand + "<");
 			//System.err.println("Return value: " + returnValue);
 		}
 		return returnValue;

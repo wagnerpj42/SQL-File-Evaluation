@@ -1,9 +1,10 @@
 /*
- * Class DataAccessObject
- * 
- * Created by Paul J. Wagner, 22-SEP-2017
- * 
- * Notes: needs ojdbc7.jar on build path/project as of 11/2019
+ * Class MySQL5xDataAccessObject - DAO for MySQL 5.X servers
+ *
+ * Created by Paul J. Wagner, 13-OCT-2019
+ *
+ * Notes: needs mysql-connector-java-5.1.23-bin.jar (or possibly similar versions) on build path/project
+ *
  */
 package sqlfe.general;
 
@@ -11,7 +12,7 @@ import java.sql.*;
 
 import sqlfe.util.Utilities;
 
-public class OracleDataAccessObject implements IDAO {
+public class MySQL5xDataAccessObject implements IDAO {
 
 	private Connection conn = null;			// JDBC connection
 	private ResultSet rset = null;			// result set for queries
@@ -21,50 +22,50 @@ public class OracleDataAccessObject implements IDAO {
 	private String idName;					// DBMS system id
 	private String username;				// DBMS user name
 	private String password;				// DBMS user password
-	
+
 	// --- constructor
-	public OracleDataAccessObject (String hostName, String portString, String idName, String username, String password) {
+	public MySQL5xDataAccessObject (String hostName, String portString, String idName, String username, String password) {
 		this.hostName = hostName;
 		this.portString = portString;
 		this.idName = idName;
 		this.username = username;
 		this.password = password;
 	}
-		
-	// --- connect - connect to the Oracle database
+
+	// --- connect - connect to the MySQL database
 	public Connection connect() {
-		// --- 1) get the Class object for the driver 
+		// --- 1) get the Class object for the driver
 		try {
-		   Class.forName ("oracle.jdbc.OracleDriver");
+		   Class.forName ("com.mysql.cj.jdbc.Driver");
 		}
 		catch (ClassNotFoundException e) {
-		   System.err.println ("Could not get class object for Driver, check if Oracle connector JAR is on project path");
+		   System.err.println ("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
 		}
 
 		// --- 2) connect to database
-		String connectString = "jdbc:oracle:thin:@" + hostName.trim() + ":" + portString.trim() + ":" + idName.trim();
+		String connectString = "jdbc:mysql://" + hostName.trim() + ":" + portString.trim() + "/" + idName.trim();
 		try {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
-		   System.err.println ("Could not make connection to database, " + sqle.getMessage());
+		   System.err.println ("Could not make connection to database");
 		   System.err.println(sqle.getMessage());
 		}
 		return conn;
 	}	// end - method connect
-	
+
 	// --- executeSQLQuery - execute an SQL query
 	public ResultSet executeSQLQuery (String sqlQuery) {
 		// --- 3a) execute SQL query
 		Statement stmt = null;		// SQL statement object
 		rset = null;				// initialize result set
 		try	{
-			stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			rset = stmt.executeQuery(sqlQuery);
+		   stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		   rset = stmt.executeQuery(sqlQuery);
 		}
-		catch (SQLException e) {
+		catch (SQLException sqle) {
 			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
-			//System.err.println(e.getMessage());
+			//System.err.println("SQL error message: " + sqle.getMessage());
 		}
 		//finally {
 		//	if (stmt != null) {
@@ -83,12 +84,12 @@ public class OracleDataAccessObject implements IDAO {
 		   pStmt = conn.prepareStatement(sqlQuery);
 		   rset = pStmt.executeQuery();
 		}
-		catch (SQLException sqle) {
-			System.err.println("Could not execute SQL statement: >" + sqlQuery + "<, " + sqle.getMessage());
+		catch (SQLException e) {
+			//System.err.println("Could not execute SQL statement: " + sqlQuery);
 		}
 		return rset;
 	}	// end - method executeSQLQueryPrepared
-	
+
 	// --- executeSQLNonQuery - execute an SQL command that is not a query
 	public int executeSQLNonQuery (String sqlCommand) {
 		// --- 3b) execute SQL non-query command
@@ -98,33 +99,33 @@ public class OracleDataAccessObject implements IDAO {
 		   stmt = conn.createStatement();
 		   returnValue = stmt.executeUpdate(sqlCommand);
 		}
-		catch (SQLException sqle) {
-			System.err.println("Could not execute SQL command: >" + sqlCommand + "<, " + sqle.getMessage());
+		catch (SQLException e) {
+			//System.err.println("Could not execute SQL command: >" + sqlCommand + "<");
 			//System.err.println("Return value: " + returnValue);
 		}
 		return returnValue;
 	}	// end - method executeSQLNonQuery
-	
+
 	// --- processResultSet - process the result set
 	public ResultSetMetaDataSummary processResultSet (ResultSet resSet) {
 		// --- 4) process result set
 		ResultSetMetaData rsmd = null;
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
 		int rowCount = -1;					// row count (all following vars for summary)
-		int columnCount = -1;				// column count 
+		int columnCount = -1;				// column count
 		String columnSet = "";				// column name set as string
-		String resultString = "";			// result string 
-		
+		String resultString = "";			// result string
+
 		try {
 			rsmd = resSet.getMetaData();
-			
+
 			// column processing
 			columnCount = rsmd.getColumnCount();
 			for (int index = 1; index <= columnCount; index++) {
 				columnSet += (rsmd.getColumnName(index) + " ");
 			}
 			columnSet = Utilities.sortString(columnSet);
-			
+
 			// row processing
 			rowCount = 0;
 			while (resSet.next()) {
@@ -134,7 +135,7 @@ public class OracleDataAccessObject implements IDAO {
 				resultString += "\n";
 				rowCount++;
 			}
-			
+
 			// put results into summary object
 			summary.setNumCols(columnCount);
 			summary.setColumnSet(columnSet);
@@ -149,7 +150,7 @@ public class OracleDataAccessObject implements IDAO {
 		}
 		return summary;
 	}	// end - method processResultSet
-	
+
 	// --- disconnect - disconnect from the Oracle database
 	public Connection disconnect () {
 		// --- 5) disconnect from database

@@ -21,6 +21,7 @@ public class BackEnd {
 
 	String dbmsName = null;							// name of DBMS to use (e.g. Oracle, MySQL)
 	String hostName = null;							// name or IP address of DBMS host (e.g. localhost, abc.univ.edu, 162.03.24.119)
+	String portString = null;						// port used on host (e.g. 3306 for MySQL)
 	String idName = null;							// system/schema id on DBMS host
 	String username = null;							// DBMS username
 	String password = null;							// DBMS password
@@ -50,6 +51,7 @@ public class BackEnd {
 	public void transferData(FrontEnd aFrontEnd) {
 		dbmsName = aFrontEnd.getDbmsChoice();							// get DBMS choice directly from front end
 		hostName = aFrontEnd.getDbmsHost();								// get DBMS host directly "
+		portString = aFrontEnd.getDbmsPort();							// get DBMS port directly "
 		idName = aFrontEnd.getDbmsSystemID();							// get DBMS system ID directly "
 		username = aFrontEnd.getDbmsUsername();							// get DBMS username directly "
 		password = aFrontEnd.getDbmsPassword();							// get DBMS password directly "
@@ -75,10 +77,13 @@ public class BackEnd {
 		
 		switch (dbmsName) {
 		case "Oracle":
-			dao = new OracleDataAccessObject(hostName, idName, username, password);
+			dao = new OracleDataAccessObject(hostName, portString, idName, username, password);
 			break;
-		case "MySQL":
-			dao = new MySQLDataAccessObject(hostName, idName, username, password);
+		case "MySQL 5.x":
+			dao = new MySQL5xDataAccessObject(hostName, portString, idName, username, password);
+			break;
+		case "MySQL 8.0":
+			dao = new MySQL80DataAccessObject(hostName, portString, idName, username, password);
 			break;
 		default:
 			// TODO: what to do if bad DAO specification?
