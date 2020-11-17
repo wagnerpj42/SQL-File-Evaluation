@@ -13,14 +13,19 @@ import org.junit.Test;
 import sqlfe.general.QuestionAnswer;
 import sqlfe.general.Submission;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class SubmissionTests extends AbstractTest {
 
+    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private final PrintStream originalErr = System.err;
+
     @Before
     public void setup() {
-        // nothing to do at this time
+        System.setErr(new PrintStream(errContent));
     }
 
     @Test
@@ -41,7 +46,7 @@ public class SubmissionTests extends AbstractTest {
 
             // Run Tests
             Submission s = new Submission();
-            String folderPath = "./files/";
+            String folderPath = "./files-sample-MySQL/";
             String fileName = "lt_s66.sql";
             s.readSubmission(folderPath + fileName, commWriter, parseWriter);
             assertEquals(folderPath + fileName, s.getSubmissionFileName());
@@ -69,6 +74,14 @@ public class SubmissionTests extends AbstractTest {
                     "    WHERE AccStatus = 'Active')";
             assertEquals(qString, a.getActualQuery().toString());
 
+            //Test nonexistant file
+            commWriter = new PrintWriter("./testEvaluations/commFileReadSubmissionTestsFail.out", "UTF-8");
+            parseWriter = new PrintWriter("./testEvaluations/parseFileReadSubmissionTestsFail.out", "UTF-8");
+            s.readSubmission("garbage", commWriter, parseWriter);
+            assertEquals("Cannot find file garbage\n", errContent.toString());
+
+            //Test parse exception
+            // TODO: Add example with parse exception
 
         } catch (Exception e) {
             System.out.println(e);
@@ -78,7 +91,7 @@ public class SubmissionTests extends AbstractTest {
 
     @After
     public void teardown () {
-        // nothing to do at this time
+        System.setErr(originalErr);
     }
 
 }	// end - test case class QueryTests
