@@ -1,8 +1,8 @@
 /*
  * Class MySQLDataAccessObject
- *
+ * 
  * Created by Paul J. Wagner, 13-OCT-2019
- *
+ * 
  * Notes: needs xxxxxx.jar on build path/project
  *
  */
@@ -21,7 +21,7 @@ public class MySQLDataAccessObject implements IDAO {
 	private String idName;					// DBMS system id
 	private String username;				// DBMS user name
 	private String password;				// DBMS user password
-
+	
 	// --- constructor
 	public MySQLDataAccessObject (String hostName, String idName, String username, String password) {
 		this.hostName = hostName;
@@ -29,10 +29,10 @@ public class MySQLDataAccessObject implements IDAO {
 		this.username = username;
 		this.password = password;
 	}
-
+		
 	// --- connect - connect to the MySQL database
 	public Connection connect() {
-		// --- 1) get the Class object for the driver
+		// --- 1) get the Class object for the driver 
 		try {
 		   Class.forName ("com.mysql.cj.jdbc.Driver");
 		}
@@ -53,7 +53,7 @@ public class MySQLDataAccessObject implements IDAO {
 		}
 		return conn;
 	}	// end - method connect
-
+	
 	// --- executeSQLQuery - execute an SQL query
 	public ResultSet executeSQLQuery (String sqlQuery) {
 		// --- 3a) execute SQL query
@@ -89,7 +89,7 @@ public class MySQLDataAccessObject implements IDAO {
 		}
 		return rset;
 	}	// end - method executeSQLQueryPrepared
-
+	
 	// --- executeSQLNonQuery - execute an SQL command that is not a query
 	public int executeSQLNonQuery (String sqlCommand) {
 		// --- 3b) execute SQL non-query command
@@ -105,27 +105,27 @@ public class MySQLDataAccessObject implements IDAO {
 		}
 		return returnValue;
 	}	// end - method executeSQLNonQuery
-
+	
 	// --- processResultSet - process the result set
 	public ResultSetMetaDataSummary processResultSet (ResultSet resSet) {
 		// --- 4) process result set
 		ResultSetMetaData rsmd = null;
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
 		int rowCount = -1;					// row count (all following vars for summary)
-		int columnCount = -1;				// column count
+		int columnCount = -1;				// column count 
 		String columnSet = "";				// column name set as string
-		String resultString = "";			// result string
-
+		String resultString = "";			// result string 
+		
 		try {
 			rsmd = resSet.getMetaData();
-
+			
 			// column processing
 			columnCount = rsmd.getColumnCount();
 			for (int index = 1; index <= columnCount; index++) {
 				columnSet += (rsmd.getColumnName(index) + " ");
 			}
 			columnSet = Utilities.sortString(columnSet);
-
+			
 			// row processing
 			rowCount = 0;
 			while (resSet.next()) {
@@ -135,7 +135,7 @@ public class MySQLDataAccessObject implements IDAO {
 				resultString += "\n";
 				rowCount++;
 			}
-
+			
 			// put results into summary object
 			summary.setNumCols(columnCount);
 			summary.setColumnSet(columnSet);
@@ -150,7 +150,7 @@ public class MySQLDataAccessObject implements IDAO {
 		}
 		return summary;
 	}	// end - method processResultSet
-
+	
 	// --- disconnect - disconnect from the Oracle database
 	public Connection disconnect () {
 		// --- 5) disconnect from database
