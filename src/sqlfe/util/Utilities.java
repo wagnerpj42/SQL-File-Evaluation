@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utilities { 	
 	// methods
@@ -225,5 +227,52 @@ public class Utilities {
 		
 		return resultPath;
 	}	// end - method processSlashes
+	
+	// -- isQuestionFound - If a non null line matches the pattern for start of a question which includes support for . and ), then return true 
+	public static boolean isQuestionFound(String line){
+		if (line != null) {
+			String regexp = "^-- -- ([\\d+])[a-z]*([.]|[)])";		// regular expression for question, e.g. >-- --1a. or -- --23. or -- -- 1)<
+			Pattern pattern = Pattern.compile(regexp);				// pattern for regexp pattern matching
+			Matcher matcher = pattern.matcher(line);
+			return matcher.find();
+		}
+		else {
+			return false;
+		}
+    }
+
+	// -- skipExtraQueries - Before reaching the first question, skip any lines that do not begin with instructor comments  
+	public static String skipExtraQueries(BufferedReader br, String line) {
+		if (line != null) {
+			line = line.trim();
+		}
+		String regexp = "^(?!-- --).*$";
+		Pattern pattern = Pattern.compile(regexp);
+		Matcher matcher = pattern.matcher(line);
+		String localLine = line;
+		try {
+			while (localLine != null && matcher.find()) {
+				localLine = br.readLine();
+				//System.out.println("skipInstructorComments();, skipping line, new line is: >" + localLine + "<");
+			}
+		} 
+		catch (IOException ioe) {
+			System.err.println("skipInstructorComments() - Cannot read from properties file");
+		}
+		return localLine;
+	}
+
+	// -- getQuestionNumber - Get question number from question string with pattern support for . and )  
+	public static String getQuestionNumber(String line) {
+		String regexp = "^-- -- ([\\d+])[a-z]*([.]|[)])";		// regular expression for question, e.g. >-- -- 1a. or -- -- 23. --or -- -- 1)<
+		Pattern pattern = Pattern.compile(regexp);				// pattern for regexp pattern matching
+		Matcher matcher = pattern.matcher(line);
+		if(matcher.find()){
+			return matcher.group(1);							// The first captured group ([\\d+]) which is a number string is returned. 
+		}
+		else {
+			return null;
+		}
+	}
 	
 }	// end - class Utilities
