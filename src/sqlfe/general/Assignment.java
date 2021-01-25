@@ -108,7 +108,7 @@ public class Assignment {
 			// read assignment name
 			line = br.readLine();			
 			assignmentName = line;							// first line = assignment name
-			System.out.println("\nAssignment: " + assignmentName);
+			System.out.println("Assignment: " + assignmentName);
 			System.out.println();
 			line = br.readLine();							// get next line after assignment name
 			

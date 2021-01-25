@@ -8,6 +8,7 @@ package sqlfe.general;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -15,16 +16,17 @@ import java.util.ArrayList;
 import sqlfe.sqltests.ISQLTest;
 import sqlfe.util.Utilities;
 
+//public class BackEnd implements Runnable {
 public class BackEnd {
 	// -- data
-	String resultString = "default result";			// overall back end result string (TODO: needed?)
-
+	// TODO: make these variables private if possible
 	String dbmsName = null;							// name of DBMS to use (e.g. Oracle, MySQL)
 	String hostName = null;							// name or IP address of DBMS host (e.g. localhost, abc.univ.edu, 162.03.24.119)
 	String portString = null;						// port used on host (e.g. 3306 for MySQL)
 	String idName = null;							// system/schema id on DBMS host
 	String username = null;							// DBMS username
 	String password = null;							// DBMS password
+	PrintStream printStream = null;					// printStream for console output
 	
 	String mainFolderPath = null;					// main folder for other folders (submissions, evaluations) and assignment prop.			
 	String submissionFolderPath = null;			 	// location of submission files relative to workspace folder
@@ -33,17 +35,30 @@ public class BackEnd {
 	String gradesFileName = null;					// name of grades summary file in evaluation folder
 	
 	IDAO dao = null;								// data access object, created based on information from front end
+
+	FrontEnd aFrontEnd = null;						// front end holding information from GUI to use in backend processing
 	
+	// -- constructor, default
+	public BackEnd() {
+		// nothing right now
+	}
 	
+	// -- constructor, one arg
+	public BackEnd(FrontEnd aFrontEnd) {
+		this.aFrontEnd = aFrontEnd;
+	}
+	
+	/*
+	 * // -- run - start of the runnable thread public void run() { process(); }
+	 */	
 	// -- process - general method to call other methods for processing
-	public String process(FrontEnd aFrontEnd) {			
+	public void process(FrontEnd aFrontEnd) {
+	//public void process () {
 		// move data in
 		transferData(aFrontEnd);
 		
 		// set up and run the evaluation system
-		resultString = evaluate();
-		
-		return resultString;
+		evaluate();
 	}	// end - method process
 
 	
@@ -55,8 +70,7 @@ public class BackEnd {
 		idName = aFrontEnd.getDbmsSystemID();							// get DBMS system ID directly "
 		username = aFrontEnd.getDbmsUsername();							// get DBMS username directly "
 		password = aFrontEnd.getDbmsPassword();							// get DBMS password directly "
-																		// get main folder path directly "
-		mainFolderPath = Utilities.processSlashes(aFrontEnd.getEvaluationFolder());	
+		mainFolderPath = Utilities.processSlashes(aFrontEnd.getEvaluationFolder());		// get main folder path directly "
 		
 		// set folder paths under main folder
 		submissionFolderPath = mainFolderPath + "/files/"; 				// set location of submission files relative to workspace folder
@@ -86,7 +100,7 @@ public class BackEnd {
 			dao = new MySQL80DataAccessObject(hostName, portString, idName, username, password);
 			break;
 		default:
-			// TODO: what to do if bad DAO specification?
+			System.err.println("Incorrect DAO specification");
 		}
 		
 		//System.out.println("main folder path is:        " + mainFolderPath);
@@ -96,8 +110,7 @@ public class BackEnd {
 	
 	
 	// -- evaluate() - do the main evaluation work
-	// TODO: do we need to return anything here? change to void?
-	public String evaluate () {
+	public void evaluate () {
 		//Question currQuestion = null;					// current question for a submitted answer
 		ArrayList<Question> currQuestions = null;		// current question(s) for a submitted answer
 		
@@ -286,9 +299,7 @@ public class BackEnd {
 		// tell user that processing is done
 		System.out.println();
 		System.out.println();
-		System.out.println("Processing of this submission set completed.");
-		
-		return resultString;		
+		System.out.println("Processing of this submission set completed.");	
 	}	// end - method evaluate
 
 }	// end - class BackEnd

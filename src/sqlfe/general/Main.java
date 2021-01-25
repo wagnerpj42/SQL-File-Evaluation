@@ -5,10 +5,13 @@
  */
 package sqlfe.general;
 
+import javafx.application.Application;
+
 public class Main {
 
 	public static void main(String[] args) {		
-		FrontEndView.start();
+		Application.launch(FrontEndView.class, args);		
+		
 	}	// end - method main
 
 }	// end - class Main
