@@ -48,12 +48,8 @@ public class BackEnd {
 		this.aFrontEnd = aFrontEnd;
 	}
 	
-	/*
-	 * // -- run - start of the runnable thread public void run() { process(); }
-	 */	
 	// -- process - general method to call other methods for processing
 	public void process(FrontEnd aFrontEnd) {
-	//public void process () {
 		// move data in
 		transferData(aFrontEnd);
 		
@@ -103,21 +99,16 @@ public class BackEnd {
 			System.err.println("Incorrect DAO specification");
 		}
 		
-		//System.out.println("main folder path is:        " + mainFolderPath);
-		//System.out.println("submissions folder path is: " + submissionFolderPath);
-		//System.out.println("evaluations folder path is: " + evaluationFolderPath);
 	}	// end - method transferData
 	
 	
 	// -- evaluate() - do the main evaluation work
 	public void evaluate () {
-		//Question currQuestion = null;					// current question for a submitted answer
 		ArrayList<Question> currQuestions = null;		// current question(s) for a submitted answer
 		
-		// read in the assignment properties
+		// read in the assignment properties, getting the questions
 		Assignment a = new Assignment();
 		a.readProperties(assignmentPropertiesFileName);
-		//System.out.println(a.toString());
 		ArrayList<Question> questions = a.getQuestions();
 
 		// set up grade summary file
@@ -125,6 +116,7 @@ public class BackEnd {
 		df.setMaximumFractionDigits(2);
 		PrintWriter gradesWriter = null;						// grade summary file writer
 
+		// set up the assignment output file
 		try {
 			gradesWriter = new PrintWriter(gradesFileName, "UTF-8");
 			// output general information
@@ -143,7 +135,6 @@ public class BackEnd {
 		ArrayList<Submission> sa = sc.getSubmissions();
 		for (int sIndex = 0; sIndex < sc.getTotalSubmissions(); sIndex++) {
 			Submission s = sa.get(sIndex);
-			//System.out.println(s.toString());
 			System.out.print("\nEvaluating " + s.getSubmissionFileName() + ": ");
 			double submissionPoints = 0;
 			ArrayList<QueryEvaluation> queryEvals = new ArrayList<QueryEvaluation>();
@@ -160,10 +151,9 @@ public class BackEnd {
 				for (int qaIndex = 0; qaIndex < qas.size(); qaIndex++) {				
 					// get the next answer for this submission
 					QuestionAnswer qa = qas.get(qaIndex);
-					System.out.print("Q" + qa.qNumStr + ".");
+					System.out.print("Q" + qa.getQNumStr() + ".");
 					
 					Query actualQuery = qa.getActualQuery();
-					//System.out.println("Main-actualQuery: >" + actualQuery.toString() + "<");
 					
 					// find the matching question(s) for the answer
 					currQuestions = new ArrayList<Question>();
@@ -171,8 +161,6 @@ public class BackEnd {
 					boolean foundAll = false;
 					int qIndex = 0;
 					while (qIndex < questions.size() && !foundAll) {
-						//System.out.println("student qa is : >" + qa.getQNumStr() + "<");
-						//System.out.println("instr. ques is: >" + questions.get(qIndex).getQNumStr());
 						// first match
 						if (!foundOne && questions.get(qIndex).getQNumStr().indexOf(qa.getQNumStr()) == 0) {
 							foundOne = true;
@@ -210,8 +198,6 @@ public class BackEnd {
 					for (int qcIndex = 0; qcIndex < currQuestions.size(); qcIndex++) {
 						// get the desired query for this question
 						Query desiredQuery = currQuestions.get(qcIndex).getDesiredQuery(); 
-						//System.out.println("evaluating answer: " + currQuestions.get(qcIndex).getQNumStr());
-						//System.out.println("Main-desiredQuery: >" + desiredQuery.toString() + "<");
 						
 						// get the evaluation components for this question
 						ArrayList<EvalComponentInQuestion> questionEvalComps = currQuestions.get(qcIndex).getTests(); 
@@ -226,7 +212,6 @@ public class BackEnd {
 							// get test names
 							String currTestName = questionEvalComps.get(tiqIndex).getEvalComponentName();
 							currTestName = "sqlfe.sqltests." + currTestName;
-							//System.out.println("test name is: >" + currTestName + "<");
 		
 							// make test object out of test name
 							try {
@@ -252,8 +237,8 @@ public class BackEnd {
 						qe = new QueryEvaluation(actualQuery, desiredQuery, dao, maxPoints, 
 													questionTests, questionPcts, questionConditions, null, 0.0);
 						qPoints = qe.evaluate();
-						//System.out.println("weighted points from evaluation: " + qPoints);
-						//System.out.println();
+
+						// use maximum score if multiple options for question
 						if (qPoints > highestPoints) {
 							highestPoints = qPoints;
 							maxQE = qe;
@@ -265,12 +250,10 @@ public class BackEnd {
 					
 					outputPointString += (df.format(highestPoints) + ", ");	// add highest points to string for grade summary output
 				}	// end - for each question answer
-				//System.out.println("Total points for this submission: " + submissionPoints);
-				//System.out.println();
+
 				s.setTotalPoints(submissionPoints);				// add the total points to the submission
 				s.setQueryEvals(queryEvals);					// add the query evaluations to the submission
 				
-				//System.out.println("finished processing submission " + s.getSubmissionFileName() + ", now writing it out");
 				s.writeSubmission(evaluationFolderPath);		// write out each submission's output file
 			}	// end - if any question answers exist
 			// clean up/disconnect data access object

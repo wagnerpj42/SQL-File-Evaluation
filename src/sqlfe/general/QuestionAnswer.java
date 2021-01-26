@@ -7,9 +7,9 @@ package sqlfe.general;
 
 public class QuestionAnswer {
 	// data
-	String qNumStr;			// question number; e.g. 1., 1a. or 1.d)
-	Query actualQuery;		// query answer that was submitted
-	double marks;			// marks awarded for this answer
+	private String qNumStr;			// question number; e.g. 1., 1a. or 1.d)
+	private Query actualQuery;		// query answer that was submitted
+	private double marks;			// marks awarded for this answer
 
 	
 	// methods

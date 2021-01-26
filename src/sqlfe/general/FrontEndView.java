@@ -214,4 +214,4 @@ public class FrontEndView extends Application {
         primaryStage.show();
     }	// end - method start
     
-}	// end - class FrontEndView2
+}	// end - class FrontEndView

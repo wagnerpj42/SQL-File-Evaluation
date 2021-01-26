@@ -141,11 +141,10 @@ public class SubmissionCollection {
 					s.setSubmissionFileName(submissionFileName.substring(submissionFileName.lastIndexOf("/") + 1));
 					// add this submission to the list
 					submissions.add(s);
-					//System.out.println(s.toString());
 					fileCount++;
 				}
 				else if (listOfFiles[index].isDirectory()) {
-					//System.out.println("Found subdirectory: " + listOfFiles[index].getName());
+					// nothing for now - shouldn't be finding subdirectory
 				}
 			}	// end - for
 		} catch (IOException ioe) {
@@ -155,7 +154,6 @@ public class SubmissionCollection {
 			parseWriter.close();
 		}
 		totalSubmissions = fileCount;
-		//System.out.println("read in " + totalSubmissions + " files");
 	}	// end - method getallFiles
 	
 }	// end - class SubmissionCollection

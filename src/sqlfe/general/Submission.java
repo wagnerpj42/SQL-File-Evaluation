@@ -174,51 +174,44 @@ public class Submission {
 				+ queryEvals + ", totalPoints=" + totalPoints + "]";
 	}
 	
-	// Skip comments or blank spaces before reaching a new question or an instructor comment
+	// parseComments - skip comments or blank spaces before reaching a new question or an instructor comment
 	private String parseComments(String line, BufferedReader br , PrintWriter commWriter ){
 		while (line != null && Utilities.isInstructorComment(line)) {			
 			
 			// skip remaining instructor comment lines with question text
 			line = Utilities.skipInstructorComments(br, line);
-			//System.out.println("line after skipping instructor comments with question text is: >" + line + "<");
 			
 			// skip any blank lines after instructor comments
 			line = Utilities.skipBlankLines(br, line);
-			//System.out.println("line after skipping blanks after instructor comments is: >" + line + "<");
 			
 			// process any user comments above the answer
 			line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
-			//System.out.println("line after skipping user comments above answer is: >" + line + "<");
 			
 			// skip any remaining blank lines before answer
 			line = Utilities.skipBlankLines(br, line);
-			//System.out.println("line after skipping any remaining blank lines before answer is: >" + line + "<");
 		
 			// check the new line to see if is new question instructor comment
 			if (Utilities.isQuestionFound(line)) {				// start of new question
-				//System.out.println("parsing instructor comments, but found new question");
 				break;
-	        	} else {
-	        		continue;
-	        		//System.out.println("parsing instructor comments, found another instructor comment for same question");
-	        	}
+	        } else {
+	        	continue;
+	        }
 		}	// end - while
 		return line;
-	}
+	}	// end - method parseComments
 	
-	//Get the complete SQL query written by student and return the answer query string
+	// getAnswerQuery - get the complete SQL query written by student and return the answer query string
 	private String getAnswerQuery(String line, String answerQueryStr, BufferedReader br,PrintWriter commWriter)
 	{
-		//start of answer (possibly complete on one line) unless no answer present, then make answerQueryStr blank
+		// start of answer (possibly complete on one line) unless no answer present, then make answerQueryStr blank
 		if (line != null && !Utilities.isInstructorComment(line)) {
 			answerQueryStr = line;
-		}else if (Utilities.isInstructorComment(line)) {	// if found next question - no answer submitted
+		} else if (Utilities.isInstructorComment(line)) {	// if found next question - no answer submitted
 			answerQueryStr = "";
 			return answerQueryStr;
-		}else {
+		} else {
 			answerQueryStr = "";
 		} 
-		//System.out.println("start of answerQueryStr is: >" + answerQueryStr + "<");
 		
 		// process the remaining lines for that answer to get the complete query
 		try {
@@ -226,17 +219,14 @@ public class Submission {
 				
 			    // if not at end of file...
 			    if (Utilities.isQuestionFound(line)) {	// if find start of next question
-			    	//System.out.println("found start of next question");
 			    	br.reset();
 			    	break;
 			    }
 			    else if (line.indexOf(';') == -1) {	// look for terminating semicolon,						
-			    	//System.out.println("found additional answer line");
 			    	answerQueryStr += ("\n" + line); //  if not found, still part of answer
 			    	br.mark(0);
 			    }
 			    else if (line.indexOf(';') != -1) { // found semicolon, is end of answer 
-			    	//System.out.println("found last question line, with semicolon");
 			    	answerQueryStr += ("\n" + line);
 			    	break;
 			    }
@@ -247,16 +237,14 @@ public class Submission {
 			    else {
 			    	System.err.println("unexpected answer line condition");
 			    }
-			    //System.out.println("next line is: >" + line + "<");
-			}// end - while more lines for answer
+			}	// end - while more lines for answer
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
 			System.err.println("Cannot read from file " + submissionFileName);
 		}
-		//System.out.println("final answer before blank/comment check for Question is " + answerQueryStr.trim() + "<\n");
 		return answerQueryStr;
-	}
+	}	// end - method getAnswerQuery
 	
 	// readSubmission - read one submission from a file
 	public void readSubmission(String submissionFileName, PrintWriter commWriter, PrintWriter parseWriter) {
@@ -272,7 +260,6 @@ public class Submission {
 			fr = new FileReader(submissionFileName);
 			br = new BufferedReader(fr);
 			this.submissionFileName = submissionFileName;
-			///System.out.println("\nReading in file " + submissionFileName);
 			
 			// initialize answers and total points
 			if (answers == null) {					// initialize questions list
@@ -292,7 +279,6 @@ public class Submission {
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
 				// TODO: need general way of detecting non-query text; e.g. comments, garbage
-				//System.out.println("line before skipping any blanks is: >" + line + "<");
 				// skip white lines before/between/after questions
 				line = Utilities.skipBlankLines(br, line);
 				
@@ -300,27 +286,24 @@ public class Submission {
 				while (!Utilities.isQuestionFound(line)) {
 					line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 					line = Utilities.skipBlankLines(br, line);
-				}
-				//System.out.println("next line to analyze is: >" + line + "<");				
+				}	
 				
 				if (Utilities.isQuestionFound(line)) {				// start of new question
-					//System.out.println("found new question...");
 					// process the first line to get question number and desired query
-
 					// get question number as string from the line with a '.' or ')'
 					qNumStr = Utilities.getQuestionNumber(line);	// skip past -- -- and space
 					System.out.print("Q" + qNumStr + ".");
 
-					//Scan any comments, blank lines before reaching the line containing answerQuery
+					// Scan any comments, blank lines before reaching the line containing answerQuery
 					line = parseComments(line, br , commWriter);
 					
-					//Parse the answer query as a string and store it in answerQuerySt
+					// Parse the answer query as a string and store it in answerQuerySt
 					answerQueryStr = getAnswerQuery(line,answerQueryStr,br,commWriter);
 
-					//Write the Question number and answer pair in the QuestionAnswer list
+					// Write the Question number and answer pair in the QuestionAnswer list
 					writeToQuestionAnswerList(qNumStr, answerQueryStr);
 					
-					//Reach next question after the answer has been parsed completely and stored in the List 
+					// Reach next question after the answer has been parsed completely and stored in the List 
 					line = reachNextQuestion(br, commWriter);
 					
 				}	// end - if matcher found the start of a question
@@ -336,7 +319,7 @@ public class Submission {
 
 	}	// end - method readSubmission
 
-	// Get the details of the file and store them in submissionName and studentName
+	// getFileMetaData - get the details of the file and store them in submissionName and studentName
 	private String getFileMetadata(BufferedReader br) {
 		// TODO - remove -- -- from these three lines before writing out
 		// TODO - make how many lines are in an assignment customizable? e.g. add student id
@@ -347,7 +330,6 @@ public class Submission {
 			
 			final int BASE_PROMPT_LENGTH = 6;								// length of instructor comment marker >-- -- <
 			submissionName = line.substring(BASE_PROMPT_LENGTH);			// first line = assignment name, strip off leading >-- -- <
-			//System.out.println("submission name: " + submissionName);
 			
 			line = br.readLine();											// second line = (student) name
 			
@@ -357,7 +339,6 @@ public class Submission {
 			} else {
 				studentName = "missing";
 			}
-			//System.out.println("name: " + studentName);
 			line = br.readLine(); 											// read third line
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
@@ -365,12 +346,11 @@ public class Submission {
 			System.err.println("Cannot read from file " + submissionFileName);
 		}
 		return line;
-	}
+	}	// end - method getFileMetaData
 
-	// skip any blank lines and additional instructions for assignment (before first question instructor comments)
+	// reachFirstQuestion - skip any blank lines and additional instructions for assignment (before first question instructor comments)
 	private String reachFirstQuestion(BufferedReader br, String line) throws SQLFEParseException {
 		line = Utilities.skipBlankLines(br, line);
-		//System.out.println("after any blanks, next line is: >" + line + "<");
 		
 		// if not already at the first question, look for any other instructor comments and trailing blanks and skip them
 		int attemptCount = 0;							// number of line attempts so far
@@ -378,22 +358,18 @@ public class Submission {
 		while (!Utilities.isUserCommentSingleLine(line) && !Utilities.isUserCommentMultiLineStart(line) && !Utilities.isQuestionFound(line) && 
         		attemptCount <= MAX_LINE_ATTEMPTS) {						
 			line = Utilities.skipInstructorComments(br, line);
-			//System.out.println("after instructor comments, next line is: >" + line + "<");
-				line = Utilities.skipBlankLines(br, line);			
-			//System.out.println("after next set of blanks, next line is: >" + line + "<");
-				line = Utilities.skipExtraQueries(br, line);
-			//System.out.println("after next set of drop queries, next line is: >" + line + "<");
+			line = Utilities.skipBlankLines(br, line);			
+			line = Utilities.skipExtraQueries(br, line);
 			attemptCount++;
 			if (attemptCount > MAX_LINE_ATTEMPTS) {
 				throw new SQLFEParseException("\nParse Exception in file: " + submissionFileName + ", approx. line: >" + line + "<");
 			}
 		}
 		return line;
-	}
+	}	// end - method reachFirstQuestion
 
-	// Write the Questions and the Answers to the QuestionAnswer List
+	// writeToQuestionAnswerList - write the Questions and the Answers to the QuestionAnswer List
 	private void writeToQuestionAnswerList(String qNumStr, String answerQueryStr) {
-		
 		// remove any trailing semicolon from the answer
 		int semiPos = answerQueryStr.indexOf(';');
 		if (semiPos != -1) {
@@ -402,12 +378,11 @@ public class Submission {
 		
 		// build the entire question answer
 		answerQueryStr = answerQueryStr.trim();
-		//System.out.println("\nfinal answer for " + qNumStr + " is: >" + answerQueryStr + "<");
 		QuestionAnswer answer = new QuestionAnswer(qNumStr, new Query(answerQueryStr), 0.0);
 		answers.add(answer);
 	}
 	
-	//Get to the next question after parsing through other user comments found along the buffer read
+	// reachNextQuestion - get to the next question after parsing through other user comments found along the buffer read
 	private String reachNextQuestion(BufferedReader br, PrintWriter commWriter) {
 		String line = null;
 		try {
@@ -428,7 +403,7 @@ public class Submission {
 			System.err.println("Cannot read from file " + submissionFileName);
 		}
 		return line;
-	}
+	}	// end - method reachNextQuestion
 	
 	// writeSubmission - write a submission out to file
 	public void writeSubmission(String evaluationFolderPath) {
@@ -444,7 +419,6 @@ public class Submission {
 			// output general information
 			outWriter.println("Assignment  : " + submissionName);
 			outWriter.println("Student Name: " + studentName);
-			//outWriter.println("Student ID  : " + studentID);
 			outWriter.println("Answer File : " + submissionFileName);
 			outWriter.println("Total Points: " + df.format(totalPoints));
 			outWriter.println();
@@ -471,7 +445,7 @@ public class Submission {
 					ISQLTest test = tests.get(testIndex);
 					int points = testPoints.get(testIndex);
 					int pct = testPcts.get(testIndex);
-					// TODO: mark conversion to utility method
+					// TODO: point conversion to utility method
 					outWriter.println(test.getDesc() + ": " + df.format ( (points / 100.0) * (qe.getMaxPoints() / 10.0) )
 							+ " / " + df.format( (pct / 100.0) * qe.getMaxPoints() ) );
 				}

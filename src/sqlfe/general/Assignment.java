@@ -131,7 +131,6 @@ public class Assignment {
 		        	// TODO: hardcoded period for now, need to generalize to get . or ) after question number
 					int periodPos = line.indexOf('.');
 					String qNumStr = line.substring(0, periodPos);
-					//System.out.println("\nqNumStr is: " + qNumStr);
 				
 					// - get number of points
 					// TODO - internationalization (points or marks as in NZ)
@@ -139,17 +138,14 @@ public class Assignment {
 					String numMarksStr = "";
 					numMarksStr = line.substring(periodPos + 3, marksPos - 1);
 					int numMarks = Integer.parseInt(numMarksStr);
-					//System.out.println("numMarksStr is >" + numMarksStr + "<");
 
 					// - build answer query, starting with rest of line
 					String desiredQueryStr = line.substring(marksPos + 7);
-					//System.out.println("desiredQuery, first line, is: >" + desiredQueryStr + "<");
 
 					// -- process the remaining lines for that query, if exist
 					boolean moreLinesForQuery = (line.indexOf(';') == -1);
 					while (moreLinesForQuery) {
 						line = br.readLine();					// get next line
-						//System.out.println("next line for query is: >" + line + "<");
 
 				        if (line.indexOf(';') == -1) {			// look for terminating semicolon, if not found...						
 				        	desiredQueryStr += (" " + line);	// add line w/ space to make sure syntactically correct when combining lines
@@ -166,21 +162,16 @@ public class Assignment {
 					if (semiPos != -1) {
 						desiredQueryStr = desiredQueryStr.substring(0, semiPos);
 					}
-					//System.out.println("final desiredQueryStr is: >" + desiredQueryStr + "<");
 
 					Query desiredQuery = new Query(desiredQueryStr);
 				
-					//System.out.println("after query, line to use for test is: >" + line + "<");
-				
 					// skip over blank line(s) if exists before test for this query
 					line = Utilities.skipBlankLines(br, line);
-					//System.out.println("first line to use for test is: >" + line + "<");
 								
 					// process the remaining lines for that question to get the conditions and tests
 					boolean moreTestsForQuestion = true;
 					ArrayList<EvalComponentInQuestion> tests = new ArrayList<EvalComponentInQuestion>();
 					while (moreTestsForQuestion) {
-						//System.out.println("test line is: >" + line + "<");
 						if (line != null && !line.equals("") && 
 								(line.substring(0, 4).equals("Test") || 
 								(line.substring(0, 4).equals("Cond") )) ) {
@@ -188,7 +179,6 @@ public class Assignment {
 							// get test name - from beginning of line to first space
 							int firstSpacePos = line.indexOf(' ');
 							String testNameString = line.substring(0, firstSpacePos);
-							//System.out.println("test is: " + testNameString);
 							
 							// get test percent
 							// look for second space after percent
@@ -202,7 +192,6 @@ public class Assignment {
 								percentString = line.substring(firstSpacePos + 1, secondSpacePos);
 							}
 							int percent = Integer.parseInt(percentString);
-							//System.out.println("percent is: " + percent);
 							
 							// if condition, get condition string
 							String condition = null;
@@ -210,7 +199,6 @@ public class Assignment {
 								condition = line.substring(secondSpacePos + 1);
 								// strip out double quotes on edges
 								condition = condition.replace("\"", "");
-								//System.out.println("condition added is >" + condition + "<");
 							}
 							
 							// build evaluation component according to type and add to test list

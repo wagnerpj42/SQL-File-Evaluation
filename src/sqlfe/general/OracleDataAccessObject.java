@@ -66,11 +66,6 @@ public class OracleDataAccessObject implements IDAO {
 			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
 			//System.err.println(e.getMessage());
 		}
-		//finally {
-		//	if (stmt != null) {
-		//		stmt.close();
-		//	}
-		//}
 		return rset;
 	}	// end - method executeSQLQuery
 
@@ -100,7 +95,6 @@ public class OracleDataAccessObject implements IDAO {
 		}
 		catch (SQLException sqle) {
 			System.err.println("Could not execute SQL command: >" + sqlCommand + "<, " + sqle.getMessage());
-			//System.err.println("Return value: " + returnValue);
 		}
 		return returnValue;
 	}	// end - method executeSQLNonQuery

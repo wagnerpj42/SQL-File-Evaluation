@@ -38,19 +38,19 @@ public class TestResult {
         this.extraRows = null;
     }
 
-    //Checks if this TestResult contains a warning
+    // containsWarning - Checks if this TestResult contains a warning
     public boolean containsWarning(int warning){
         return this.warnings.contains(warning);
     }
 
-    //Adds a warning to this TestResult
+    // addWarning - Adds a warning to this TestResult
     public void addWarning(int warning) {
     	//System.out.println("This testResult object is: " + this);
     	//System.out.println("This object's warnings is: " + this.warnings);
         this.warnings.add(warning);
     }
 
-    //GETTERS AND SETTERS
+    // getters and setters
     public ArrayList<Integer> getWarnings() {
         return warnings;
     }
@@ -78,4 +78,4 @@ public class TestResult {
     public void setExtraRows(ArrayList<String[]> extraRows) {
         this.extraRows = extraRows;
     }
-}
+}	// end - class TestResult

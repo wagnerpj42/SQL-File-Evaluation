@@ -5,15 +5,10 @@
  */
 package sqlfe.general;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Properties;
 
-@SuppressWarnings("unused")
-//public class FrontEnd implements Runnable {
 public class FrontEnd {
 	// data
 	private String dbmsChoice;			// DBMS being used for evaluation (e.g. Oracle, MySQL)
@@ -127,27 +122,21 @@ public class FrontEnd {
 	}
 	
 	
-	/*
-	 * // -- run - start the thread public void run () { processInput(); }
-	 */
-	
-	// processInput - process the GUI input and set for backend usage
+	// processInput - support transfer of GUI input into this class for later processing
 	public void processInput(String dbmsChoice, String dbmsHost, String dbmsPort, String dbmsSystemID, String dbmsUsername, String dbmsPassword,
 								String evaluationFolder, String assignPropFile) {
-	//public void processInput() {
-		// populate FrontEnd
-		//System.out.println("in FrontEnd, method processInput() - setting data members using passed values");
-		setDbmsChoice(dbmsChoice); setDbmsHost(dbmsHost); setDbmsPort(dbmsPort);
-		setDbmsSystemID(dbmsSystemID); setDbmsUsername(dbmsUsername);
-		setDbmsPassword(dbmsPassword); setEvaluationFolder(evaluationFolder);
+		setDbmsChoice(dbmsChoice); 
+		setDbmsHost(dbmsHost); 
+		setDbmsPort(dbmsPort);
+		setDbmsSystemID(dbmsSystemID); 
+		setDbmsUsername(dbmsUsername);
+		setDbmsPassword(dbmsPassword); 
+		setEvaluationFolder(evaluationFolder);
 		setAssignPropFile(assignPropFile);
-		 		
-		//System.out.println("in FrontEnd, method processInput() - after setting data, before calling BackEnd.process()");
 		
 		// write FrontEnd information out to properties file (set if new, replace if a value already there)
 		final String CONFIG_PROP_NAME = "config.properties";
 		Properties configProp = new Properties();
-		File propFile = new File(CONFIG_PROP_NAME);
 		
 		// write new values
 		configProp.setProperty("dbmsChoice", dbmsChoice);
@@ -167,9 +156,6 @@ public class FrontEnd {
 		// send FrontEnd information to BackEnd for processing
 		aBackEnd.process(this);				// start backend process in same thread - problems with GUI console output to text area
 		
-		//aBackEnd = new BackEnd(this);
-		//Thread t = new Thread(aBackEnd);
-		//t.start();								// start the backend thread, thread calls BackEnd process method
 	}	// end - method processInput
 		
 }	// end - class FrontEnd

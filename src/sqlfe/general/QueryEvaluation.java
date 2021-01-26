@@ -200,23 +200,20 @@ public class QueryEvaluation {
 		int testIndex = 0;					// index for each test in list
 		for (ISQLTest aTest: allTests) {
 			String testString = null;		// test string to evaluate
-			String aTestName = aTest.getName();
-			//System.out.println("Now processing test " + testIndex + ", " + aTestName);
+			String aTestName = aTest.getName();	// get the name of the test
 			if (aTestName.substring(0, 4).equals("Test")) {
 				testString = desiredQuery.toString().trim();
 			}
 			else if (aTestName.substring(0, 4).equals("Cond")) {
 				testString = allTestsConditions.get(testIndex);
 			}
-			//System.out.println("QueryEvaluation-evaluate() - testString " + testIndex + " is: >" +  testString + "<");
+			// execute the test
 			TestResult testResult = aTest.sqlTest(dao, givenQuery, testString); // or some condition string
-			//System.out.println("testResult is: " + testResult);
+			// calculate percent and points
 			int currentPercent = allTestsPercents.get(testIndex);
-			//System.out.println("currentPercent is: " + currentPercent);
 			int currentPoints = testResult.getScore() * currentPercent;
 			results.add(currentPoints);
-			//System.out.println(aTestName + ": " + "testResult: " + testResult + ", curr%: " + currentPercent +
-			//	 ", curr points: " + currentPoints);
+			
 			pointsTotal += currentPoints;
 			testIndex++;
 		}	//	end - for each test

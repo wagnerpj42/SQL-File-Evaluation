@@ -67,11 +67,6 @@ public class MySQL80DataAccessObject implements IDAO {
 			//System.err.println("Could not execute SQL statement: >" + sqlQuery + "<");
 			//System.err.println("SQL error message: " + sqle.getMessage());
 		}
-		//finally {
-		//	if (stmt != null) {
-		//		stmt.close();
-		//	}
-		//}
 		return rset;
 	}	// end - method executeSQLQuery
 

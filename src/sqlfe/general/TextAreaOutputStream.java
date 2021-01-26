@@ -1,3 +1,7 @@
+/*
+ * TextAreaOutputStream - possible class for appending to text area through GUI
+ * from online search 11/2020
+ */
 package sqlfe.general;
 
 import java.awt.*;
