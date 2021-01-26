@@ -24,9 +24,6 @@ public class TestColumnCountTests extends AbstractTest {
 
 	@Test
 	public void testTestColumnCount() {
-		// TODO: fix all test evaluations to be more precise (not just 10 or 0), 
-		//        given that sqlTest sends back integer result in range 0-10.
-		
 		// queries of same tables with same number of columns are equal in column count
 		assertEquals(testCC.sqlTest(testDAO, creatureAllQuery, creatureAllQuery.toString()).getScore(), 10);
 		// queries of different tables with same number of columns are equal in column count

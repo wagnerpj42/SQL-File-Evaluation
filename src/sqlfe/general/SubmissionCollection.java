@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class SubmissionCollection {
 	// data
-	// TODO: include a submissions stats class?
 	private ArrayList<Submission> submissions;			// collection of all submissions
 	private int totalSubmissions;						// count of submissions
 	private ArrayList<Double> submissionMarks;			// parallel collection of marks for all submissions

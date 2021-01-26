@@ -15,8 +15,7 @@ public class TestQueryStringEqual implements ISQLTest {
 	
 	// sqlTest - from interface
 	public TestResult sqlTest (IDAO dao, Query givenQuery, String desiredQueryString) {
-		// TODO: need to test more comprehensively for content,
-		//       as spacing, etc. may vary
+		// TODO: need to test more comprehensively for content, as spacing, etc. may vary
 		int result;			// result on scale 0 to 10
 		
 		if (givenQuery.toString().toLowerCase().equals(desiredQueryString.toLowerCase() )) {

@@ -8,7 +8,7 @@ package sqlfe.general;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+//import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -19,22 +19,21 @@ import sqlfe.util.Utilities;
 //public class BackEnd implements Runnable {
 public class BackEnd {
 	// -- data
-	// TODO: make these variables private if possible
-	String dbmsName = null;							// name of DBMS to use (e.g. Oracle, MySQL)
-	String hostName = null;							// name or IP address of DBMS host (e.g. localhost, abc.univ.edu, 162.03.24.119)
-	String portString = null;						// port used on host (e.g. 3306 for MySQL)
-	String idName = null;							// system/schema id on DBMS host
-	String username = null;							// DBMS username
-	String password = null;							// DBMS password
-	PrintStream printStream = null;					// printStream for console output
+	private String dbmsName = null;							// name of DBMS to use (e.g. Oracle, MySQL)
+	private String hostName = null;							// name or IP address of DBMS host (e.g. localhost, abc.univ.edu, 162.03.24.119)
+	private String portString = null;						// port used on host (e.g. 3306 for MySQL)
+	private String idName = null;							// system/schema id on DBMS host
+	private String username = null;							// DBMS username
+	private String password = null;							// DBMS password
+	//private PrintStream printStream = null;					// printStream for console output
 	
-	String mainFolderPath = null;					// main folder for other folders (submissions, evaluations) and assignment prop.			
-	String submissionFolderPath = null;			 	// location of submission files relative to workspace folder
-	String evaluationFolderPath = null; 			// location of evaluation output files relative to workspace folder
-	String assignmentPropertiesFileName = null;		// name of assignment properties file relative to workspace folder
-	String gradesFileName = null;					// name of grades summary file in evaluation folder
+	private String mainFolderPath = null;					// main folder for other folders (submissions, evaluations) and assignment prop.			
+	private String submissionFolderPath = null;			 	// location of submission files relative to workspace folder
+	private String evaluationFolderPath = null; 			// location of evaluation output files relative to workspace folder
+	private String assignmentPropertiesFileName = null;		// name of assignment properties file relative to workspace folder
+	private String gradesFileName = null;					// name of grades summary file in evaluation folder
 	
-	IDAO dao = null;								// data access object, created based on information from front end
+	private IDAO dao = null;								// data access object, created based on information from front end
 
 	FrontEnd aFrontEnd = null;						// front end holding information from GUI to use in backend processing
 	
@@ -183,8 +182,6 @@ public class BackEnd {
 						}
 					}	// end - while looking for question(s) to match student answer
 					
-					// TODO: how to do error handling for finding question to match submission answer number?
-					//       may need try/catch block to avoid later work
 					if (!foundOne) {
 						System.out.println("cannot find question");
 					}

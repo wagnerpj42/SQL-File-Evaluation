@@ -31,7 +31,7 @@ public class SubmissionTests extends AbstractTest {
     @Test
     public void testReadSubmission() {
         try {
-            // Setup
+            // setup
             String assignmentName = "testAssignment";
             PrintWriter commWriter = new PrintWriter("./testEvaluations/commFileReadSubmissionTests.out", "UTF-8");
             PrintWriter parseWriter = new PrintWriter("./testEvaluations/parseFileReadSubmissionTests.out", "UTF-8");
@@ -44,7 +44,7 @@ public class SubmissionTests extends AbstractTest {
             parseWriter.println("Assignment  : " + assignmentName);
             parseWriter.println("");
 
-            // Run Tests
+            // run Tests
             Submission s = new Submission();
             String folderPath = "./files-sample-MySQL/";
             String fileName = "lt_s66.sql";
@@ -63,7 +63,7 @@ public class SubmissionTests extends AbstractTest {
                     "WHERE A.AccOpenLocation = 'Central' AND A.AccClosedDate >= '2017-03-01'";
             assertEquals(qString, a.getActualQuery().toString());
 
-            //Test cross join
+            // test cross join
             a = answers.get(5);
             qString = "SELECT CustID, FName, LName\n" +
                     "FROM Customer\n" +
@@ -74,13 +74,13 @@ public class SubmissionTests extends AbstractTest {
                     "    WHERE AccStatus = 'Active')";
             assertEquals(qString, a.getActualQuery().toString());
 
-            //Test nonexistant file
+            // test non-existent file
             commWriter = new PrintWriter("./testEvaluations/commFileReadSubmissionTestsFail.out", "UTF-8");
             parseWriter = new PrintWriter("./testEvaluations/parseFileReadSubmissionTestsFail.out", "UTF-8");
             s.readSubmission("garbage", commWriter, parseWriter);
             assertEquals("Cannot find file garbage\n", errContent.toString());
 
-            //Test parse exception
+            // test parse exception
             // TODO: Add example with parse exception
 
         } catch (Exception e) {

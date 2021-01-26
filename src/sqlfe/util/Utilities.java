@@ -19,9 +19,7 @@ public class Utilities {
 	public static String sortString(String origString) {
 		String result = "";
 		String[] words = origString.split("\\s+");
-		//System.out.println("words before sort: " + words.toString());
 		Arrays.sort(words);;
-		//System.out.println("words after sort: " + words.toString());
 		StringBuilder sb = new StringBuilder();
 		for (String s: words) {
 			sb.append(s);
@@ -32,8 +30,7 @@ public class Utilities {
 		return result;
 	}	// end - method sortString
 	
-	// -- countMatches - count the matches for a substr in a longer string
-	// TODO: need to check to only count subString if in body of query, not in table alias, column alias, or string literal
+	// -- countMatches - count the matches for a substr in a longer query string
 	public static int countMatches(String queryString, String subString) {
 		int result = 0;
 		
@@ -65,17 +62,12 @@ public class Utilities {
 		
 		queryString = queryString.toUpperCase().trim();
 		int selectPos = queryString.indexOf("SELECT");
-		//System.out.println("selectPos: " + selectPos);
 		int fromPos   = queryString.indexOf("FROM");
-		//System.out.println("fromPos : " + fromPos);
 		int debugCount = 0;
 		while (selectPos < fromPos && debugCount < 10 && selectPos != -1 && fromPos != -1) {
 			queryString = queryString.substring(0, selectPos) + queryString.substring(fromPos + 4);
-			//System.out.println("query string now is >" + queryString + "<");
 			selectPos = queryString.indexOf("SELECT");
-			//System.out.println("selectPos: " + selectPos);
 			fromPos   = queryString.indexOf("FROM");
-			//System.out.println("fromPos : " + fromPos);
 			debugCount++;
 		}
 		newString = queryString;
@@ -110,7 +102,6 @@ public class Utilities {
 		try {
 			while (localLine != null && isInstructorComment(localLine)) {
 				localLine = br.readLine();
-				//System.out.println("skipInstructorComments();, skipping line, new line is: >" + localLine + "<");
 			}
 		} 
 		catch (IOException ioe) {
@@ -126,14 +117,11 @@ public class Utilities {
 		String localLine = line;
 		boolean isSingleLineComment = isUserCommentSingleLine(line);
 		boolean isMultiLineComment = isUserCommentMultiLineStart(line);
-		//System.out.println("Utilities, processUserComments() - is user comment single line? " + isSingleLineComment);
-		//System.out.println("Utilities, processUserComments() - is user comment multi line start? " + isMultiLineComment);
 		if (isSingleLineComment) {							// is single-line comment, process until don't find any more
 			try {
 				while (localLine != null && isUserCommentSingleLine(localLine)) {
 					commWriter.println(submissionFileName + ": " + localLine);
 					localLine = br.readLine();
-					//System.out.println("processUserComments();, processing user comment line, new line is: >" + localLine + "<");
 				}
 			} 
 			catch (IOException ioe) {
@@ -144,7 +132,6 @@ public class Utilities {
 				while (localLine != null && !isUserCommentMultiLineEnd(localLine)) {
 					commWriter.println(submissionFileName + ": " + localLine);
 					localLine = br.readLine();
-					//System.out.println("processUserComments();, processing user comment line, new line is: >" + localLine + "<");
 				}
 				// process the multi-line comment end line
 				commWriter.println(submissionFileName + ": " + localLine);
@@ -153,7 +140,6 @@ public class Utilities {
 			catch (IOException ioe) {
 				System.err.println("processUserComments() - Either, cannot read from submission file, or write to comments file");
 			}	
-			// TODO: look for multiple multi-line comments or combination of single and multi-line comments?
 		}
 		return localLine;
 	}	// end = method processUserComments
@@ -223,7 +209,6 @@ public class Utilities {
 		
 		// replace all backslashes with forward slashes
 		resultPath = path.replace("\\", "/");
-		//System.out.println("in processSlashes, path is now: >" + resultPath + "<");
 		
 		return resultPath;
 	}	// end - method processSlashes
@@ -239,7 +224,7 @@ public class Utilities {
 		else {
 			return false;
 		}
-    }
+    }	// end - method isQuestionFound
 
 	// -- skipExtraQueries - Before reaching the first question, skip any lines that do not begin with instructor comments  
 	public static String skipExtraQueries(BufferedReader br, String line) {
@@ -253,14 +238,13 @@ public class Utilities {
 		try {
 			while (localLine != null && matcher.find()) {
 				localLine = br.readLine();
-				//System.out.println("skipInstructorComments();, skipping line, new line is: >" + localLine + "<");
 			}
 		} 
 		catch (IOException ioe) {
 			System.err.println("skipInstructorComments() - Cannot read from properties file");
 		}
 		return localLine;
-	}
+	}	// end - method skipExtraQueries
 
 	// -- getQuestionNumber - Get question number from question string with pattern support for . and )  
 	public static String getQuestionNumber(String line) {
@@ -273,6 +257,6 @@ public class Utilities {
 		else {
 			return null;
 		}
-	}
+	}	// end - method getQuestionNumber
 	
 }	// end - class Utilities

@@ -43,9 +43,6 @@ public class TestSameColumnSet implements ISQLTest {
 		rset = null;
 		summary = null;
 		
-		//System.out.println("thisColSet:    >" + thisColSet + "<");
-		//System.out.println("desiredColSet: >" + desiredColSet + "<");
-		
 		// TODO: need to allow for variation in order of column names in set
 		if (thisColSet == null) {
 			result = 0;
@@ -61,11 +58,12 @@ public class TestSameColumnSet implements ISQLTest {
 
 	}	// end - method sqlTest
 	
-	// getName - from interface
+	// getName - return the test name
 	public String getName() {
 		return ("TestSameColumnSet");
 	}
 	
+	// getDesc - return the test description
 	public String getDesc() {
 		return "Answer has same set of column names as desired query";
 	}

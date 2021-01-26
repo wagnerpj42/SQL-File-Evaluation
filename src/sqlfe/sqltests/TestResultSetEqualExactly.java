@@ -23,9 +23,8 @@ public class TestResultSetEqualExactly implements ISQLTest {
 		ResultSet rset = null;				// result set for SQL query
 											// summary of result set's metadata
 		ResultSetMetaDataSummary summary = new ResultSetMetaDataSummary();
-											// query object for string
+											// build Query object for desired query string
 		Query desiredQuery = new Query(desiredQueryString);
-		// TODO: do we need to build query from string, just to use toString() later?
 		
 		// 1) execute given query, get result set string for this query
 		try {
@@ -52,10 +51,7 @@ public class TestResultSetEqualExactly implements ISQLTest {
 
 		rset = null;
 		summary = null;
-		
-		//System.out.println("thisResultString: >" + thisResultString + "<");
-		//System.out.println("desiredResultString: >" + desiredResultString + "<");
-		
+				
 		try {
 			if (thisResultString.equals(desiredResultString)) {
 				result = 10;
@@ -72,11 +68,12 @@ public class TestResultSetEqualExactly implements ISQLTest {
 
 	}	// end - method sqlTest
 	
-	// getName - from interface
+	// getName - return the test name
 	public String getName() {
 		return ("TestResultSetEqualExactly");
 	}
 	
+	// getDesc - return the test description
 	public String getDesc() {
 		return "Answer has exactly same result set as desired query";
 	}

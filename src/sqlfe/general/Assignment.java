@@ -127,13 +127,11 @@ public class Assignment {
 		        matcher = pattern.matcher(line);
 		        if (matcher.find()) {						// first line of answer
 					// process the first line to get question number, number of points and desired query
-		        	// - get the question number
-		        	// TODO: hardcoded period for now, need to generalize to get . or ) after question number
+		        	// - get the question number, required to end in period (.)
 					int periodPos = line.indexOf('.');
 					String qNumStr = line.substring(0, periodPos);
 				
 					// - get number of points
-					// TODO - internationalization (points or marks as in NZ)
 					int marksPos = line.indexOf("points");
 					String numMarksStr = "";
 					numMarksStr = line.substring(periodPos + 3, marksPos - 1);

@@ -278,7 +278,6 @@ public class Submission {
 			System.out.print("   Parsing: ");
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
-				// TODO: need general way of detecting non-query text; e.g. comments, garbage
 				// skip white lines before/between/after questions
 				line = Utilities.skipBlankLines(br, line);
 				
@@ -321,8 +320,6 @@ public class Submission {
 
 	// getFileMetaData - get the details of the file and store them in submissionName and studentName
 	private String getFileMetadata(BufferedReader br) {
-		// TODO - remove -- -- from these three lines before writing out
-		// TODO - make how many lines are in an assignment customizable? e.g. add student id
 		String line = null;
 		try {
 			line = br.readLine(); 											// get first line
@@ -445,9 +442,9 @@ public class Submission {
 					ISQLTest test = tests.get(testIndex);
 					int points = testPoints.get(testIndex);
 					int pct = testPcts.get(testIndex);
-					// TODO: point conversion to utility method
-					outWriter.println(test.getDesc() + ": " + df.format ( (points / 100.0) * (qe.getMaxPoints() / 10.0) )
-							+ " / " + df.format( (pct / 100.0) * qe.getMaxPoints() ) );
+					// output scaled points scored out of scaled available points
+					outWriter.println(test.getDesc() + ": " + df.format (scaleValue(points, qe.getMaxPoints() / 10.0))
+													+ " / " + df.format(scaleValue (pct, qe.getMaxPoints() )) );
 				}
 				outWriter.println();
 			}
@@ -460,5 +457,10 @@ public class Submission {
 			outWriter.close();
 		}
 	}	// end - method writeSubmission
+	
+	// scaleValue - convert integer point value to scaled real value
+	public double scaleValue (int value, double scale) {
+		return ((value / 100.0) * scale);
+	}
 
 }	// end - class Submission
