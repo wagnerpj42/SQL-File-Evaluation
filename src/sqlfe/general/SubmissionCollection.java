@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import sqlfe.util.Utilities;
+
 public class SubmissionCollection {
 	// data
 	private ArrayList<Submission> submissions;			// collection of all submissions
@@ -133,7 +135,7 @@ public class SubmissionCollection {
 			for (int index = 0; index < listOfFiles.length; index++) {
 				if (listOfFiles[index].isFile()) {
 					String fileName = listOfFiles[index].getName();
-					System.out.println("Parsing file: " + fileName);
+					Utilities.threadSafeOutput("Parsing file: " + fileName + "\n");
 					Submission s = new Submission();
 					s.readSubmission(folderPath + fileName, commWriter, parseWriter);	// get submission information
 					String submissionFileName = s.getSubmissionFileName();

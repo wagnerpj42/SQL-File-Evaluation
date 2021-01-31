@@ -56,19 +56,15 @@ public class FrontEndView extends Application {
     private TextField waTextField 					= null;									// will assign later
     private final DirectoryChooser waFolderChooser	= new DirectoryChooser();
     private final Button wafButton 					= new Button("Change Work Area Folder");
-    private Label statusDisplayText 				= new Label("Work Display-updated after evaluation done");
+    private Label statusDisplayText 				= new Label("Work Display");
     private TextArea statusTextArea 				= new TextArea(); 
     private final Button evalButton 				= new Button("Evaluate Files");
     // -- connection to rest of system
     private BackEnd aBackEnd						= new BackEnd();
     private FrontEnd aFrontEnd						= new FrontEnd(aBackEnd);				// front end needs back end tied to it to pass information to
-//    private FrontEnd aFrontEnd						= null;									// will assign later
     // -- console output to text area
     private Console console							= new Console(statusTextArea);		
-    @SuppressWarnings("unused")
 	private PrintStream printStream					= new PrintStream(console, true);
-    // -- thread for backend processing
-    //private Thread t								= null;
 
     // methods
     // -- start (gets called indirectly by thread created when FrontEndView is launched in main)
@@ -164,14 +160,6 @@ public class FrontEndView extends Application {
 						hostTextField.getText(), portTextField.getText(), sysidTextField.getText(),
 						userTextField.getText(), pwPasswordField.getText(), waTextField.getText(),
 						apTextField.getText() );
-						/*
-						 * aBackEnd = new BackEnd(); aFrontEnd = new
-						 * FrontEnd((String)dbmsComboBox.getValue(), hostTextField.getText(),
-						 * portTextField.getText(), sysidTextField.getText(), userTextField.getText(),
-						 * pwPasswordField.getText(), waTextField.getText(), apTextField.getText(),
-						 * aBackEnd); t = new Thread(aFrontEnd); t.start();
-						 * }
-						 */
         		}	// end - method handle
         	}	// end - new EventHandler
         );
@@ -200,7 +188,7 @@ public class FrontEndView extends Application {
 		
 		// connect console to display text area
 		System.setOut(printStream);
-		System.setOut(printStream);
+		//System.setErr(printStream);
         
         // configure the grid
         GridPane.setRowSpan(statusTextArea, 3);

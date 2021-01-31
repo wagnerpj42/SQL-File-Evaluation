@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javafx.application.Platform;
+
 public class Utilities { 	
 	// methods
 	// -- sortString - sort a string into ordered component parts
@@ -56,7 +58,6 @@ public class Utilities {
 	// -- removeSelectFroms - remove SELECT...FROM parts of query so that comma counting
 	//                          only counts join commas
 	// TODO: what about commas in GROUP BY or ORDER BY clauses?
-	// TODO: problem if nested subqueries, order is SELECT... SELECT..FROM  ...FROM
 	public static String removeSelectFroms (String queryString) {
 		String newString = null;
 		
@@ -258,5 +259,16 @@ public class Utilities {
 			return null;
 		}
 	}	// end - method getQuestionNumber
+	
+	// -- threadSafeOutput - process output to make sure is run later if not in FX thread
+	public static void threadSafeOutput(String string) {
+		if (Platform.isFxApplicationThread()) {
+			// output as normal - OK to output within FX thread
+			System.out.print(string);
+		} else {
+			// run later to sync with FX thread
+			Platform.runLater(() -> System.out.print(string));
+		}
+	}	// end - method threadSafeOutput
 	
 }	// end - class Utilities

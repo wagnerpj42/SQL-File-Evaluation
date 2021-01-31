@@ -52,8 +52,11 @@ public class BackEnd {
 		// move data in
 		transferData(aFrontEnd);
 		
-		// set up and run the evaluation system
-		evaluate();
+		// set up and run the evaluation system in a separate thread to avoid linear flow in regard to GUI
+		Thread thread = new Thread(() -> {
+			evaluate();
+		});
+		thread.start();
 	}	// end - method process
 
 	
@@ -134,7 +137,7 @@ public class BackEnd {
 		ArrayList<Submission> sa = sc.getSubmissions();
 		for (int sIndex = 0; sIndex < sc.getTotalSubmissions(); sIndex++) {
 			Submission s = sa.get(sIndex);
-			System.out.print("\nEvaluating " + s.getSubmissionFileName() + ": ");
+			Utilities.threadSafeOutput("\nEvaluating " + s.getSubmissionFileName() + ": \n    ");
 			double submissionPoints = 0;
 			ArrayList<QueryEvaluation> queryEvals = new ArrayList<QueryEvaluation>();
 
@@ -150,7 +153,7 @@ public class BackEnd {
 				for (int qaIndex = 0; qaIndex < qas.size(); qaIndex++) {				
 					// get the next answer for this submission
 					QuestionAnswer qa = qas.get(qaIndex);
-					System.out.print("Q" + qa.getQNumStr() + ".");
+					Utilities.threadSafeOutput("Q" + qa.getQNumStr() + ".");
 					
 					Query actualQuery = qa.getActualQuery();
 					
@@ -183,7 +186,7 @@ public class BackEnd {
 					}	// end - while looking for question(s) to match student answer
 					
 					if (!foundOne) {
-						System.out.println("cannot find question");
+						System.err.println("cannot find question");
 					}
 					
 					// loop through all possible questions, evaluate, choose max
@@ -277,9 +280,8 @@ public class BackEnd {
 		}
 
 		// tell user that processing is done
-		System.out.println();
-		System.out.println();
-		System.out.println("Processing of this submission set completed.");	
+		//System.out.println("\n\nProcessing of this submission set completed.");
+		Utilities.threadSafeOutput("\n\nProcessing of this submission set completed.\n");
 	}	// end - method evaluate
 
 }	// end - class BackEnd

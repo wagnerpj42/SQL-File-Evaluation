@@ -105,20 +105,17 @@ public class Assignment {
 			br = new BufferedReader(fr);					// "      "
 			String line = null;								// each line from assignment properties file
 
-			// read assignment name
+			// read and process assignment name
 			line = br.readLine();			
 			assignmentName = line;							// first line = assignment name
-			System.out.println("Assignment: " + assignmentName);
-			System.out.println();
+			Utilities.threadSafeOutput("Assignment: " + assignmentName + "\n\n");
 			line = br.readLine();							// get next line after assignment name
 			
 			if (questions == null) {						// initialize questions list
 				questions = new ArrayList<Question>();
 			}
 			
-			//System.out.println("line before skipping blanks is: >" + line + "<");
 			line = Utilities.skipBlankLines(br, line);		// skip blank lines before any answers		
-			//System.out.println("line after skipping blanks is: >" + line + "<");
 			
 			// read in questions (if exist)
 			while (line != null && !line.equals("")) {   	// more questions to process

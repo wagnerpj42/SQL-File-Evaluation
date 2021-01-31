@@ -275,7 +275,7 @@ public class Submission {
 			line = reachFirstQuestion(br, line);
 
 			// get first answer and the subsequent questions & answers in the file
-			System.out.print("   Parsing: ");
+			Utilities.threadSafeOutput("   ");
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
 				// skip white lines before/between/after questions
@@ -291,7 +291,8 @@ public class Submission {
 					// process the first line to get question number and desired query
 					// get question number as string from the line with a '.' or ')'
 					qNumStr = Utilities.getQuestionNumber(line);	// skip past -- -- and space
-					System.out.print("Q" + qNumStr + ".");
+					//System.out.print("Q" + qNumStr + ".");
+					Utilities.threadSafeOutput("Q" + qNumStr + ".");
 
 					// Scan any comments, blank lines before reaching the line containing answerQuery
 					line = parseComments(line, br , commWriter);
@@ -307,7 +308,8 @@ public class Submission {
 					
 				}	// end - if matcher found the start of a question
 			}	// end - while more answers to process
-			System.out.println(); 									// end parsing output to console
+			//System.out.println(); 									// end parsing output to console
+			Utilities.threadSafeOutput("\n");
 		 
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
@@ -394,7 +396,7 @@ public class Submission {
 			while (line != null && !Utilities.isQuestionFound(line)) {
 				line = br.readLine();									// go to next line and check that line
 			}	// end - while
-		}catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
 			System.err.println("Cannot read from file " + submissionFileName);

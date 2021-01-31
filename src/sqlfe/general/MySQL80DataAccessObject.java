@@ -39,7 +39,7 @@ public class MySQL80DataAccessObject implements IDAO {
 		   Class.forName ("com.mysql.cj.jdbc.Driver");
 		}
 		catch (ClassNotFoundException e) {
-		   System.err.println ("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
+		   Utilities.threadSafeOutput("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
 		}
 
 		// --- 2) connect to database
@@ -48,8 +48,7 @@ public class MySQL80DataAccessObject implements IDAO {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
-		   System.err.println ("Could not make connection to database");
-		   System.err.println(sqle.getMessage());
+		   Utilities.threadSafeOutput("Could not make connection to database, " + sqle.getMessage());
 		}
 		return conn;
 	}	// end - method connect
@@ -158,7 +157,7 @@ public class MySQL80DataAccessObject implements IDAO {
 			}
 		}
 		catch (SQLException sqle) {
-			System.err.println ("Error in closing database connection");
+			//System.err.println ("Error in closing database connection");
 		}
 		finally {
 			if (conn != null) {
@@ -181,4 +180,4 @@ public class MySQL80DataAccessObject implements IDAO {
 		return conn;
 	}	// end - method disconnect
 
-}	// end - class DataAccessObject
+}	// end - class MySQL80DataAccessObject

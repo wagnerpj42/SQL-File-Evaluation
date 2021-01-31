@@ -11,7 +11,6 @@ public class Main {
 
 	public static void main(String[] args) {		
 		Application.launch(FrontEndView.class, args);		
-		
 	}	// end - method main
 
 }	// end - class Main
