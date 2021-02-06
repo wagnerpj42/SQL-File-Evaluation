@@ -22,14 +22,16 @@ public class MySQL5xDataAccessObject implements IDAO {
 	private String idName;					// DBMS system id
 	private String username;				// DBMS user name
 	private String password;				// DBMS user password
+	private boolean forTesting;				// whether DAO used for JUnit testing or for regular evaluation
 	
 	// --- constructor
-	public MySQL5xDataAccessObject (String hostName, String portString, String idName, String username, String password) {
+	public MySQL5xDataAccessObject (String hostName, String portString, String idName, String username, String password, boolean forTesting) {
 		this.hostName = hostName;
 		this.portString = portString;
 		this.idName = idName;
 		this.username = username;
 		this.password = password;
+		this.forTesting = forTesting;
 	}
 		
 	// --- connect - connect to the MySQL database
@@ -39,7 +41,11 @@ public class MySQL5xDataAccessObject implements IDAO {
 		   Class.forName ("com.mysql.jdbc.Driver");
 		}
 		catch (ClassNotFoundException e) {
-		   Utilities.threadSafeOutput("\nCould not get class object for Driver, check if MySQL JDBC Connector file is on your build path\n");
+			if (forTesting) {
+				System.out.println("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
+			} else {
+				Utilities.threadSafeOutput("\nCould not get class object for Driver, check if MySQL JDBC Connector file is on your build path\n");	// for JavaFX GUI thread safety
+			}
 		}
 
 		// --- 2) connect to database
@@ -48,7 +54,11 @@ public class MySQL5xDataAccessObject implements IDAO {
 		   conn = DriverManager.getConnection(connectString, username, password);
 		}
 		catch (SQLException sqle) {
-		   Utilities.threadSafeOutput("Could not make connection to database, " + sqle.getMessage());
+			if (forTesting) {
+				System.out.println("Could not make connection to database, " + sqle.getMessage());
+			} else {
+				Utilities.threadSafeOutput("\nCould not make connection to database, " + sqle.getMessage() + "\n");		// for JavaFX GUI thread safety
+			}
 		}
 		return conn;
 	}	// end - method connect

@@ -246,8 +246,8 @@ public class Submission {
 		return answerQueryStr;
 	}	// end - method getAnswerQuery
 	
-	// readSubmission - read one submission from a file
-	public void readSubmission(String submissionFileName, PrintWriter commWriter, PrintWriter parseWriter) {
+	// readSubmission - read one submission from a file, either for JUnit testing or regular parsing and evaluation
+	public void readSubmission(String submissionFileName, PrintWriter commWriter, PrintWriter parseWriter, boolean forTesting) {
 		FileReader fr = null;						// file stream for reading SQL submission file
 		BufferedReader br = null;					// buffered reader for that stream
 		String answerQueryStr = "";					// each answer string given in assignment
@@ -260,6 +260,7 @@ public class Submission {
 			fr = new FileReader(submissionFileName);
 			br = new BufferedReader(fr);
 			this.submissionFileName = submissionFileName;
+			System.out.println("submission name: " + submissionFileName);
 			
 			// initialize answers and total points
 			if (answers == null) {					// initialize questions list
@@ -275,7 +276,11 @@ public class Submission {
 			line = reachFirstQuestion(br, line);
 
 			// get first answer and the subsequent questions & answers in the file
-			Utilities.threadSafeOutput("   ");
+			if (forTesting) {
+				System.out.println("   ");
+			} else {
+				Utilities.threadSafeOutput("   ");	
+			}
 			while (line != null && loopCount < MAX_TIMES_TO_TRY) {					// more answers to process  
 				loopCount++;
 				// skip white lines before/between/after questions
@@ -292,8 +297,12 @@ public class Submission {
 					// get question number as string from the line with a '.' or ')'
 					qNumStr = Utilities.getQuestionNumber(line);	// skip past -- -- and space
 					//System.out.print("Q" + qNumStr + ".");
-					Utilities.threadSafeOutput("Q" + qNumStr + ".");
-
+					if (forTesting) {
+						System.out.println("Q" + qNumStr + ".");
+					} else {
+						Utilities.threadSafeOutput("Q" + qNumStr + ".");
+					}
+					
 					// Scan any comments, blank lines before reaching the line containing answerQuery
 					line = parseComments(line, br , commWriter);
 					
@@ -308,9 +317,12 @@ public class Submission {
 					
 				}	// end - if matcher found the start of a question
 			}	// end - while more answers to process
-			//System.out.println(); 									// end parsing output to console
-			Utilities.threadSafeOutput("\n");
-		 
+			if (forTesting) {
+				System.out.println();
+			} else {
+				Utilities.threadSafeOutput("\n");
+			}
+			
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + submissionFileName);
 		} catch (SQLFEParseException sqlfepe) {

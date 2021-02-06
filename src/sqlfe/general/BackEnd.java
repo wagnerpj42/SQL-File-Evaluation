@@ -89,13 +89,13 @@ public class BackEnd {
 		
 		switch (dbmsName) {
 		case "Oracle":
-			dao = new OracleDataAccessObject(hostName, portString, idName, username, password);
+			dao = new OracleDataAccessObject(hostName, portString, idName, username, password, false);
 			break;
 		case "MySQL 5.x":
-			dao = new MySQL5xDataAccessObject(hostName, portString, idName, username, password);
+			dao = new MySQL5xDataAccessObject(hostName, portString, idName, username, password, false);
 			break;
 		case "MySQL 8.0":
-			dao = new MySQL80DataAccessObject(hostName, portString, idName, username, password);
+			dao = new MySQL80DataAccessObject(hostName, portString, idName, username, password, false);
 			break;
 		default:
 			System.err.println("Incorrect DAO specification");

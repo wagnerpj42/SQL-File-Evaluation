@@ -137,7 +137,7 @@ public class SubmissionCollection {
 					String fileName = listOfFiles[index].getName();
 					Utilities.threadSafeOutput("Parsing file: " + fileName + "\n");
 					Submission s = new Submission();
-					s.readSubmission(folderPath + fileName, commWriter, parseWriter);	// get submission information
+					s.readSubmission(folderPath + fileName, commWriter, parseWriter, false);	// get submission information
 					String submissionFileName = s.getSubmissionFileName();
 					s.setSubmissionFileName(submissionFileName.substring(submissionFileName.lastIndexOf("/") + 1));
 					// add this submission to the list
