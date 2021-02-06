@@ -1,8 +1,7 @@
-/* TestResultSetEqualContentv1 - class to test for result set equality regardless of row/column order
- * NOTE: currently testing row ct., column ct., and result string length.
- *       Cannot directly test column names because people may change names with various aliases
+/* TestResultSetEqualContent - class to test for result set equality regardless of row/column order
  *
  * Created - Paul J. Wagner, 2-Oct-2018
+ * Major modifications by Ryan Vaughn, ??-Jan-2020 - column matching, date formats, real formats and precision - see README
  */
 package sqlfe.sqltests;
 
@@ -112,6 +111,7 @@ public class TestResultSetEqualContent implements ISQLTest {
 
 
 	public TestResult sqlTest(IDAO dao, Query givenQuery, String desiredQueryString){
+		//System.out.println("entering TestResultSetEqualContent class, sqlTest() method");
 		int result = 10;                        // result on scale 0 to 10
 		this.numDuplicates = Integer.MAX_VALUE;	 //We will be looking for minimum numUnmatched and numDuplicates, so set to MAX_VALUE initially
 		this.numUnmatchedRows = Integer.MAX_VALUE;
@@ -138,14 +138,15 @@ public class TestResultSetEqualContent implements ISQLTest {
 			summaryGiven = dao.processResultSet(rsetGiven);
 			rsetGiven.beforeFirst();	//move result set cursor to start
 		} catch (Exception e) {
-			//System.err.println("Error executing SQL/processing result set for given");
+			//System.err.println("Error in testResultSetEqualContent on executing SQL/processing result set for given query");
+			//System.err.println(e.getMessage());
 			//System.out.println("RESULT: 0");
 			return new TestResult(0);
 		}
 		//get row and column counts
 		givenRowCt = summaryGiven.getNumRows();
 		givenColCt = summaryGiven.getNumCols();
-
+		//System.out.println("submitted/given query: " + givenRowCt + " rows, " + givenColCt + " cols");
 
 		// 2) execute desired query
 		try {
@@ -154,12 +155,12 @@ public class TestResultSetEqualContent implements ISQLTest {
 			summaryDesired = dao.processResultSet(rsetDesired);
 			rsetDesired.beforeFirst();
 		} catch (Exception e) {
-			//System.err.println("Error executing SQL/processing result set for desired");
+			//System.err.println("Error executing SQL/processing result set for desired query");
 		}
 
 		desiredRowCt = summaryDesired.getNumRows();
 		desiredColCt = summaryDesired.getNumCols();
-
+		//System.out.println("desired query: " + desiredRowCt + " rows, " + desiredColCt + " cols");
 
 		//Attempt matching student and solution's columns based off of column names found in queries
 		Map<Integer, ArrayList<Integer>> columnAssociations = attemptColumnAssociation(desiredQueryString, givenQuery.toString());
@@ -210,9 +211,10 @@ public class TestResultSetEqualContent implements ISQLTest {
 		
 		if(result != 10) result -= 2;
 		
-		// TODO: may want to make this deduction proportional - e.g. 1 vs. 4 cols. might be worse than 7 vs 10 cols.
+		// deduction for different column counts
 		if(desiredColCt != givenColCt) result -= 3;
 
+		// cannot set result lower than zero
 		if(result < 0) result = 0;
 		
 		//System.out.println("TRSEC - result after calculation: " + result);

@@ -37,13 +37,13 @@ public class TestSameColumnSet implements ISQLTest {
 			
 		// 2) execute desired query, get counts for this query
 		rset = dao.executeSQLQuery(desiredQuery.toString());
-		summary = dao.processResultSet(rset);
+		summary = dao.processResultSet(rset);					// includes sorting the column names
 		desiredColSet = summary.getColumnSet();
 		
 		rset = null;
 		summary = null;
 		
-		// TODO: need to allow for variation in order of column names in set
+		// set result based on whether column sets are equal
 		if (thisColSet == null) {
 			result = 0;
 		}

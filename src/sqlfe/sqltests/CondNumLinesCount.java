@@ -21,7 +21,6 @@ public class CondNumLinesCount implements ISQLTest {
 		boolean compResult = false;		// result of condition evaluation
 		
 		// count number of selects in query
-		// TODO: can this work with %n instead of \n - can't make it match in tests so far
 		thisLinesCt = Utilities.countMatches(givenQuery.toString(), "\n");
 		thisLinesCt += 1;				// one more line than line break
 		//System.out.println("line count is: " + thisLinesCt);
