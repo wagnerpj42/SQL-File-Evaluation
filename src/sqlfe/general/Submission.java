@@ -260,7 +260,6 @@ public class Submission {
 			fr = new FileReader(submissionFileName);
 			br = new BufferedReader(fr);
 			this.submissionFileName = submissionFileName;
-			System.out.println("submission name: " + submissionFileName);
 			
 			// initialize answers and total points
 			if (answers == null) {					// initialize questions list
