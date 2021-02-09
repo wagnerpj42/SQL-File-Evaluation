@@ -15,7 +15,8 @@ public class OracleDataAccessObject implements IDAO {
 
 	private Connection conn = null;			// JDBC connection
 	private ResultSet rset = null;			// result set for queries
-	private int returnValue;				// return value for all other commands
+	private int returnValue;				// return value for other commands
+	private boolean returnBoolean;			// return boolean value
 	private String hostName;				// DBMS host
 	private String portString;				// DBMS port
 	private String idName;					// DBMS system id
@@ -97,14 +98,16 @@ public class OracleDataAccessObject implements IDAO {
 	public int executeSQLNonQuery (String sqlCommand) {
 		// --- 3b) execute SQL non-query command
 		Statement stmt = null;		// SQL statement object
-		returnValue = -1;			// initialize return value
+		//returnValue = -1;			// initialize return value
+		returnBoolean = false;		// initialize return boolean
 		try	{
 		   stmt = conn.createStatement();
 		   returnValue = stmt.executeUpdate(sqlCommand);
 		}
 		catch (SQLException sqle) {
-			//System.err.println("Could not execute SQL command: >" + sqlCommand + "<, " + sqle.getMessage());
+			System.err.println("Could not execute SQL command: >" + sqlCommand + "<, " + sqle.getMessage());
 		}
+		returnValue = (returnBoolean == true ? 1 : 0);
 		return returnValue;
 	}	// end - method executeSQLNonQuery
 	

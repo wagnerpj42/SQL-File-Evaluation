@@ -67,8 +67,8 @@ public abstract class AbstractTest {
 	protected AbstractTest() {
 		// DAO setup - change type of object instantiated (if necessary) and arguments to make this functional 
 		// testDAO			= new OracleDataAccessObject("host", "port", "sysid", "user", "password", true);				// DAO and params must be changed to run unit tests 
-		//testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi7cs", true); 
-		testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);	
+		testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi7cs", true); 
+		//testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);	
 		//testDAO				= new MySQL5xDataAccessObject("localhost", "3306", "test", "wagnerpj", "toldics", true);
 		
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
@@ -99,7 +99,7 @@ public abstract class AbstractTest {
 		orderByDescQuery	= new Query("SELECT * FROM Achievement ORDER BY c_id, s_code DESC");
 		orderByDesc2Query	= new Query("SELECT * FROM Achievement ORDER BY c_id, s_code DESCENDING");
 		orderByDesc3Query	= new Query("SELECT * FROM Achievement ORDER BY c_id DESC, s_code DESCENDING");
-		joinOneQuery		= new Query("SELECT * FROM Creature C " +
+		joinOneQuery		= new Query("SELECT a.c_id, c.c_name FROM Creature C " +
 											"JOIN Achievement A ON C.c_id = A.c_id");
 		joinManyQuery		= new Query("SELECT c_id FROM Creature, Achievement " + 
 											"JOIN Skill ON Skill.s_code = Achievement.s_code");
