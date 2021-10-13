@@ -88,7 +88,8 @@ public class FrontEndView extends Application {
         ObservableList<String> options = FXCollections.observableArrayList(
         	"Oracle", 
         	"MySQL 5.x", 
-        	"MySQL 8.0"
+        	"MySQL 8.0",
+        	"Mock"
         );
         dbmsComboBox = new ComboBox<String>(options);
         dbmsComboBox.getSelectionModel().selectFirst();

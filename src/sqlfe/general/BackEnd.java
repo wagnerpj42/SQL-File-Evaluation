@@ -97,6 +97,9 @@ public class BackEnd {
 		case "MySQL 8.0":
 			dao = new MySQL80DataAccessObject(hostName, portString, idName, username, password, false);
 			break;
+		case "Mock":
+			dao = new MockDataAccessObject(hostName, portString, idName, username, password, false);
+			break;
 		default:
 			System.err.println("Incorrect DAO specification");
 		}

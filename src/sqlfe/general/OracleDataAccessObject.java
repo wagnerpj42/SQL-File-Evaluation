@@ -13,6 +13,7 @@ import sqlfe.util.Utilities;
 
 public class OracleDataAccessObject implements IDAO {
 
+	// data
 	private Connection conn = null;			// JDBC connection
 	private ResultSet rset = null;			// result set for queries
 	private int returnValue;				// return value for other commands

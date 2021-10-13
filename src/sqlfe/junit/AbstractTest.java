@@ -61,15 +61,20 @@ public abstract class AbstractTest {
 	protected Query implicitJoinQuery;	// query with multiple implicit joins
 	protected Query complexNestedQuery;	// query with nested selects in FROM, JOIN and WHERE
 	protected Query fromFormatQuery;	// query with FROM at end of a line
+	protected Query andTestQuery;		// query for testing (AND)
+	protected Query minTestQuery;		// query for testing (MIN)
+	protected Query min2TestQuery;		// query 2 for tetsing (MIN)
+	protected Query minusTestQuery;		// query for testing (MINUS)
 	
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
 		// DAO setup - change type of object instantiated (if necessary) and arguments to make this functional 
 		// testDAO			= new OracleDataAccessObject("host", "port", "sysid", "user", "password", true);				// DAO and params must be changed to run unit tests 
-		testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi7cs", true); 
+		testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi8cs", true); 
 		//testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);	
 		//testDAO				= new MySQL5xDataAccessObject("localhost", "3306", "test", "wagnerpj", "toldics", true);
+		//testDA0				= new MockDataAccessObject("xyz", "xyz", "test", "user", "pass", true);		// won't work with unit testing as can't execute queries and get reasonable results back
 		
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");
@@ -132,11 +137,20 @@ public abstract class AbstractTest {
 		minusQuery			= new Query("SELECT c_id FROM Creature MINUS SELECT c_id FROM Achievement");
 		implicitJoinQuery	= new Query("SELECT c_name, s_desc FROM Creature, Achievement, Skill WHERE Creature.c_id = Achievement.c_id " +
 											"AND Achievement.s_code = Skill.s_code");
-    	complexNestedQuery = new Query("SELECT t1.columnName2, t2.columnName3 \r\n" + 
+    	complexNestedQuery 	= new Query("SELECT t1.columnName2, t2.columnName3 \r\n" + 
 				   							"FROM (SELECT columnName2 FROM tableName) t1\r\n" + 
 				   							"JOIN (SELECT columnName3 FROM anotherTableName) t2 ON (t1.columnName = t2.columnName3)" +
 				   							"WHERE t2.columnName3 IN (SELECT columnName4 FROM aThirdTableName);") ;
-    	fromFormatQuery = new Query("SELECT c_id FROM\nCreature");
+    	fromFormatQuery 	= new Query("SELECT c_id FROM\nCreature");
+    	andTestQuery		= new Query("SELECT sandid, sanderling as SANDALIAS FROM Sandstorm WHERE sandid = 3 AND sanderling LIKE '%and%'");
+    	minTestQuery		= new Query("SELECT MIN(remindid) FROM Reminder MINUS SELECT MIN(remindid) FROM Reminder WHERE minstring LIKE '%min%'");
+    	min2TestQuery		= new Query("SELECT MIN(remindid) FROM Reminder MINUS SELECT MIN(remindid) FROM Reminder WHERE minstring LIKE '% min %'");
+    	minusTestQuery		= new Query("SELECT remindid, minstring AS MINSTRING\r\n"
+    									+ "FROM Reminder\r\n"
+    									+ "    MINUS\r\n"
+    									+ "SELECT remindid, minstring AS MINSTRING\r\n"
+    									+ "FROM Reminder    \r\n"
+    									+ "WHERE minstring LIKE '%minus%' ");
 	}	// end - constructor/query initialization
 	
 	// finalize - essentially cross-test fixture teardown
@@ -188,6 +202,10 @@ public abstract class AbstractTest {
 		implicitJoinQuery	= null;
 		complexNestedQuery	= null;
 		fromFormatQuery		= null;
+		andTestQuery		= null;
+		minTestQuery		= null;
+		min2TestQuery		= null;
+		minusTestQuery		= null;
 		
 		super.finalize();
 	}	// end - method finalize
