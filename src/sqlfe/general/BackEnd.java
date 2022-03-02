@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import sqlfe.sqltests.ISQLTest;
 import sqlfe.util.Utilities;
@@ -286,5 +288,19 @@ public class BackEnd {
 		//System.out.println("\n\nProcessing of this submission set completed.");
 		Utilities.threadSafeOutput("\n\nProcessing of this submission set completed.\n");
 	}	// end - method evaluate
+
+	// Method to create a map of questions
+	Map<Integer, ArrayList<Question>> createQuestionToAnswer(ArrayList<Question> questions) {
+
+		Map<Integer, ArrayList<Question>>  questionToAnswer = new HashMap<>();
+
+		for( Question question: questions){
+			Integer questionNo = Integer.parseInt(String.valueOf(question.getQNumStr().charAt(0)));
+
+			questionToAnswer.putIfAbsent(questionNo, new ArrayList<>());
+			questionToAnswer.get(questionNo).add(question);
+		}
+		return questionToAnswer;
+	}
 
 }	// end - class BackEnd
