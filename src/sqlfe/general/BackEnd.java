@@ -163,6 +163,13 @@ public void evaluate () {
 		Utilities.threadSafeOutput("\n\nProcessing of this submission set completed.\n");
 	}	// end - method evaluate
 
+	/**
+	 *
+	 * @param sc A submission collection object that holds the submissions of all the student.s
+	 * @param questions Arraylist that holds the list of questions.
+	 * @param gradesWriter Writer object that writes to GUI.
+	 * @param df Defines the floating point precision.
+	 */
 	void goThroughAllSubmissionsAndGrade(SubmissionCollection sc,ArrayList<Submission> sa, ArrayList<Question> questions,
 										 PrintWriter gradesWriter, DecimalFormat df) {
 		ArrayList<Question> currQuestions = null;		// current question(s) for a submitted answer
@@ -173,6 +180,7 @@ public void evaluate () {
 
 		Map<String, QueryEvaluationLists> questionNoToEvaluationMetrics = queryEvaluationLists.createQuestionNoToEvaluationMetricsMap(questions);
 
+		// Iterate through all the student's submissions.
 		for (int sIndex = 0; sIndex < sc.getTotalSubmissions(); sIndex++) {
 			Submission s = sa.get(sIndex);
 			Utilities.threadSafeOutput("\nEvaluating " + s.getSubmissionFileName() + ": \n    ");
@@ -250,13 +258,23 @@ public void evaluate () {
 	}	// end - for each submission
 
 	// Method to create a map of questions
+
+	/**
+	 *
+	 * @param questions Array list containing a list of questions.
+	 * @return Arraylist from Integer(question number) to list of questions.
+	 */
 	Map<Integer, ArrayList<Question>> createQuestionToAnswer(ArrayList<Question> questions) {
+
 
 		Map<Integer, ArrayList<Question>>  questionToAnswer = new HashMap<>();
 
+		// iterate through the list of questions.
 		for( Question question: questions){
+			// get the question number
 			Integer questionNo = Integer.parseInt(String.valueOf(question.getQNumStr().charAt(0)));
 
+			//Add the question to the map.
 			questionToAnswer.putIfAbsent(questionNo, new ArrayList<>());
 			questionToAnswer.get(questionNo).add(question);
 		}
