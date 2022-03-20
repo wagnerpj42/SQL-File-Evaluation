@@ -29,6 +29,8 @@ public class BackEnd {
 	private String password = null;							// DBMS password
 	//private PrintStream printStream = null;					// printStream for console output
 
+	private boolean abc=true;
+
 	private String mainFolderPath = null;					// main folder for other folders (submissions, evaluations) and assignment prop.			
 	private String submissionFolderPath = null;			 	// location of submission files relative to workspace folder
 	private String evaluationFolderPath = null; 			// location of evaluation output files relative to workspace folder
@@ -47,6 +49,14 @@ public class BackEnd {
 	// -- constructor, one arg
 	public BackEnd(FrontEnd aFrontEnd) {
 		this.aFrontEnd = aFrontEnd;
+	}
+
+	public void setEvaluationFolderPath(String evaluationFolderPath) {
+		this.evaluationFolderPath = evaluationFolderPath;
+	}
+
+	public void setSubmissionFolderPath(String submissionFolderPath) {
+		this.submissionFolderPath = submissionFolderPath;
 	}
 
 	// -- process - general method to call other methods for processing
@@ -120,12 +130,17 @@ public class BackEnd {
 		assignmentPropertiesFileName = mainFolderPath + "/assignmentProperties-MySQL";	// get assignment properties file name directly "
 	}
 
+	public Assignment createAssignment(String propertyFilePath){
+		Assignment a = new Assignment();
+		a.readProperties(assignmentPropertiesFileName);
+		return a;
+	}
+
 	// -- evaluate() - do the main evaluation work
 	public void evaluate () {
 
 		// read in the assignment properties, getting the questions
-		Assignment a = new Assignment();
-		a.readProperties(assignmentPropertiesFileName);
+		Assignment a = createAssignment(assignmentPropertiesFileName);
 		ArrayList<Question> questions = a.getQuestions();
 
 		// set up grade summary file
@@ -146,11 +161,23 @@ public class BackEnd {
 
 		// read in all submission files
 		SubmissionCollection sc = new SubmissionCollection();
-		sc.getAllFiles(submissionFolderPath, evaluationFolderPath, a.getAssignmentName());
+		try {
+			sc.getAllFiles(submissionFolderPath, evaluationFolderPath, a.getAssignmentName());
+		}
+		catch (Exception e){
+			System.err.println("Error in reading submission collection");
+			return;
+		}
 
 		ArrayList<Submission> sa = sc.getSubmissions();
 
-		dao.connect();
+
+		if(dao.connect()==null){
+			System.err.println("Invalid database properties");
+			return;
+		}
+
+
 
 		goThroughAllSubmissions( sc, sa, questions,
 				gradesWriter, df);

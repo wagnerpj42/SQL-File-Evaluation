@@ -1,7 +1,7 @@
 Assignment  : CS 260, Fall 2019, Lab Test
 Student Name: Student 02
 Answer File : lt_s02.sql
-Total Points: 82
+Total Points: 79.45
 
 Your answers, evaluation and points follow.
 
@@ -9,7 +9,7 @@ Your answers, evaluation and points follow.
     FROM Customer c
         JOIN Account a
             ON (c.CustID = a.Customer)
-        WHERE AccOpenLocation = 'Central' AND (AccClosedDate > '01-Mar-17')
+        WHERE AccOpenLocation = 'Central' AND (AccClosedDate > '2017-03-01')
 
 Points given: 15 of maximum 15
 
@@ -21,7 +21,7 @@ Answer has appropriate number of tables used: 1.5 / 1.5
 Answer has appropriate number of WHERE keyword: 1.5 / 1.5
 Answer has same result set content as desired query: 5.25 / 5.25
 
-2: SELECT AccOpenLocation, AccStatus, COUNT (AccStatus)
+2: SELECT AccOpenLocation, AccStatus, COUNT(AccStatus)
     FROM Account
         GROUP BY AccStatus, AccOpenLocation
             ORDER BY AccStatus, AccOpenLocation
@@ -53,7 +53,7 @@ Answer has appropriate number of tables used: 1.8 / 1.8
 Answer has same column count as desired result query: 1.8 / 1.8
 Answer has same result set content as desired query: 4.05 / 8.1
 
-4: SELECT TransLocation, CAST (AVG(TransAmount) AS NUMBER(*,2))
+4: SELECT TransLocation, AVG(TransAmount)
     FROM Transaction
        GROUP BY TransAmount, TransLocation
         HAVING AVG(TransAmount) < 
@@ -96,12 +96,12 @@ Answer has same result set content as desired query: 5.6 / 5.6
         LEFT JOIN Account a ON (c.CustID = a.Customer)
             WHERE NOT(a.AccStatus = 'Active') OR a.AccNumber IS NULL
 
-Points given: 9.35 of maximum 17
+Points given: 6.8 of maximum 17
 
 Answer compiles without errors: 1.7 / 1.7
 Answer has at least SELECT and FROM: 2.55 / 2.55
 Answer has appropriate number of WHERE keyword: 2.55 / 2.55
-Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has appropriate number of SELECT keyword: 0 / 2.55
 Answer has same column count as desired result query: 0 / 1.7
 Answer has same result set content as desired query: 0 / 5.95
 

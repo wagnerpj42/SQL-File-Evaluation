@@ -1,7 +1,7 @@
 Assignment  : CS 260, Fall 2019, Lab Test
 Student Name: Student 05
 Answer File : lt_s05.sql
-Total Points: 34.4
+Total Points: 35.9
 
 Your answers, evaluation and points follow.
 
@@ -10,16 +10,16 @@ FROM Customer C
 WHERE AccClosedDate IN
     (SELECT AccOpenLocation
     FROM Account A
-    WHERE A.AccOpenLocation = 'Central' AND A.AccClosedDate >= '01-MAR-2017')
+    WHERE A.AccOpenLocation = 'Central' AND A.AccClosedDate >= '2017-03-01')
 
-Points given: 3.75 of maximum 15
+Points given: 5.25 of maximum 15
 
 Answer compiles without errors: 0 / 1.5
 Answer has at least SELECT and FROM: 2.25 / 2.25
 Answer has same row count as desired query: 0 / 1.5
 Answer has same column count as desired result query: 0 / 1.5
 Answer has appropriate number of tables used: 1.5 / 1.5
-Answer has appropriate number of WHERE keyword: 0 / 1.5
+Answer has appropriate number of WHERE keyword: 1.5 / 1.5
 Answer has same result set content as desired query: 0 / 5.25
 
 2: SELECT COUNT(A.AccOpenLocation), COUNT(A.AccStatus)
@@ -96,7 +96,7 @@ Points given: 7.65 of maximum 17
 Answer compiles without errors: 0 / 1.7
 Answer has at least SELECT and FROM: 2.55 / 2.55
 Answer has appropriate number of WHERE keyword: 2.55 / 2.55
-Answer has appropriate number of tables used: 2.55 / 2.55
+Answer has appropriate number of SELECT keyword: 2.55 / 2.55
 Answer has same column count as desired result query: 0 / 1.7
 Answer has same result set content as desired query: 0 / 5.95
 
