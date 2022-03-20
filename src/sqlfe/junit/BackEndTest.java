@@ -41,9 +41,11 @@ public class BackEndTest extends AbstractTest{
             backEnd.evaluate();
 
             // test the number of lines in the output file. Should be number of files  + 2.
-            String backEndSubmissionPath=mainFolderPath + "/files/";
+            String backEndSubmissionPath = mainFolderPath + "/files/test/";
             String evaluationFolderPath=  mainFolderPath + "/evaluations/";
             String gradesFileName = evaluationFolderPath + "AAA_grade_summary.out";
+
+            String gradesTestFile = evaluationFolderPath + "/test/grade_summary_test.out";
 
             int numberOfFiles = Objects.requireNonNull(new File(backEndSubmissionPath).list()).length;
             long lineCount;
@@ -92,13 +94,20 @@ public class BackEndTest extends AbstractTest{
             assertEquals("Error in reading submission collection\n".trim(), errContent.toString().trim());
 
             errContent.reset();
+            backEnd.createTestObject(testDAO, mainFolderPath);
 
 
             // invalid DAO object
-            testDAO	= new MySQL80DataAccessObject("localhost", "3306", "sqlf", "roo", "", true);
-            backEnd.createTestObject(testDAO, mainFolderPath);
+            IDAO invalidDAO	= new MySQL80DataAccessObject("localhost", "3306", "sqlf", "roo", "", true);
+            backEnd.createTestObject(invalidDAO, mainFolderPath);
             backEnd.evaluate();
             assertEquals("Invalid database properties\n".trim(), errContent.toString().trim());
+
+            backEnd.createTestObject(testDAO, mainFolderPath);
+
+            //Test for grade submission, the output file should match are predefined one to pass
+            backEnd.evaluate();
+            assertEquals(Files.readAllLines(Paths.get(gradesTestFile)), Files.readAllLines(Paths.get(gradesFileName)));
 
 //Reflection demo
 //            Field privateStringField= backEnd.getClass().getDeclaredField("abc");

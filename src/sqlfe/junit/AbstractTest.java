@@ -77,7 +77,7 @@ public abstract class AbstractTest {
 		//testDAO				= new MySQL5xDataAccessObject("localhost", "3306", "test", "wagnerpj", "toldics", true);
 		//testDA0				= new MockDataAccessObject("xyz", "xyz", "test", "user", "pass", true);		// won't work with unit testing as can't execute queries and get reasonable results back
 
-		mainFolderPath = "/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation";
+		mainFolderPath = ".";
 
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");

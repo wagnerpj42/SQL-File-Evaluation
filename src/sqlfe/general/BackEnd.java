@@ -29,8 +29,6 @@ public class BackEnd {
 	private String password = null;							// DBMS password
 	//private PrintStream printStream = null;					// printStream for console output
 
-	private boolean abc=true;
-
 	private String mainFolderPath = null;					// main folder for other folders (submissions, evaluations) and assignment prop.			
 	private String submissionFolderPath = null;			 	// location of submission files relative to workspace folder
 	private String evaluationFolderPath = null; 			// location of evaluation output files relative to workspace folder
@@ -124,7 +122,7 @@ public class BackEnd {
 		mainFolderPath = mainFolder;		// get main folder path directly "
 
 		// set folder paths under main folder
-		submissionFolderPath = mainFolderPath + "/files/"; 				// set location of submission files relative to workspace folder
+		submissionFolderPath = mainFolderPath + "/files/test/"; 				// set location of submission files relative to workspace folder
 		evaluationFolderPath = mainFolderPath + "/evaluations/"; 		// set location of evaluation output files relative to workspace folder
 		gradesFileName = evaluationFolderPath + "AAA_grade_summary.out";
 		assignmentPropertiesFileName = mainFolderPath + "/assignmentProperties-MySQL";	// get assignment properties file name directly "
@@ -171,16 +169,12 @@ public class BackEnd {
 
 		ArrayList<Submission> sa = sc.getSubmissions();
 
-
 		if(dao.connect()==null){
 			System.err.println("Invalid database properties");
 			return;
 		}
 
-
-
-		goThroughAllSubmissions( sc, sa, questions,
-				gradesWriter, df);
+		goThroughAllSubmissions(sc, sa, questions, gradesWriter, df);
 
 		// close evaluation folder / grades file
 		try {
@@ -226,7 +220,7 @@ public class BackEnd {
 			// process each question answer in the submission
 			ArrayList<QuestionAnswer> qas = s.getAnswers();
 			if (qas != null) {
-				outputPointString=gradeSubmission(questions,  qas,questionToAnswer
+				outputPointString=gradeSubmission(questions, qas, questionToAnswer
 						, queryEvals, df, s);
 			}
 			// write each total grade to grades file
@@ -312,7 +306,7 @@ public class BackEnd {
 		s.setQueryEvals(queryEvals);                    // add the query evaluations to the submission
 
 		s.writeSubmission(evaluationFolderPath);        // write out each submission's output file
-		return outputPointString;
+		return outputPointString.substring(0, outputPointString.length()-1);
 	}
 
 
