@@ -65,7 +65,8 @@ public abstract class AbstractTest {
 	protected Query minTestQuery;		// query for testing (MIN)
 	protected Query min2TestQuery;		// query 2 for tetsing (MIN)
 	protected Query minusTestQuery;		// query for testing (MINUS)
-	
+	protected String mainFolderPath;
+
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
@@ -75,7 +76,9 @@ public abstract class AbstractTest {
 		//testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);	
 		//testDAO				= new MySQL5xDataAccessObject("localhost", "3306", "test", "wagnerpj", "toldics", true);
 		//testDA0				= new MockDataAccessObject("xyz", "xyz", "test", "user", "pass", true);		// won't work with unit testing as can't execute queries and get reasonable results back
-		
+
+		mainFolderPath = "/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation";
+
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");
 		creatureAllQueryLC  = new Query("select * from creature");
@@ -156,7 +159,8 @@ public abstract class AbstractTest {
 	// finalize - essentially cross-test fixture teardown
 	protected void finalize() throws Throwable {
 		testDAO				= null;
-		
+
+		mainFolderPath = null;
 		achievementAllQuery = null;
 		creatureAllQuery    = null;
 		creatureAllQueryLC  = null;

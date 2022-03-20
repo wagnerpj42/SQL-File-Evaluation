@@ -108,6 +108,17 @@ public class BackEnd {
 
 	}	// end - method transferData
 
+	// set dao for testing
+	public void createTestObject(IDAO dao, String mainFolder) {
+		this.dao = dao;
+		mainFolderPath = mainFolder;		// get main folder path directly "
+
+		// set folder paths under main folder
+		submissionFolderPath = mainFolderPath + "/files/"; 				// set location of submission files relative to workspace folder
+		evaluationFolderPath = mainFolderPath + "/evaluations/"; 		// set location of evaluation output files relative to workspace folder
+		gradesFileName = evaluationFolderPath + "AAA_grade_summary.out";
+		assignmentPropertiesFileName = mainFolderPath + "/assignmentProperties-MySQL";	// get assignment properties file name directly "
+	}
 
 	// -- evaluate() - do the main evaluation work
 	public void evaluate () {
@@ -214,7 +225,6 @@ public class BackEnd {
 	 */
 	String gradeSubmission(ArrayList<Question> questions, ArrayList<QuestionAnswer> qas,Map<Integer, ArrayList<Question>> questionToAnswer
 						 ,ArrayList<QueryEvaluation> queryEvals, DecimalFormat df, Submission s){
-
 		ArrayList<Question> currQuestions = null;
 		double submissionPoints = 0;
 		String outputPointString = ": ";
