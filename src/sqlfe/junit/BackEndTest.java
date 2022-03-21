@@ -109,15 +109,7 @@ public class BackEndTest extends AbstractTest{
             backEnd.evaluate();
             assertEquals(Files.readAllLines(Paths.get(gradesTestFile)), Files.readAllLines(Paths.get(gradesFileName)));
 
-//Reflection demo
-//            Field privateStringField= backEnd.getClass().getDeclaredField("abc");
-//            privateStringField.setAccessible(true);
-//            boolean height = privateStringField.getBoolean(backEnd);
 
-//            Method method = backEnd.getClass().getDeclaredMethod("createQuestionToAnswer", ArrayList.class);
-//            method.setAccessible(true);
-//            Map<Integer, ArrayList<Question>> mp= (Map<Integer, ArrayList<Question>>) method.invoke(backEnd, a.getQuestions());
-//
 
         }
         catch (Exception e) {
