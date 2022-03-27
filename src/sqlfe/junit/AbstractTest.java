@@ -72,12 +72,12 @@ public abstract class AbstractTest {
 	protected AbstractTest() {
 		// DAO setup - change type of object instantiated (if necessary) and arguments to make this functional 
 		// testDAO			= new OracleDataAccessObject("host", "port", "sysid", "user", "password", true);				// DAO and params must be changed to run unit tests 
-		testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi8cs", true); 
-		//testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);	
+		testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi8cs", true);
+		//testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);
 		//testDAO				= new MySQL5xDataAccessObject("localhost", "3306", "test", "wagnerpj", "toldics", true);
 		//testDA0				= new MockDataAccessObject("xyz", "xyz", "test", "user", "pass", true);		// won't work with unit testing as can't execute queries and get reasonable results back
 
-		mainFolderPath = ".";
+		mainFolderPath = System.getProperty("user.dir")+"/SQL-File-Evaluation";
 
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");

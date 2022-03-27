@@ -8,12 +8,14 @@ import sqlfe.util.Utilities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -24,10 +26,29 @@ public class BackEndTest extends AbstractTest{
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalErr = System.err;
     private final BackEnd backEnd = new BackEnd();
+    String backEndSubmissionPath;
 
     @Before
-    public void setup() {
+    public void setup() throws IOException {
         Utilities.forTesting = true;
+
+        // code to create new folder and copy files
+        // lt_s01.sql
+        backEndSubmissionPath = mainFolderPath + "/files/test/";
+
+        String submissionFileOriginalDir=mainFolderPath+"/files-sample-MySQL/";
+
+        // create the test directory
+        File theDir = new File(backEndSubmissionPath);
+        if (!theDir.exists()){
+            theDir.mkdirs();
+        }
+
+        // copy the submission of students into this file.
+        for(int i=1;i<=6;i++) {
+            String filename="lt_s0" + Integer.toString(i) + ".sql";
+            Files.copy(Paths.get(submissionFileOriginalDir + filename), Paths.get(backEndSubmissionPath+filename), StandardCopyOption.REPLACE_EXISTING);
+        }
         backEnd.createTestObject(testDAO, mainFolderPath);
         System.setErr(new PrintStream(errContent));
     }
@@ -41,11 +62,8 @@ public class BackEndTest extends AbstractTest{
             backEnd.evaluate();
 
             // test the number of lines in the output file. Should be number of files  + 2.
-            String backEndSubmissionPath = mainFolderPath + "/files/test/";
             String evaluationFolderPath=  mainFolderPath + "/evaluations/";
             String gradesFileName = evaluationFolderPath + "AAA_grade_summary.out";
-
-            String gradesTestFile = evaluationFolderPath + "/test/grade_summary_test.out";
 
             int numberOfFiles = Objects.requireNonNull(new File(backEndSubmissionPath).list()).length;
             long lineCount;
@@ -107,17 +125,19 @@ public class BackEndTest extends AbstractTest{
 
             //Test for grade submission, the output file should match are predefined one to pass
             backEnd.evaluate();
-            assertEquals(Files.readAllLines(Paths.get(gradesTestFile)), Files.readAllLines(Paths.get(gradesFileName)));
-
-//Reflection demo
-//            Field privateStringField= backEnd.getClass().getDeclaredField("abc");
-//            privateStringField.setAccessible(true);
-//            boolean height = privateStringField.getBoolean(backEnd);
-
-//            Method method = backEnd.getClass().getDeclaredMethod("createQuestionToAnswer", ArrayList.class);
-//            method.setAccessible(true);
-//            Map<Integer, ArrayList<Question>> mp= (Map<Integer, ArrayList<Question>>) method.invoke(backEnd, a.getQuestions());
-//
+            String expectedAns="Assignment  : CS 260, Fall 2019, Lab Test\n" +
+                    "\n" +
+                    "Student 03: 74.84: 15, 16, 9.72, 10.8, 13.52, 6.8, 3,\n" +
+                    "Student 02: 79.45: 15, 16, 13.95, 11.7, 16, 6.8, 0,\n" +
+                    "Student 01: 102.1: 15, 16, 18, 17.1, 16, 17, 3,\n" +
+                    "Student 05: 35.9: 5.25, 4, 5.4, 7.2, 6.4, 7.65, 0,\n" +
+                    "Student 04: 77.5: 15, 4.8, 9.9, 18, 12.8, 17, 0,\n" +
+                    "Student 06: 105: 15, 16, 18, 18, 16, 17, 5,\n";
+            String actualAns="";
+            for( String line:Files.readAllLines(Paths.get(gradesFileName))){
+                actualAns+=line+"\n";
+            }
+            assertEquals(actualAns, expectedAns);
 
         }
         catch (Exception e) {
@@ -128,11 +148,17 @@ public class BackEndTest extends AbstractTest{
 
     @After
     public void teardown () {
-        System.setErr(originalErr);
+        // delete the folders and files created
+        final File file = new File(backEndSubmissionPath);
+        File[] list = file.listFiles();
+        if (list != null) {
+            for (File currentFile : list) {
+                currentFile.delete();
+            }
+        }
+        if (file.delete()) {
+            System.setErr(originalErr);
+        }
     }
-
-
-
-
 
 }
