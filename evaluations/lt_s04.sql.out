@@ -10,7 +10,7 @@ FROM Customer C
 JOIN Account A
 ON A.Customer = C.CustID
 WHERE A.AccOpenLocation = 'Central' 
-    AND A.AccClosedDate >= '2017-03-01'
+    AND A.AccClosedDate >= '01-MAR-2017'
 
 Points given: 15 of maximum 15
 
@@ -123,7 +123,7 @@ Points given: 17 of maximum 17
 Answer compiles without errors: 1.7 / 1.7
 Answer has at least SELECT and FROM: 2.55 / 2.55
 Answer has appropriate number of WHERE keyword: 2.55 / 2.55
-Answer has appropriate number of SELECT keyword: 2.55 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
 Answer has same column count as desired result query: 1.7 / 1.7
 Answer has same result set content as desired query: 5.95 / 5.95
 

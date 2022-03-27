@@ -1,17 +1,38 @@
 Assignment  : CS 260, Fall 2019, Lab Test
 
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --I also tried this solution for question 2:
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --FROM Account
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --HAVING AccStatus = 'Active'
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --    UNION
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --FROM Account
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --HAVING AccStatus = 'Closed')   
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --    UNION
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --FROM Account
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/Git_same/SQL-File-Evaluation/files/lt_s04.sql: --HAVING AccStatus = 'Frozen');
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --I also tried this solution for question 2:
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Active'
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --    UNION
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Closed')   
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --    UNION
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Frozen');
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s08.sql: --SELECT * FROM Customer;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s08.sql: --SELECT * FROM Account;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s08.sql: --SELECT * FROM Transaction;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s09.sql: --ASSUMED THAT YOU DIDN'T WANT TO DISPLAY IF THEY HAD 0 ACTIVE, CLOSED, OR FROZEN ACCOUNTS
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- SELECT c.custid,c.fname,c.lname,MAX(t.transamount)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- FROM customer c
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- JOIN account a ON c.custid = a.customer
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --JOIN transaction t ON a.accnumber = t.accnumber
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --WHERE t.transtype LIKE 'w'
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: -- GROUP BY c.custid;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --SELECT MAX(transamount)
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --FROM transaction
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s22.sql: --GROUP BY transtype;
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s25.sql: --Can join based on a foreign key.
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s25.sql: --THIS ONE IS WRONG
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s25.sql: --Self join
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: -- DO NOT KNOW WHY THIS IS NOT WORKING ORDER BY ACCNUMBER));
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: --WHERE (AVG(T.TRANSAMOUNT) >
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: --(SELECT AVG(T2.TRANSAMOUNT) FROM TRANSAMOUNT TS));
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s29.sql: --GROUP BY T.TRANSLOCATION, AVG(T.TRANSAMOUNT)));
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s50.sql: -- ASSUMPTION: If the OpenLocation doesn't have Accounts of some type (Active, Closed, Frozen) it won't need to print them

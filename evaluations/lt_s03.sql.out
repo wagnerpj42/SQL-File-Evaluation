@@ -1,13 +1,13 @@
 Assignment  : CS 260, Fall 2019, Lab Test
 Student Name: Student 03
 Answer File : lt_s03.sql
-Total Points: 74.84
+Total Points: 77.39
 
 Your answers, evaluation and points follow.
 
 1: SELECT CR.CUSTID, CR.FNAME, CR.LNAME ,AV.ACCCLOSEDDATE FROM CUSTOMER CR
     JOIN ACCOUNT AV ON (AV.CUSTOMER = CUSTID AND AV.ACCOPENLOCATION LIKE '%Central%')
-    WHERE (AV.ACCCLOSEDDATE >= '2017-03-01')
+    WHERE (AV.ACCCLOSEDDATE >= '1-MAR-17')
 
 Points given: 15 of maximum 15
 
@@ -47,7 +47,7 @@ Answer has appropriate number of tables used: 1.8 / 1.8
 Answer has same column count as desired result query: 0 / 1.8
 Answer has same result set content as desired query: 1.62 / 8.1
 
-4: SELECT TRANSLOCATION, AVG(TRANSAMOUNT) as AverageTransaction  FROM TRANSACTION A
+4: SELECT TRANSLOCATION, CAST (AVG(TRANSAMOUNT) AS NUMBER(*,2)) as AverageTransaction  FROM TRANSACTION A
         WHERE (A.TRANSAMOUNT < (SELECT AVG(b.TRANSAMOUNT) FROM TRANSACTION b))
         GROUP BY TRANSLOCATION, TRANSAMOUNT
         ORDER BY TRANSAMOUNT DESC
@@ -85,12 +85,12 @@ Answer has same result set content as desired query: 3.92 / 5.6
         LEFT JOIN ACCOUNT AZ on (CT.CUSTID = AZ.CUSTOMER)
         WHERE(AZ.ACCSTATUS LIKE '%Closed%' or AZ.ACCSTATUS is null or AZ.ACCSTATUS LIKE '%frozen%' or CUSTID is null)
 
-Points given: 6.8 of maximum 17
+Points given: 9.35 of maximum 17
 
 Answer compiles without errors: 1.7 / 1.7
 Answer has at least SELECT and FROM: 2.55 / 2.55
 Answer has appropriate number of WHERE keyword: 2.55 / 2.55
-Answer has appropriate number of SELECT keyword: 0 / 2.55
+Answer has appropriate number of tables used: 2.55 / 2.55
 Answer has same column count as desired result query: 0 / 1.7
 Answer has same result set content as desired query: 0 / 5.95
 
