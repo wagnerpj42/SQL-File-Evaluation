@@ -15,7 +15,9 @@ import java.util.regex.Pattern;
 
 import javafx.application.Platform;
 
-public class Utilities { 	
+public class Utilities {
+
+	public static boolean forTesting = false;
 	// methods
 	// -- sortString - sort a string into ordered component parts
 	public static String sortString(String origString) {
@@ -262,7 +264,7 @@ public class Utilities {
 	
 	// -- threadSafeOutput - process output to make sure is run later if not in FX thread
 	public static void threadSafeOutput(String string) {
-		if (Platform.isFxApplicationThread()) {
+		if (Platform.isFxApplicationThread() || forTesting) {
 			// output as normal - OK to output within FX thread
 			System.out.print(string);
 		} else {
