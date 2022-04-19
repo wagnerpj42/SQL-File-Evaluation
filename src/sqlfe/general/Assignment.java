@@ -217,9 +217,9 @@ public class Assignment {
 		        }	// end - if processing a question
 			}	// end - while more questions
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot find file " + propertiesFilename);
+			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + propertiesFilename);
 		} catch (IOException ioe) {
-			System.err.println("Cannot read from file " + propertiesFilename);
+			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + propertiesFilename);
 		}
 	}	// end - method readProperties
 	

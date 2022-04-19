@@ -9,6 +9,7 @@ package sqlfe.general;
 import java.io.File;
 import java.io.IOException;
 //import java.io.PrintStream;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -62,11 +63,21 @@ public class BackEnd {
 		// move data in
 		transferData(aFrontEnd);
 
+		try {
+			// create file
+			String systemErrorFileName = evaluationFolderPath + "AAA_system_err.out";
+			PrintStream printStream = new PrintStream(new File(systemErrorFileName));
+			System.setErr(printStream);
+		} catch (IOException e) {
+			System.err.println("Failed to create system error logger");
+		}
+
 		// set up and run the evaluation system in a separate thread to avoid linear flow in regard to GUI
 		Thread thread = new Thread(() -> {
 			evaluate();
 		});
 		thread.start();
+
 	}	// end - method process
 
 
@@ -111,7 +122,7 @@ public class BackEnd {
 				dao = new MockDataAccessObject(hostName, portString, idName, username, password, false);
 				break;
 			default:
-				System.err.println("Incorrect DAO specification");
+				System.err.println(this.getClass().getSimpleName() + " Incorrect DAO specification");
 		}
 
 	}	// end - method transferData
@@ -154,7 +165,7 @@ public class BackEnd {
 			gradesWriter.println("");
 		}
 		catch (IOException ioe) {
-			System.err.println("IOException in writing to file " + gradesFileName);
+			System.err.println(this.getClass().getSimpleName() + " IOException in writing to file " + gradesFileName);
 		}
 
 		// read in all submission files
@@ -163,14 +174,14 @@ public class BackEnd {
 			sc.getAllFiles(submissionFolderPath, evaluationFolderPath, a.getAssignmentName());
 		}
 		catch (Exception e){
-			System.err.println("Error in reading submission collection");
+			System.err.println(this.getClass().getSimpleName() + " Error in reading submission collection");
 			return;
 		}
 
 		ArrayList<Submission> sa = sc.getSubmissions();
 
 		if(dao.connect()==null){
-			System.err.println("Invalid database properties");
+			System.err.println(this.getClass().getSimpleName() + " Invalid database properties");
 			return;
 		}
 
@@ -182,7 +193,7 @@ public class BackEnd {
 			gradesWriter.close();
 		}
 		catch (Exception e) {
-			System.err.println("Error in closing grades file: " + gradesFileName);
+			System.err.println(this.getClass().getSimpleName() + "Error in closing grades file: " + gradesFileName);
 		}
 		finally {
 			dao.disconnect();
@@ -228,7 +239,7 @@ public class BackEnd {
 				gradesWriter.println(s.getStudentName() + ": " + df.format(s.getTotalPoints()) + outputPointString);
 			}
 			catch (Exception e) {
-				System.err.println("Error in writing to grades file " + gradesFileName);
+				System.err.println(this.getClass().getSimpleName() + " Error in writing to grades file " + gradesFileName);
 			}
 		}
 
