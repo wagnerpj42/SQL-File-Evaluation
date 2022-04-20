@@ -5,11 +5,11 @@
  */
 package sqlfe.junit;
 
-import sqlfe.general.IDAO;
-import sqlfe.general.MySQL5xDataAccessObject;
-import sqlfe.general.MySQL80DataAccessObject;
-import sqlfe.general.OracleDataAccessObject;
-import sqlfe.general.Query;
+import sqlfe.general.*;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 @SuppressWarnings("unused")
 public abstract class AbstractTest {
@@ -70,14 +70,32 @@ public abstract class AbstractTest {
 	// methods
 	// default constructor - essentially cross-test fixture setup
 	protected AbstractTest() {
-		// DAO setup - change type of object instantiated (if necessary) and arguments to make this functional 
-		// testDAO			= new OracleDataAccessObject("host", "port", "sysid", "user", "password", true);				// DAO and params must be changed to run unit tests 
-		testDAO					= new OracleDataAccessObject("localhost", "1521", "toldidb", "paul", "toldi8cs", true);
-		//testDAO				= new MySQL80DataAccessObject("localhost", "3307", "test", "paul", "toldi42cs*", true);
-		//testDAO				= new MySQL5xDataAccessObject("localhost", "3306", "test", "wagnerpj", "toldics", true);
-		//testDA0				= new MockDataAccessObject("xyz", "xyz", "test", "user", "pass", true);		// won't work with unit testing as can't execute queries and get reasonable results back
 
-		mainFolderPath = System.getProperty("user.dir")+"/SQL-File-Evaluation";
+		Properties prop = new Properties();
+		try {
+			prop.load(new FileInputStream("setup/test/application.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// DAO setup - change type of object instantiated (if necessary) and arguments to make this functional 
+		// testDAO			= new OracleDataAccessObject("host", "port", "sysid", "user", "password", true);				// DAO and params must be changed to run unit tests
+		switch (prop.getProperty("sqlfe.dbtype")){
+			case "oracle":
+				testDAO	= new OracleDataAccessObject(prop.getProperty("sqlfe.hostname"), prop.getProperty("sqlfe.port"), prop.getProperty("sqlfe.dbname"), prop.getProperty("sqlfe.username"), prop.getProperty("sqlfe.password"), Boolean.parseBoolean(prop.getProperty("sqlfe.fortesting")));
+				break;
+			case "mysql8":
+				testDAO= new MySQL80DataAccessObject(prop.getProperty("sqlfe.hostname"), prop.getProperty("sqlfe.port"), prop.getProperty("sqlfe.dbname"), prop.getProperty("sqlfe.username"), prop.getProperty("sqlfe.password"), Boolean.parseBoolean(prop.getProperty("sqlfe.fortesting")));
+				break;
+			case "mysql5":
+				testDAO	= new MySQL5xDataAccessObject(prop.getProperty("sqlfe.hostname"), prop.getProperty("sqlfe.port"), prop.getProperty("sqlfe.dbname"), prop.getProperty("sqlfe.username"), prop.getProperty("sqlfe.password"), Boolean.parseBoolean(prop.getProperty("sqlfe.fortesting")));
+				break;
+			default:
+				testDAO	= new MockDataAccessObject("xyz", "xyz", "test", "user", "pass", true);		// won't work with unit testing as can't execute queries and get reasonable results back
+		}
+
+
+		mainFolderPath = System.getProperty("user.dir");
 
 		achievementAllQuery = new Query("SELECT * FROM Achievement");
 		creatureAllQuery    = new Query("SELECT * FROM Creature");
