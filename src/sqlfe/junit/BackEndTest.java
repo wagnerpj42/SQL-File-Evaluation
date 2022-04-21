@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
-public class BackEndTest extends AbstractTest{
+public class BackEndTests extends AbstractTest{
 
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalErr = System.err;

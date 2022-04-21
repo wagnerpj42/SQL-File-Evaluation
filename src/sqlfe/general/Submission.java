@@ -456,8 +456,8 @@ public class Submission {
 					int points = testPoints.get(testIndex);
 					int pct = testPcts.get(testIndex);
 					// output scaled points scored out of scaled available points
-					outWriter.println(test.getDesc() + ": " + df.format (scaleValue(points, qe.getMaxPoints() / 10.0))
-													+ " / " + df.format(scaleValue (pct, qe.getMaxPoints() )) );
+					String formattedString= String.format("%s : %"+(80 -test.getDesc().length())+".2f / %.2f", test.getDesc(), scaleValue(points, qe.getMaxPoints() / 10.0),   scaleValue (pct, qe.getMaxPoints()));
+					outWriter.println(formattedString);
 				}
 				outWriter.println();
 			}
