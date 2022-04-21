@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import static org.junit.Assert.*;
 
 
-public class FrontEnd_Test extends AbstractTest {
+public class FrontEndTests extends AbstractTest {
 
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalErr = System.err;

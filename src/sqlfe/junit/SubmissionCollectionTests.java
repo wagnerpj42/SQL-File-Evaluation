@@ -10,18 +10,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 
-public class SubmissionCollection_Test extends AbstractTest{
+public class SubmissionCollectionTests extends AbstractTest{
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalErr = System.err;
     private final SubmissionCollection subColl = new SubmissionCollection();
@@ -33,9 +28,14 @@ public class SubmissionCollection_Test extends AbstractTest{
     public void setup() throws IOException {
         // set up for testing
         Utilities.forTesting = true;
-        evaluationsFolderPath = "C://Users//jhard//OneDrive//Documents//Object_Oriented_Development//final project//SQL-File-Evaluation" + "/evaluations/";
-        backEndSubmissionPath = "C://Users//jhard//OneDrive//Documents//Object_Oriented_Development//final project//SQL-File-Evaluation" + "/files/test/";
-        submissionFileOriginalDir = "C://Users//jhard//OneDrive//Documents//Object_Oriented_Development//final project//SQL-File-Evaluation"+"/files-sample-MySQL/";
+        evaluationsFolderPath = mainFolderPath + "/evaluations/";
+        backEndSubmissionPath = mainFolderPath + "/files/test/";
+        submissionFileOriginalDir = mainFolderPath+"/files-sample-MySQL/";
+
+        File theDir = new File(backEndSubmissionPath);
+        if (!theDir.exists()){
+            theDir.mkdirs();
+        }
 
         // copy the submission of students into this file.
         for(int i=1;i<=6;i++) {
@@ -50,12 +50,6 @@ public class SubmissionCollection_Test extends AbstractTest{
     @Test
     public void testSubmissionCollection() {
         try {
-            File theDir = new File(backEndSubmissionPath);
-            // main folder path added /SQL-File-Evaluation/ twice so this was hardcoded for the specific PC
-            if (!theDir.exists()){
-                theDir.mkdirs();
-            }
-
 
             backEnd.createTestObject(testDAO, "C://Users//jhard//OneDrive//Documents//Object_Oriented_Development//final project//SQL-File-Evaluation");
 
