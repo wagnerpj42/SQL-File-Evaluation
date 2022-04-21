@@ -225,7 +225,8 @@ public class BackEnd {
 			}
 			// write each total grade to grades file
 			try {
-				gradesWriter.println(s.getStudentName() + ": " + df.format(s.getTotalPoints()) + outputPointString);
+				String formattedString= String.format("%s : %"+(60 -s.getStudentName().length())+".2f %s", s.getStudentName(), s.getTotalPoints(),   outputPointString.substring(0,outputPointString.length()-1));
+				gradesWriter.println(formattedString);
 			}
 			catch (Exception e) {
 				System.err.println("Error in writing to grades file " + gradesFileName);
