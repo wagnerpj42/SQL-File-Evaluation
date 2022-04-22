@@ -13,6 +13,10 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +26,7 @@ public class SubmissionCollectionTests extends AbstractTest{
     private final SubmissionCollection subColl = new SubmissionCollection();
     private final BackEnd backEnd = new BackEnd();
     String backEndSubmissionPath; String evaluationsFolderPath; String submissionFileOriginalDir;
+    String expecHash;
 
 
     @Before
@@ -52,14 +57,25 @@ public class SubmissionCollectionTests extends AbstractTest{
         try {
 
             backEnd.createTestObject(testDAO, "C://Users//jhard//OneDrive//Documents//Object_Oriented_Development//final project//SQL-File-Evaluation");
-
             Assignment a = backEnd.createAssignment("C://Users//jhard/OneDrive/Documents/Object_Oriented_Development/final project/SQL-File-Evaluation/assignmentProperties-MySQL/");
             subColl.getAllFiles(backEndSubmissionPath, evaluationsFolderPath, a.getAssignmentName());
 
             // test getAllFiles method
-//            assertEquals(6,subColl.getTotalSubmissions());
-            System.out.println(subColl.getSubmissions());
-            //assertSame("",subColl.getSubmissions().)
+            assertEquals(6,subColl.getTotalSubmissions());
+
+            // test hashCode method
+            assertEquals(937134617,subColl.hashCode());
+
+            // test submission name
+            List<Submission> submissions = subColl.getSubmissions();
+            String[] fileNames = new String[] {"lt_s01.sql", "lt_s02.sql", "lt_s03.sql", "lt_s04.sql", "lt_s05.sql", "lt_s06.sql"};
+            Set<String> fileNamesSet = new HashSet<>(Arrays.asList(fileNames));
+            for(Submission i:submissions) {
+                String fileName = i.getSubmissionFileName();
+                assertTrue(fileNamesSet.contains(fileName));
+            }
+            System.out.println(subColl.getSubmissionMarks());
+            //assertSame("lt_s01.sql",subColl.getSubmissions());
       }
         catch(Exception e){
             System.out.println(e);
