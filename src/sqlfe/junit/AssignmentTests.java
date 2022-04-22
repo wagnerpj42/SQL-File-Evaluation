@@ -68,6 +68,7 @@ public class AssignmentTests extends AbstractTest {
         BufferedWriter writer;
         {
             try {
+                // creating file to test regular expression of questions and assignment name
                 writer = new BufferedWriter(new FileWriter("Test_assignmentProperties.txt"));
                 writer.write(testProperties);
                 writer.close();
@@ -80,6 +81,7 @@ public class AssignmentTests extends AbstractTest {
       BufferedWriter w;
       {
           try {
+              // creating file to test correct question count and question points of each question.
               w = new BufferedWriter(new FileWriter("Test_assignmentQuestions.txt"));
               w.write(testQuestions);
               w.close();
@@ -94,13 +96,18 @@ public class AssignmentTests extends AbstractTest {
     @Test
     public void testAssign() {
         try {
-            Assignment a = backEnd.createAssignment( "/Users/shubhendersingh/Documents/final/SQL-File-Evaluation/Test_assignmentProperties.txt");
+            // To check whether regular expression for question number is working or not.
+            Assignment a = backEnd.createAssignment( mainFolderPath+ "/Test_assignmentProperties.txt");
             assertEquals(0,a.getQuestions().size());
+
+            // To check whether Assignment name is correctly set or not.
             assertEquals("Assignment  : CS 260, Fall 2019, Lab Test",a.getAssignmentName());
 
-
-            Assignment b = backEnd.createAssignment( "/Users/shubhendersingh/Documents/final/SQL-File-Evaluation/Test_assignmentQuestions.txt");
+            // To check each question with correct format is correctly captured and total number of questions are correctly updated or not.
+            Assignment b = backEnd.createAssignment( mainFolderPath+ "/Test_assignmentQuestions.txt");
             assertEquals(2,b.getQuestions().size());
+
+            // To check if the question points of each question is correctly captured or not.
             assertEquals(15,b.getQuestions().get(0).getQuestionPoints());
             assertEquals(16,b.getQuestions().get(1).getQuestionPoints());
 
@@ -116,6 +123,9 @@ public class AssignmentTests extends AbstractTest {
     @After
     public void teardown () {
         File file = new File(mainFolderPath + "/Test_assignmentProperties.txt");
+        file.delete();
+
+        File file2 = new File(mainFolderPath + "/Test_assignmentQuestions.txt");
         file.delete();
 
     }

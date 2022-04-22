@@ -50,8 +50,6 @@ public class TestResultTests extends AbstractTest {
             assertEquals(e_row, testresult.getExtraRows());
             assertEquals(m_row, testresult.getMissingRows());
 
-
-
         }
         catch (Exception e) {
             System.out.println(e);
