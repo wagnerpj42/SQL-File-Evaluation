@@ -149,7 +149,7 @@ public class SubmissionCollection {
 				}
 			}	// end - for
 		} catch (IOException ioe) {
-			System.err.println( " IOException in writing to file ");
+			System.err.println( this.getClass().getSimpleName() + " IOException in writing to file " + commFileName + " or " + parseFileName);
 		} finally {
 			commWriter.close();
 			parseWriter.close();
