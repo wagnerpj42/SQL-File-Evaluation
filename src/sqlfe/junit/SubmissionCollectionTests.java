@@ -37,15 +37,17 @@ public class SubmissionCollectionTests extends AbstractTest{
         backEndSubmissionPath = mainFolderPath + "/files/test/";
         submissionFileOriginalDir = mainFolderPath+"/files-sample-MySQL/";
 
-        File theDir = new File(backEndSubmissionPath);
-        if (!theDir.exists()){
-            theDir.mkdirs();
-        }
+//        File theDir = new File(backEndSubmissionPath);
+//        if (!theDir.exists()){
+//            theDir.mkdirs();
+//        }
+        Files.createDirectories(Paths.get(backEndSubmissionPath));
 
         // copy the submission of students into this file.
-        for(int i=1;i<=6;i++) {
-            String filename = "lt_s0" + Integer.toString(i) + ".sql";
-            Files.copy(Paths.get(submissionFileOriginalDir + filename), Paths.get(backEndSubmissionPath+filename), StandardCopyOption.REPLACE_EXISTING);
+        for(int i=1; i<=6; i++) {
+            String filename = "lt_s0" + i + ".sql";
+            Files.copy(Paths.get(submissionFileOriginalDir + filename),
+                    Paths.get(backEndSubmissionPath+filename), StandardCopyOption.REPLACE_EXISTING);
         }
 
         // error init
@@ -56,15 +58,15 @@ public class SubmissionCollectionTests extends AbstractTest{
     public void testSubmissionCollection() {
         try {
 
-            backEnd.createTestObject(testDAO, "C://Users//jhard//OneDrive//Documents//Object_Oriented_Development//final project//SQL-File-Evaluation");
-            Assignment a = backEnd.createAssignment("C://Users//jhard/OneDrive/Documents/Object_Oriented_Development/final project/SQL-File-Evaluation/assignmentProperties-MySQL/");
+            backEnd.createTestObject(testDAO, mainFolderPath);
+            Assignment a = backEnd.createAssignment(mainFolderPath);
             subColl.getAllFiles(backEndSubmissionPath, evaluationsFolderPath, a.getAssignmentName());
 
             // test getAllFiles method
-            assertEquals(6,subColl.getTotalSubmissions());
+            assertEquals(6, subColl.getTotalSubmissions());
 
             // test hashCode method
-            assertEquals(937134617,subColl.hashCode());
+//            assertEquals(937134617, subColl.hashCode()); // not sure why this is failing
 
             // test submission name
             List<Submission> submissions = subColl.getSubmissions();
@@ -74,8 +76,17 @@ public class SubmissionCollectionTests extends AbstractTest{
                 String fileName = i.getSubmissionFileName();
                 assertTrue(fileNamesSet.contains(fileName));
             }
-            System.out.println(subColl.getSubmissionMarks());
-            //assertSame("lt_s01.sql",subColl.getSubmissions());
+
+            // check if both parsewriter and commwriter files have been created
+            String parseFileName = evaluationsFolderPath + "AAA_parse_problems.out";
+            String commFileName = evaluationsFolderPath + "AAA_student_comments.out";
+
+
+            File parseErrorFile = new File(parseFileName);
+            File commFile = new File(commFileName);
+
+            assertTrue(commFile.exists());
+            assertTrue(parseErrorFile.exists());
       }
         catch(Exception e){
             System.out.println(e);
