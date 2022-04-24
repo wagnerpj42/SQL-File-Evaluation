@@ -130,7 +130,7 @@ public class BackEnd {
 
 	public Assignment createAssignment(String propertyFilePath){
 		Assignment a = new Assignment();
-		a.readProperties(assignmentPropertiesFileName);
+		a.readProperties(propertyFilePath);
 		return a;
 	}
 

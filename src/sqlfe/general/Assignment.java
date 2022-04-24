@@ -215,9 +215,14 @@ public class Assignment {
 					Question question = new Question(qNumStr, numMarks, desiredQuery, tests);
 					questions.add(question);
 		        }	// end - if processing a question
+				else {
+					System.err.println("Error in reading the first question");
+					break;
+				}
 			}	// end - while more questions
 		} catch (FileNotFoundException e) {
 			System.err.println("Cannot find file " + propertiesFilename);
+
 		} catch (IOException ioe) {
 			System.err.println("Cannot read from file " + propertiesFilename);
 		}

@@ -14,13 +14,12 @@ import static org.junit.Assert.fail;
 
 public class AssignmentTests extends AbstractTest {
 
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-    private final PrintStream originalErr = System.err;
-    private final BackEnd backEnd = new BackEnd();
+    private  BackEnd backEnd ;
 
     @Before
     public void setup() throws IOException {
         Utilities.forTesting = true;
+        backEnd = new BackEnd();
         String testProperties="Assignment  : CS 260, Fall 2019, Lab Test\n" +
                 "\n" +
                 "@. (15 points)\n"+
@@ -63,33 +62,28 @@ public class AssignmentTests extends AbstractTest {
                 "TestColumnCount 10\n" +
                 "TestResultSetEqualContent 45";
 
-
-
         BufferedWriter writer;
-        {
-            try {
-                // creating file to test regular expression of questions and assignment name
-                writer = new BufferedWriter(new FileWriter("Test_assignmentProperties.txt"));
-                writer.write(testProperties);
-                writer.close();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            // creating file to test regular expression of questions and assignment name
+            writer = new BufferedWriter(new FileWriter("Test_assignmentProperties.txt"));
+            writer.write(testProperties);
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-      BufferedWriter w;
-      {
-          try {
-              // creating file to test correct question count and question points of each question.
-              w = new BufferedWriter(new FileWriter("Test_assignmentQuestions.txt"));
-              w.write(testQuestions);
-              w.close();
+        try {
+          // creating file to test correct question count and question points of each question.
+          writer = new BufferedWriter(new FileWriter("Test_assignmentQuestions.txt"));
+          writer.write(testQuestions);
+          writer.close();
 
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
-       }
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
 
     }
 
