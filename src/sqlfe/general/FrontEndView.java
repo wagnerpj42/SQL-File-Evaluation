@@ -141,7 +141,7 @@ public class FrontEndView extends Application {
         			if (file != null) {
         				waTextField.setText(file.getAbsolutePath());
         			} else {
-        				System.err.println("null folder from chooser");
+        				System.err.println(this.getClass().getSimpleName() + " null folder from chooser");
         			}
         		}
         	}
@@ -183,7 +183,7 @@ public class FrontEndView extends Application {
 				apTextField.setText(configProp.getProperty("assignPropFile"));
 				in.close();
 			} catch (IOException e) {
-				System.err.println("problem reading config properties");
+				System.err.println(this.getClass().getSimpleName() + " problem reading config properties");
 			}
 		}
 		
