@@ -1,17 +1,45 @@
-Assignment  : null
+Assignment  : CS 260, Fall 2019, Lab Test
 
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --I also tried this solution for question 2:
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --FROM Account
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --HAVING AccStatus = 'Active'
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --    UNION
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --FROM Account
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --HAVING AccStatus = 'Closed')   
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --    UNION
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --FROM Account
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-/Users/sam/Desktop/sem2/oodd/project3/final/SQL-File-Evaluation/files/test/lt_s04.sql: --HAVING AccStatus = 'Frozen');
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s29.sql: -- DO NOT KNOW WHY THIS IS NOT WORKING ORDER BY ACCNUMBER));
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s29.sql: -- WHERE (AVG(T.TRANSAMOUNT) >
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s29.sql:     -- (SELECT AVG(T2.TRANSAMOUNT) FROM TRANSAMOUNT TS));
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s29.sql:     -- GROUP BY T.TRANSLOCATION, AVG(T.TRANSAMOUNT)));
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --I also tried this solution for question 2:
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --FROM Account
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --HAVING AccStatus = 'Active'
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --    UNION
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --FROM Account
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --HAVING AccStatus = 'Closed')   
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --    UNION
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --FROM Account
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s04.sql: --HAVING AccStatus = 'Frozen');
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s61.sql: -- one comment section with two single line comments
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s61.sql: -- is placed here
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s66.sql: -- Customer ( _CustID_ , FName, LName, PIN)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s66.sql: -- Account ( _AccNumber_ , AccType, AccBalance, Customer (FK), AccOpenLocation, 
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s66.sql: --                         AccOpenDate, AccClosedDate, AccStatus)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s66.sql: -- Transaction ( _TransID_ , AccNumber (FK), TransAmount, TransDateTime, 
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s66.sql: --                         TransType, TransLocation)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s65.sql: -- this is a comment inserted after the submitted query
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s56.sql: -- user comment added here
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s57.sql: -- user comment added here
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s52.sql: -- - user comment with incorrect marker
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s50.sql: -- ASSUMPTION: If the OpenLocation doesn't have Accounts of some type (Active, Closed, Frozen) it won't need to print them
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s22.sql: -- SELECT c.custid,c.fname,c.lname,MAX(t.transamount)
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s22.sql:    -- FROM customer c
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s22.sql:    -- JOIN account a ON c.custid = a.customer
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s22.sql:     --JOIN transaction t ON a.accnumber = t.accnumber
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s22.sql:     --WHERE t.transtype LIKE 'w'
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s22.sql:    -- GROUP BY c.custid;
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s09.sql: --ASSUMED THAT YOU DIDN'T WANT TO DISPLAY IF THEY HAD 0 ACTIVE, CLOSED, OR FROZEN ACCOUNTS
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s08.sql: --SELECT * FROM Account;
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s08.sql: --SELECT * FROM Transaction;
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s25.sql: --Can join based on a foreign key.
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s25.sql: --THIS ONE IS WRONG
+/Users/rachitsharma/Desktop/CSC517/SQL-File-Evaluation/files/lt_s25.sql: --Self join
