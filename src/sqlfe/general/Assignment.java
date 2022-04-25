@@ -215,6 +215,10 @@ public class Assignment {
 					Question question = new Question(qNumStr, numMarks, desiredQuery, tests);
 					questions.add(question);
 		        }	// end - if processing a question
+				else {
+					System.err.println(this.getClass().getSimpleName() + "Error in reading the first question");
+					break;
+				}
 			}	// end - while more questions
 		} catch (FileNotFoundException e) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + propertiesFilename);
