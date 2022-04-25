@@ -66,7 +66,7 @@ public class AssignmentTests extends AbstractTest {
 
         try {
             // creating file to test regular expression of questions and assignment name
-            writer = new BufferedWriter(new FileWriter("Test_assignmentProperties.txt"));
+            writer = new BufferedWriter(new FileWriter("TestAssignmentProperties.txt"));
             writer.write(testProperties);
             writer.close();
 
@@ -76,7 +76,7 @@ public class AssignmentTests extends AbstractTest {
 
         try {
           // creating file to test correct question count and question points of each question.
-          writer = new BufferedWriter(new FileWriter("Test_assignmentQuestions.txt"));
+          writer = new BufferedWriter(new FileWriter("TestAssignmentQuestions.txt"));
           writer.write(testQuestions);
           writer.close();
 
@@ -91,14 +91,14 @@ public class AssignmentTests extends AbstractTest {
     public void testAssign() {
         try {
             // To check whether regular expression for question number is working or not.
-            Assignment a = backEnd.createAssignment( mainFolderPath+ "/Test_assignmentProperties.txt");
+            Assignment a = backEnd.createAssignment( mainFolderPath+ "/TestAssignmentProperties.txt");
             assertEquals(0,a.getQuestions().size());
 
             // To check whether Assignment name is correctly set or not.
             assertEquals("Assignment  : CS 260, Fall 2019, Lab Test",a.getAssignmentName());
 
             // To check each question with correct format is correctly captured and total number of questions are correctly updated or not.
-            Assignment b = backEnd.createAssignment( mainFolderPath+ "/Test_assignmentQuestions.txt");
+            Assignment b = backEnd.createAssignment( mainFolderPath+ "/TestAssignmentQuestions.txt");
             assertEquals(2,b.getQuestions().size());
 
             // To check if the question points of each question is correctly captured or not.
@@ -116,13 +116,11 @@ public class AssignmentTests extends AbstractTest {
 
     @After
     public void teardown () {
-        File file = new File(mainFolderPath + "/Test_assignmentProperties.txt");
+        File file = new File(mainFolderPath + "/TestAssignmentProperties.txt");
         file.delete();
 
-        File file2 = new File(mainFolderPath + "/Test_assignmentQuestions.txt");
+        file = new File(mainFolderPath + "/TestAssignmentQuestions.txt");
         file.delete();
 
+        }
     }
-    }
-
-
