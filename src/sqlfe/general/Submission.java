@@ -235,13 +235,13 @@ public class Submission {
 			    	line = Utilities.processUserComments(br, line, commWriter, submissionFileName);
 			    }
 			    else {
-			    	System.err.println("unexpected answer line condition");
+			    	System.err.println(this.getClass().getSimpleName() + " unexpected answer line condition");
 			    }
 			}	// end - while more lines for answer
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot find file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
-			System.err.println("Cannot read from file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + submissionFileName);
 		}
 		return answerQueryStr;
 	}	// end - method getAnswerQuery
@@ -323,7 +323,7 @@ public class Submission {
 			}
 			
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot find file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
 		} catch (SQLFEParseException sqlfepe) {
 			System.err.println(sqlfepe.getMessage());
 			parseWriter.println(sqlfepe.getMessage());
@@ -351,9 +351,9 @@ public class Submission {
 			}
 			line = br.readLine(); 											// read third line
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot find file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
-			System.err.println("Cannot read from file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + submissionFileName);
 		}
 		return line;
 	}	// end - method getFileMetaData
@@ -408,9 +408,9 @@ public class Submission {
 				line = br.readLine();									// go to next line and check that line
 			}	// end - while
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot find file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
 		} catch (IOException ioe) {
-			System.err.println("Cannot read from file " + submissionFileName);
+			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + submissionFileName);
 		}
 		return line;
 	}	// end - method reachNextQuestion
@@ -456,8 +456,8 @@ public class Submission {
 					int points = testPoints.get(testIndex);
 					int pct = testPcts.get(testIndex);
 					// output scaled points scored out of scaled available points
-					outWriter.println(test.getDesc() + ": " + df.format (scaleValue(points, qe.getMaxPoints() / 10.0))
-													+ " / " + df.format(scaleValue (pct, qe.getMaxPoints() )) );
+					String formattedString= String.format("%s : %"+(80 -test.getDesc().length())+".2f / %.2f", test.getDesc(), scaleValue(points, qe.getMaxPoints() / 10.0),   scaleValue (pct, qe.getMaxPoints()));
+					outWriter.println(formattedString);
 				}
 				outWriter.println();
 			}

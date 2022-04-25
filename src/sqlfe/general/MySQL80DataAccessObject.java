@@ -44,7 +44,7 @@ public class MySQL80DataAccessObject implements IDAO {
 			if (forTesting) {
 				System.out.println("Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");
 			} else {
-				Utilities.threadSafeOutput("\nCould not get class object for Driver, check if MySQL JDBC Connector file is on your build path\n");	// for JavaFX GUI thread safety
+				System.err.println(this.getClass().getSimpleName()+ " Could not get class object for Driver, check if MySQL JDBC Connector file is on your build path");	// for JavaFX GUI thread safety
 			}
 		}
 
@@ -57,7 +57,7 @@ public class MySQL80DataAccessObject implements IDAO {
 			if (forTesting) {
 				System.out.println("Could not make connection to database, " + sqle.getMessage());
 			} else {
-				Utilities.threadSafeOutput("\nCould not make connection to database, " + sqle.getMessage() + "\n");		// for JavaFX GUI thread safety
+				System.err.println(this.getClass().getSimpleName() + " Could not make connection to database, " + sqle.getMessage());		// for JavaFX GUI thread safety
 			}
 		}
 		return conn;
