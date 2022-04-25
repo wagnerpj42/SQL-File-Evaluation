@@ -34,7 +34,7 @@ public class TestResultTests extends AbstractTest {
     }
 
     @Test
-    public void test_testResults(){
+    public void testTestResults(){
         try {
             // check the values set in setter getter is working fine
             assertEquals(c_warning, testresult.getWarnings());
