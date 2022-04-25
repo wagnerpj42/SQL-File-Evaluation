@@ -6,8 +6,8 @@ import org.junit.Test;
 import sqlfe.general.*;
 import sqlfe.util.Utilities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
+import java.util.Properties;
 
 
 import static org.junit.Assert.*;
@@ -17,25 +17,15 @@ public class FrontEndTests extends AbstractTest {
 
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalErr = System.err;
-    private final FrontEnd frontEnd = new FrontEnd();
-    private final BackEnd backEnd = new BackEnd();
-    String frontEndSubmissionPath;
+    private FrontEnd frontEnd;
+    private BackEnd backEnd = new BackEnd();
 
     @Before
     public void setup()  {
         // set up for testing
         Utilities.forTesting = true;
-
-        // setters
-        frontEnd.setDbmsChoice("SQL");
-        frontEnd.setDbmsHost("host");
-        frontEnd.setDbmsPort("port");
-        frontEnd.setDbmsSystemID("ID");
-        frontEnd.setDbmsUsername("Username");
-        frontEnd.setDbmsPassword("Password");
-        frontEnd.setEvaluationFolder("Folder");
-        frontEnd.setAssignPropFile("PropFile");
-        frontEnd.setABackEnd(backEnd);
+        frontEnd = new FrontEnd();
+        backEnd = new BackEnd();
 
         // error init
         System.setErr(new PrintStream(errContent));
@@ -45,6 +35,18 @@ public class FrontEndTests extends AbstractTest {
     public void testFrontEnd() {
         try {
             // testing getters
+            // setters
+            frontEnd.setDbmsChoice("SQL");
+            frontEnd.setDbmsHost("host");
+            frontEnd.setDbmsPort("port");
+            frontEnd.setDbmsSystemID("ID");
+            frontEnd.setDbmsUsername("Username");
+            frontEnd.setDbmsPassword("Password");
+            frontEnd.setEvaluationFolder("Folder");
+            frontEnd.setAssignPropFile("PropFile");
+            frontEnd.setABackEnd(backEnd);
+
+            //checking correct value was set by setters
             assertSame("SQL", frontEnd.getDbmsChoice());
             assertSame("host",frontEnd.getDbmsHost());
             assertSame("port",frontEnd.getDbmsPort());
@@ -54,6 +56,14 @@ public class FrontEndTests extends AbstractTest {
             assertSame("Folder",frontEnd.getEvaluationFolder());
             assertSame("PropFile",frontEnd.getAssignPropFile());
             assertEquals(backEnd,frontEnd.getABackEnd());
+            frontEnd.processInput("SQL","host","ID","username","Password",
+                    "Password","Folder","PropFile");
+
+            String configFilePath = mainFolderPath + "/config.properties";
+            File configFile = new File(configFilePath);
+
+            // check config file is created after calling processInput
+            assertTrue(configFile.exists());
         }
         catch(Exception e){
                 System.out.println(e);
@@ -75,6 +85,11 @@ public class FrontEndTests extends AbstractTest {
         frontEnd.setABackEnd(null);
         // putting system error back to original error
         System.setErr(originalErr);
+
+        String configFilePath = mainFolderPath + "/config.properties";
+        File configFile = new File(configFilePath);
+        configFile.delete();
+
     }
 
 }

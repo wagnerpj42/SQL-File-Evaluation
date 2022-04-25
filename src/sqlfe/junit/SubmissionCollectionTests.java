@@ -25,8 +25,10 @@ public class SubmissionCollectionTests extends AbstractTest{
     private final PrintStream originalErr = System.err;
     private final SubmissionCollection subColl = new SubmissionCollection();
     private final BackEnd backEnd = new BackEnd();
-    String backEndSubmissionPath; String evaluationsFolderPath; String submissionFileOriginalDir;
-    String expecHash;
+    String backEndSubmissionPath;
+    String evaluationsFolderPath;
+    String submissionFileOriginalDir;
+
 
 
     @Before
@@ -37,10 +39,6 @@ public class SubmissionCollectionTests extends AbstractTest{
         backEndSubmissionPath = mainFolderPath + "/files/test/";
         submissionFileOriginalDir = mainFolderPath+"/files-sample-MySQL/";
 
-//        File theDir = new File(backEndSubmissionPath);
-//        if (!theDir.exists()){
-//            theDir.mkdirs();
-//        }
         Files.createDirectories(Paths.get(backEndSubmissionPath));
 
         // copy the submission of students into this file.
@@ -65,13 +63,12 @@ public class SubmissionCollectionTests extends AbstractTest{
             // test getAllFiles method
             assertEquals(6, subColl.getTotalSubmissions());
 
-            // test hashCode method
-//            assertEquals(937134617, subColl.hashCode()); // not sure why this is failing
-
             // test submission name
             List<Submission> submissions = subColl.getSubmissions();
             String[] fileNames = new String[] {"lt_s01.sql", "lt_s02.sql", "lt_s03.sql", "lt_s04.sql", "lt_s05.sql", "lt_s06.sql"};
             Set<String> fileNamesSet = new HashSet<>(Arrays.asList(fileNames));
+
+            // check the filename is same as expected
             for(Submission i:submissions) {
                 String fileName = i.getSubmissionFileName();
                 assertTrue(fileNamesSet.contains(fileName));
@@ -85,6 +82,7 @@ public class SubmissionCollectionTests extends AbstractTest{
             File parseErrorFile = new File(parseFileName);
             File commFile = new File(commFileName);
 
+            // checking if the required files exist.
             assertTrue(commFile.exists());
             assertTrue(parseErrorFile.exists());
       }

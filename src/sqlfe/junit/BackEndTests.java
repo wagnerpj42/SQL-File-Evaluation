@@ -95,7 +95,7 @@ public class BackEndTests extends AbstractTest{
                 if(lineNo>=2){
                     String[] arrOfStr = line.split(":");
                     assertEquals(arrOfStr.length,3);
-                    int freqComma =0;
+                    int freqComma = 1;
                     for(int i=0;i<arrOfStr[2].length();i++){
                         if(arrOfStr[2].charAt(i)==',')
                             freqComma++;
@@ -109,7 +109,7 @@ public class BackEndTests extends AbstractTest{
             backEnd.setSubmissionFolderPath("invalidPath");
             backEnd.setEvaluationFolderPath("invalidPath");
             backEnd.evaluate();
-            assertEquals("Error in reading submission collection\n".trim(), errContent.toString().trim());
+            assertEquals("BackEnd Error in reading submission collection\n".trim(), errContent.toString().trim());
 
             errContent.reset();
             backEnd.createTestObject(testDAO, mainFolderPath);
@@ -119,7 +119,7 @@ public class BackEndTests extends AbstractTest{
             IDAO invalidDAO	= new MySQL80DataAccessObject("localhost", "3306", "sqlf", "roo", "", true);
             backEnd.createTestObject(invalidDAO, mainFolderPath);
             backEnd.evaluate();
-            assertEquals("Invalid database properties\n".trim(), errContent.toString().trim());
+            assertEquals("BackEnd Invalid database properties\n".trim(), errContent.toString().trim());
 
             backEnd.createTestObject(testDAO, mainFolderPath);
 
@@ -127,12 +127,12 @@ public class BackEndTests extends AbstractTest{
             backEnd.evaluate();
             String expectedAns="Assignment  : CS 260, Fall 2019, Lab Test\n" +
                     "\n" +
-                    "Student 03: 74.84: 15, 16, 9.72, 10.8, 13.52, 6.8, 3,\n" +
-                    "Student 02: 79.45: 15, 16, 13.95, 11.7, 16, 6.8, 0,\n" +
-                    "Student 01: 102.1: 15, 16, 18, 17.1, 16, 17, 3,\n" +
-                    "Student 05: 35.9: 5.25, 4, 5.4, 7.2, 6.4, 7.65, 0,\n" +
-                    "Student 04: 77.5: 15, 4.8, 9.9, 18, 12.8, 17, 0,\n" +
-                    "Student 06: 105: 15, 16, 18, 18, 16, 17, 5,\n";
+                    "Student 03 :                                              74.84 : 15, 16, 9.72, 10.8, 13.52, 6.8, 3\n" +
+                    "Student 02 :                                              79.45 : 15, 16, 13.95, 11.7, 16, 6.8, 0\n" +
+                    "Student 01 :                                             102.10 : 15, 16, 18, 17.1, 16, 17, 3\n" +
+                    "Student 05 :                                              35.90 : 5.25, 4, 5.4, 7.2, 6.4, 7.65, 0\n" +
+                    "Student 04 :                                              77.50 : 15, 4.8, 9.9, 18, 12.8, 17, 0\n" +
+                    "Student 06 :                                             105.00 : 15, 16, 18, 18, 16, 17, 5\n";
             String actualAns="";
             for( String line:Files.readAllLines(Paths.get(gradesFileName))){
                 actualAns+=line+"\n";
@@ -159,6 +159,13 @@ public class BackEndTests extends AbstractTest{
         if (file.delete()) {
             System.setErr(originalErr);
         }
+        File parseProblems= new File(mainFolderPath+"/invalidPathAAA_parse_problems.out");
+        File commentFile= new File(mainFolderPath+"/invalidPathAAA_student_comments.out");
+
+        parseProblems.delete();
+        commentFile.delete();
+
+
     }
 
 }
