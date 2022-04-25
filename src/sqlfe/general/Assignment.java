@@ -216,7 +216,7 @@ public class Assignment {
 					questions.add(question);
 		        }	// end - if processing a question
 				else {
-					System.err.println("Error in reading the first question");
+					System.err.println(this.getClass().getSimpleName() + "Error in reading the first question");
 					break;
 				}
 			}	// end - while more questions
