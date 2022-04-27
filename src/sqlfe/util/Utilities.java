@@ -109,6 +109,7 @@ public class Utilities {
 		} 
 		catch (IOException ioe) {
 			System.err.println("skipInstructorComments() - Cannot read from properties file");
+			Utilities.threadSafeOutput("Error, please check the error file");
 		}
 
 		return localLine;
@@ -129,6 +130,7 @@ public class Utilities {
 			} 
 			catch (IOException ioe) {
 				System.err.println("processUserComments() - Either, cannot read from submission file, or write to comments file");
+				Utilities.threadSafeOutput("Error, please check the error file");
 			}
 		} else if (isMultiLineComment) {					// is multi-line comment, process to end of this comment
 			try {
@@ -142,7 +144,8 @@ public class Utilities {
 			} 
 			catch (IOException ioe) {
 				System.err.println("processUserComments() - Either, cannot read from submission file, or write to comments file");
-			}	
+				Utilities.threadSafeOutput("Error, please check the error file");
+			}
 		}
 		return localLine;
 	}	// end = method processUserComments
@@ -245,6 +248,7 @@ public class Utilities {
 		} 
 		catch (IOException ioe) {
 			System.err.println("skipInstructorComments() - Cannot read from properties file");
+			Utilities.threadSafeOutput("Error, please check the error file");
 		}
 		return localLine;
 	}	// end - method skipExtraQueries

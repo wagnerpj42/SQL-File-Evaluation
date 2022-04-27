@@ -163,14 +163,16 @@ public class BackEnd {
 			sc.getAllFiles(submissionFolderPath, evaluationFolderPath, a.getAssignmentName());
 		}
 		catch (Exception e){
-			System.err.println("Error in reading submission collection");
+			System.err.println(this.getClass().getSimpleName() + " Error in reading submission collection");
+			Utilities.threadSafeOutput("Error, please check the error file");
 			return;
 		}
 
 		ArrayList<Submission> sa = sc.getSubmissions();
 
 		if(dao.connect()==null){
-			System.err.println("Invalid database properties");
+			System.err.println(this.getClass().getSimpleName() + " Invalid database properties");
+			Utilities.threadSafeOutput("Error, please check the error file");
 			return;
 		}
 
