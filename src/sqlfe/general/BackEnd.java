@@ -175,6 +175,7 @@ public class BackEnd {
 		}
 		catch (Exception e){
 			System.err.println(this.getClass().getSimpleName() + " Error in reading submission collection");
+			Utilities.threadSafeOutput("Error, please check the error file");
 			return;
 		}
 
@@ -182,6 +183,7 @@ public class BackEnd {
 
 		if(dao.connect()==null){
 			System.err.println(this.getClass().getSimpleName() + " Invalid database properties");
+			Utilities.threadSafeOutput("Error, please check the error file");
 			return;
 		}
 

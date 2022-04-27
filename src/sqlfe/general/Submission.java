@@ -240,8 +240,10 @@ public class Submission {
 			}	// end - while more lines for answer
 		} catch (FileNotFoundException e) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		} catch (IOException ioe) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		}
 		return answerQueryStr;
 	}	// end - method getAnswerQuery
@@ -324,6 +326,7 @@ public class Submission {
 			
 		} catch (FileNotFoundException e) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		} catch (SQLFEParseException sqlfepe) {
 			System.err.println(sqlfepe.getMessage());
 			parseWriter.println(sqlfepe.getMessage());
@@ -352,8 +355,10 @@ public class Submission {
 			line = br.readLine(); 											// read third line
 		} catch (FileNotFoundException e) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		} catch (IOException ioe) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		}
 		return line;
 	}	// end - method getFileMetaData
@@ -409,8 +414,10 @@ public class Submission {
 			}	// end - while
 		} catch (FileNotFoundException e) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		} catch (IOException ioe) {
 			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + submissionFileName);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		}
 		return line;
 	}	// end - method reachNextQuestion

@@ -33,7 +33,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
- 
+import sqlfe.util.Utilities;
+
 public class FrontEndView extends Application {
 	// data
 	// -- GUI fields
@@ -184,6 +185,7 @@ public class FrontEndView extends Application {
 				in.close();
 			} catch (IOException e) {
 				System.err.println(this.getClass().getSimpleName() + " problem reading config properties");
+                Utilities.threadSafeOutput("Error, please check the error file");
 			}
 		}
 		
