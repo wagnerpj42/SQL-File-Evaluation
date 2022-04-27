@@ -215,11 +215,17 @@ public class Assignment {
 					Question question = new Question(qNumStr, numMarks, desiredQuery, tests);
 					questions.add(question);
 		        }	// end - if processing a question
+				else {
+					System.err.println(this.getClass().getSimpleName() + "Error in reading the first question");
+					break;
+				}
 			}	// end - while more questions
 		} catch (FileNotFoundException e) {
-			System.err.println("Cannot find file " + propertiesFilename);
+			System.err.println(this.getClass().getSimpleName() + " Cannot find file " + propertiesFilename);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		} catch (IOException ioe) {
-			System.err.println("Cannot read from file " + propertiesFilename);
+			System.err.println(this.getClass().getSimpleName() + " Cannot read from file " + propertiesFilename);
+			Utilities.threadSafeOutput("Error, please check the error file");
 		}
 	}	// end - method readProperties
 	

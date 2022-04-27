@@ -81,7 +81,7 @@ public class SubmissionTests extends AbstractTest {
             commWriter = new PrintWriter("./testEvaluations/commFileReadSubmissionTestsFail.out", "UTF-8");
             parseWriter = new PrintWriter("./testEvaluations/parseFileReadSubmissionTestsFail.out", "UTF-8");
             s.readSubmission("garbage", commWriter, parseWriter, true);
-            assertEquals("Cannot find file garbage\n".trim(), errContent.toString().trim());
+            assertEquals("Submission Cannot find file garbage\n".trim(), errContent.toString().trim());
             commWriter.close();
             parseWriter.close();
             
