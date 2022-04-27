@@ -1,0 +1,33 @@
+name: Maven Build Merge
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ macos-latest,ubuntu-20.04, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 18
+
+      - name: Install with Maven
+        run:  mvn -B package --file pom.xml
+
+      - run: mkdir production && cp target/*.jar production
+      - name: Copy jars
+        uses: actions/upload-artifact@v3
+        with:
+          name: SQLFE-${{ matrix.os }}
+          path: production

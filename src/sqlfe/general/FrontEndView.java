@@ -142,7 +142,7 @@ public class FrontEndView extends Application {
         			if (file != null) {
         				waTextField.setText(file.getAbsolutePath());
         			} else {
-        				System.err.println("null folder from chooser");
+        				System.err.println(this.getClass().getSimpleName() + " null folder from chooser");
         			}
         		}
         	}
