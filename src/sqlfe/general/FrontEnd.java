@@ -150,7 +150,7 @@ public class FrontEnd {
 		try {
 			configProp.store(new FileOutputStream(CONFIG_PROP_NAME), null);
 		} catch (IOException ioe) {
-			System.err.println("error saving config properties");
+			System.err.println(this.getClass().getSimpleName() + " error saving config properties");
 		}		
 
 		// send FrontEnd information to BackEnd for processing

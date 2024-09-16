@@ -9,7 +9,7 @@ C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --    UN
 C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
 C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
 C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --GROUP BY AccOpenLocation, AccStatus, COUNT(AccNumber)
-C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Closed')   
+C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --HAVING AccStatus = 'Closed')
 C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --    UNION
 C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --(SELECT AccOpenLocation, AccStatus, COUNT(AccNumber)
 C:/Users/paul/Documents/Java/workspace/SQLFileTesting/files/lt_s04.sql: --FROM Account
